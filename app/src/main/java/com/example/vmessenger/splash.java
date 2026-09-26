@@ -29,7 +29,9 @@ public class splash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         logo = findViewById(R.id.logoimg);
         name = findViewById(R.id.logonameimg);
         own1 = findViewById(R.id.ownone);
