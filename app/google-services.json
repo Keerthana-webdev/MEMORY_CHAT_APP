@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "253978982073",
+    "project_id": "vmessenger-47cd7",
+    "storage_bucket": "vmessenger-47cd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253978982073:android:91fd870262558782264d68",
+        "android_client_info": {
+          "package_name": "com.example.vmessenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCXJXkfbG3Ap0lNJ4P-ALgDj-pLQaMaDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

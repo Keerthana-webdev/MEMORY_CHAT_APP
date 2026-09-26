@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/logoimg"
-        android:layout_width="@dimen/_160sdp"
+        android:layout_width="@dimen/_180sdp"
         android:layout_height="@dimen/_84sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
