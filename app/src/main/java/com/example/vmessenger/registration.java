@@ -50,56 +50,40 @@ public class registration extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
         progressDialog = new ProgressDialog(this);
-
-        progressDialog.setMessage(
-                "Creating your MemoryChat account..."
-        );
-
+        progressDialog.setMessage("Creating your MemoryChat account...");
         progressDialog.setCancelable(false);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        database =
-                FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
 
-        auth =
-                FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
 
-        loginbut =
-                findViewById(R.id.loginbut);
+        loginbut = findViewById(R.id.loginbut);
 
-        rg_username =
-                findViewById(R.id.rgusername);
+        rg_username = findViewById(R.id.rgusername);
 
-        rg_email =
-                findViewById(R.id.rgemail);
+        rg_email = findViewById(R.id.rgemail);
 
-        rg_password =
-                findViewById(R.id.rgpassword);
+        rg_password = findViewById(R.id.rgpassword);
 
-        rg_repassword =
-                findViewById(R.id.rgrepassword);
+        rg_repassword = findViewById(R.id.rgrepassword);
 
-        rg_profileImg =
-                findViewById(R.id.profilerg0);
+        rg_profileImg = findViewById(R.id.profilerg0);
 
-        rg_signup =
-                findViewById(R.id.signupbutton);
+        rg_signup = findViewById(R.id.signupbutton);
 
-        loginbut.setOnClickListener(
-                new View.OnClickListener() {
+        loginbut.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        Intent intent =
-                                new Intent(registration.this, login.class);
+                        Intent intent = new Intent(registration.this, login.class);
                         startActivity(intent);
                         finish();
                     }
@@ -112,7 +96,6 @@ public class registration extends AppCompatActivity {
                     public void onClick(View v) {Intent intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
-
                         startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), 10);
                     }
                 }
