@@ -56,21 +56,8 @@ public class login extends AppCompatActivity {
             finish();
         });
 
-
-        // --------------------------------------------------
-        // LOGIN
-        // --------------------------------------------------
-
-        button.setOnClickListener(v -> {
-
-            String Email =
-                    email.getText()
-                            .toString()
-                            .trim();
-
-            String pass =
-                    password.getText()
-                            .toString();
+        button.setOnClickListener(v -> {String Email = email.getText().toString().trim();
+            String pass = password.getText().toString();
 
 
             // --------------------------------------------------
