@@ -15,8 +15,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class CloudinaryUploader {
-    private static final String CLOUD_NAME = "YOUR_CLOUD_NAME";
-    private static final String UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+    private static final String CLOUD_NAME = "dfqd4mj03";
+    private static final String UPLOAD_PRESET = "memorychat_upload";
     public interface UploadCallback {
         void onSuccess(String downloadUrl);
         void onFailure(String error);
