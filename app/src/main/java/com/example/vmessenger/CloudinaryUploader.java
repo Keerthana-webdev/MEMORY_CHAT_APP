@@ -68,10 +68,6 @@ public class CloudinaryUploader {
                 DataOutputStream outputStream =
                         new DataOutputStream(connection.getOutputStream());
 
-                // ------------------------------------------------
-                // upload_preset
-                // ------------------------------------------------
-
                 outputStream.writeBytes("--" + boundary + "\r\n");
 
                 outputStream.writeBytes(
