@@ -70,26 +70,14 @@ public class login extends AppCompatActivity {
             }
 
 
-            if (!Email.matches(emailPattern)) {
-
-                email.setError(
-                        "Enter a valid email address"
-                );
-
+            if (!Email.matches(emailPattern)) {email.setError("Enter a valid email address");
                 email.requestFocus();
-
                 return;
             }
 
 
-            if (pass.length() < 6) {
-
-                password.setError(
-                        "Password must contain at least 6 characters"
-                );
-
+            if (pass.length() < 6) {password.setError("Password must contain at least 6 characters");
                 password.requestFocus();
-
                 return;
             }
 
