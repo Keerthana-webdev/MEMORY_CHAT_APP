@@ -90,38 +90,15 @@ public class login extends AppCompatActivity {
 
                             if (task.isSuccessful()) {Toast.makeText(login.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(login.this, MainActivity.class);
-
-
-                                // Remove login from back stack
-                                intent.setFlags(
-                                        Intent.FLAG_ACTIVITY_NEW_TASK |
-                                                Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                );
-
-
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
-
                                 finish();
-
-
                             } else {
-
-                                String errorMsg =
-                                        "Login failed";
-
-                                if (task.getException() != null) {
-
-                                    errorMsg =
-                                            task.getException()
-                                                    .getMessage();
+                                String errorMsg = "Login failed";
+                                if (task.getException() != null) {errorMsg = task.getException().getMessage();
                                 }
 
-
-                                Toast.makeText(
-                                        login.this,
-                                        errorMsg,
-                                        Toast.LENGTH_LONG
-                                ).show();
+                                Toast.makeText(login.this, errorMsg, Toast.LENGTH_LONG).show();
                             }
                         }
                     }
