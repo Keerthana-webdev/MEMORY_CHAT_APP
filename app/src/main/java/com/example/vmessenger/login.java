@@ -51,21 +51,8 @@ public class login extends AppCompatActivity {
 
         logsignup = findViewById(R.id.logsignup);
 
-
-        // --------------------------------------------------
-        // SIGN UP
-        // --------------------------------------------------
-
-        logsignup.setOnClickListener(v -> {
-
-            Intent intent =
-                    new Intent(
-                            login.this,
-                            registration.class
-                    );
-
+        logsignup.setOnClickListener(v -> {Intent intent = new Intent(login.this, registration.class);
             startActivity(intent);
-
             finish();
         });
 
