@@ -46,20 +46,13 @@ public class registration extends AppCompatActivity {
 
     String imageuri;
 
-    String emailPattern =
-            "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_registration);
-
-        // -------------------------------------------------------
-        // Progress dialog
-        // -------------------------------------------------------
 
         progressDialog = new ProgressDialog(this);
 
