@@ -18,59 +18,24 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class login extends AppCompatActivity {
-
     TextView logsignup;
     Button button;
     EditText email, password;
-
     FirebaseAuth auth;
-
-    String emailPattern =
-            "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     ProgressDialog progressDialog;
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
-        // --------------------------------------------------
-        // Firebase Authentication
-        // --------------------------------------------------
+        if (getSupportActionBar() != null) {getSupportActionBar().hide();}
 
         auth = FirebaseAuth.getInstance();
 
-
-        // --------------------------------------------------
-        // IMPORTANT:
-        // If user is already logged in,
-        // directly open MainActivity.
-        // --------------------------------------------------
-
-        if (auth.getCurrentUser() != null) {
-
-            Intent intent =
-                    new Intent(
-                            login.this,
-                            MainActivity.class
-                    );
-
-            intent.setFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK |
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK
-            );
-
+        if (auth.getCurrentUser() != null) {Intent intent = new Intent(login.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-
             finish();
-
             return;
         }
 
