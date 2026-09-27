@@ -39,18 +39,8 @@ public class login extends AppCompatActivity {
             return;
         }
 
-
-        // --------------------------------------------------
-        // Progress Dialog
-        // --------------------------------------------------
-
-        progressDialog =
-                new ProgressDialog(this);
-
-        progressDialog.setMessage(
-                "Please Wait..."
-        );
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please Wait...");
         progressDialog.setCancelable(false);
 
 
