@@ -106,11 +106,6 @@ public class registration extends AppCompatActivity {
                 }
         );
 
-
-        // =======================================================
-        // PROFILE IMAGE
-        // =======================================================
-
         rg_profileImg.setOnClickListener(
                 new View.OnClickListener() {
 
