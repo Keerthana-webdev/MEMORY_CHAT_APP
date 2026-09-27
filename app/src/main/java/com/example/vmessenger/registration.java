@@ -186,11 +186,8 @@ public class registration extends AppCompatActivity {
                                                 );
 
                                             } else {
-                                                imageuri = "";
-
-                                                saveUserToFirebase(
-                                                        reference,
-                                                        id,
+                                                imageuri = "https://res.cloudinary.com/dfqd4mj03/image/upload/v1790523802/man_nlsk8r.png";
+                                                saveUserToFirebase(reference, id,
                                                         namee,
                                                         emaill,
                                                         Password,
