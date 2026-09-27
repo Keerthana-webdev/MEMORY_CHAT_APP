@@ -24,28 +24,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class registration extends AppCompatActivity {
-
     TextView loginbut;
-
     EditText rg_username;
     EditText rg_email;
     EditText rg_password;
     EditText rg_repassword;
-
     Button rg_signup;
-
     CircleImageView rg_profileImg;
-
     FirebaseAuth auth;
-
     FirebaseDatabase database;
-
     ProgressDialog progressDialog;
-
     Uri imageURI;
-
     String imageuri;
-
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
 
