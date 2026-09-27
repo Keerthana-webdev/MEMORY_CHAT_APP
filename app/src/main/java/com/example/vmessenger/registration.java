@@ -146,11 +146,6 @@ public class registration extends AppCompatActivity {
                             return;
                         }
 
-
-                        // ------------------------------------------------
-                        // SHOW PROGRESS
-                        // ------------------------------------------------
-
                         progressDialog.setMessage(
                                 "Creating account..."
                         );
