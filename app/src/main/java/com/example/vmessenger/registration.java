@@ -186,13 +186,7 @@ public class registration extends AppCompatActivity {
                                                 );
 
                                             } else {
-
-                                                // =================================================
-                                                // NO PROFILE PHOTO
-                                                // =================================================
-
-                                                imageuri =
-                                                        "";
+                                                imageuri = "";
 
                                                 saveUserToFirebase(
                                                         reference,
@@ -205,26 +199,13 @@ public class registration extends AppCompatActivity {
                                                 );
                                             }
 
-
                                         } else {
-
                                             progressDialog.dismiss();
 
-                                            String error =
-                                                    "Registration failed";
+                                            String error = "Registration failed";
 
-                                            if (task.getException() != null) {
-
-                                                error =
-                                                        task.getException()
-                                                                .getMessage();
-                                            }
-
-                                            Toast.makeText(
-                                                    registration.this,
-                                                    error,
-                                                    Toast.LENGTH_LONG
-                                            ).show();
+                                            if (task.getException() != null) {error = task.getException().getMessage();}
+                                            Toast.makeText(registration.this, error, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 }
