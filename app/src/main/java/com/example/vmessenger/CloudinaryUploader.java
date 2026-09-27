@@ -15,12 +15,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class CloudinaryUploader {
-
-    // ============================================================
-    // IMPORTANT:
-    // Replace these two values with YOUR Cloudinary details.
-    // ============================================================
-
     private static final String CLOUD_NAME = "YOUR_CLOUD_NAME";
     private static final String UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
 
