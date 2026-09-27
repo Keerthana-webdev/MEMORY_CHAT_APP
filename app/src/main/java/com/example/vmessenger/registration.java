@@ -253,32 +253,14 @@ public class registration extends AppCompatActivity {
                 );
     }
 
-
-    // ============================================================
-    // IMAGE PICKER RESULT
-    // ============================================================
-
-    @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            @Nullable Intent data
-    ) {
-
-        super.onActivityResult(
-                requestCode, resultCode, data
-        );
-
-
+    @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (
                 requestCode == 10 && resultCode == RESULT_OK && data != null
         ) {
             imageURI = data.getData();
 
-            if (imageURI != null) {
-                rg_profileImg.setImageURI(
-                        imageURI
-                );
+            if (imageURI != null) {rg_profileImg.setImageURI(imageURI);
             }
         }
     }
