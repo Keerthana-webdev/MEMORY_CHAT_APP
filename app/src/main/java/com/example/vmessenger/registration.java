@@ -132,12 +132,7 @@ public class registration extends AppCompatActivity {
                         }
 
 
-                        if (!emaill.matches(emailPattern)) {
-
-                            rg_email.setError(
-                                    "Type a valid email address"
-                            );
-
+                        if (!emaill.matches(emailPattern)) {rg_email.setError("Type a valid email address");
                             return;
                         }
 
