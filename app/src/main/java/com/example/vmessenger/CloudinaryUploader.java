@@ -112,10 +112,6 @@ public class CloudinaryUploader {
 
                 outputStream.writeBytes("\r\n");
 
-                // ------------------------------------------------
-                // End multipart request
-                // ------------------------------------------------
-
                 outputStream.writeBytes("--" + boundary + "--\r\n");
 
                 outputStream.flush();
