@@ -146,22 +146,10 @@ public class registration extends AppCompatActivity {
                             return;
                         }
 
-                        progressDialog.setMessage(
-                                "Creating account..."
-                        );
-
+                        progressDialog.setMessage("Creating account...");
                         progressDialog.show();
 
-
-                        // =================================================
-                        // CREATE FIREBASE AUTH USER
-                        // =================================================
-
-                        auth.createUserWithEmailAndPassword(
-                                emaill,
-                                Password
-                        ).addOnCompleteListener(
-                                new OnCompleteListener<AuthResult>() {
+                        auth.createUserWithEmailAndPassword(emaill, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
                                     @Override
                                     public void onComplete(
