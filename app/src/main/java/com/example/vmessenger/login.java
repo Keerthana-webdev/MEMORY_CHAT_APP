@@ -64,15 +64,8 @@ public class login extends AppCompatActivity {
                 return;
             }
 
-
-            if (TextUtils.isEmpty(pass)) {
-
-                password.setError(
-                        "Enter your password"
-                );
-
+            if (TextUtils.isEmpty(pass)) {password.setError("Enter your password");
                 password.requestFocus();
-
                 return;
             }
 
