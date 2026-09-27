@@ -59,19 +59,8 @@ public class login extends AppCompatActivity {
         button.setOnClickListener(v -> {String Email = email.getText().toString().trim();
             String pass = password.getText().toString();
 
-
-            // --------------------------------------------------
-            // Validation
-            // --------------------------------------------------
-
-            if (TextUtils.isEmpty(Email)) {
-
-                email.setError(
-                        "Enter your email"
-                );
-
+            if (TextUtils.isEmpty(Email)) {email.setError("Enter your email");
                 email.requestFocus();
-
                 return;
             }
 
