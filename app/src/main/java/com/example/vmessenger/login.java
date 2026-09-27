@@ -81,50 +81,15 @@ public class login extends AppCompatActivity {
                 return;
             }
 
-
-            // --------------------------------------------------
-            // Show Progress
-            // --------------------------------------------------
-
             progressDialog.show();
 
+            auth.signInWithEmailAndPassword(Email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
-            // --------------------------------------------------
-            // Firebase Login
-            // --------------------------------------------------
-
-            auth.signInWithEmailAndPassword(
-                    Email,
-                    pass
-            ).addOnCompleteListener(
-                    new OnCompleteListener<AuthResult>() {
-
-                        @Override
-                        public void onComplete(
-                                @NonNull Task<AuthResult> task
-                        ) {
-
+                        @Override public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
 
-
-                            if (task.isSuccessful()) {
-
-                                // ------------------------------------------
-                                // Firebase has now saved the login session.
-                                // ------------------------------------------
-
-                                Toast.makeText(
-                                        login.this,
-                                        "Login Successful",
-                                        Toast.LENGTH_SHORT
-                                ).show();
-
-
-                                Intent intent =
-                                        new Intent(
-                                                login.this,
-                                                MainActivity.class
-                                        );
+                            if (task.isSuccessful()) {Toast.makeText(login.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(login.this, MainActivity.class);
 
 
                                 // Remove login from back stack
