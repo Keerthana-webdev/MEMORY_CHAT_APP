@@ -66,10 +66,6 @@ public class registration extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // -------------------------------------------------------
-        // Firebase
-        // -------------------------------------------------------
-
         database =
                 FirebaseDatabase.getInstance();
 
