@@ -215,11 +215,6 @@ public class registration extends AppCompatActivity {
         );
     }
 
-
-    // ============================================================
-    // SAVE USER TO FIREBASE REALTIME DATABASE
-    // ============================================================
-
     private void saveUserToFirebase(
             DatabaseReference reference,
             String id,
@@ -230,8 +225,7 @@ public class registration extends AppCompatActivity {
             String status
     ) {
 
-        Users users =
-                new Users(
+        Users users = new Users(
                         id,
                         name,
                         email,
@@ -241,43 +235,18 @@ public class registration extends AppCompatActivity {
                 );
 
 
-        reference.setValue(users)
-                .addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
+        reference.setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
 
-                            @Override
-                            public void onComplete(
-                                    @NonNull Task<Void> task
-                            ) {
-
+                            @Override public void onComplete(@NonNull Task<Void> task) {
                                 progressDialog.dismiss();
+                                if (task.isSuccessful()) {Toast.makeText(registration.this, "Account Created Successfully", Toast.LENGTH_SHORT).show();
 
-                                if (task.isSuccessful()) {
-
-                                    Toast.makeText(
-                                            registration.this,
-                                            "Account Created Successfully",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-
-
-                                    Intent intent =
-                                            new Intent(
-                                                    registration.this,
-                                                    MainActivity.class
-                                            );
-
+                                    Intent intent = new Intent(registration.this, MainActivity.class);
                                     startActivity(intent);
-
                                     finish();
 
                                 } else {
-
-                                    Toast.makeText(
-                                            registration.this,
-                                            "Error creating user",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
+                                    Toast.makeText(registration.this, "Error creating user", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
