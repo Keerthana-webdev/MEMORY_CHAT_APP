@@ -23,8 +23,6 @@ public class splash extends AppCompatActivity {
     TextView name, own1, own2;
     Animation topAnim, bottomAnim;
 
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
