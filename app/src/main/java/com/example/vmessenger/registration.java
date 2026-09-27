@@ -126,27 +126,8 @@ public class registration extends AppCompatActivity {
 
                         String status = "Hey I'm Using MemoryChat";
 
-
-                        // ------------------------------------------------
-                        // VALIDATION
-                        // ------------------------------------------------
-
-                        if (
-                                TextUtils.isEmpty(namee)
-                                        ||
-                                        TextUtils.isEmpty(emaill)
-                                        ||
-                                        TextUtils.isEmpty(Password)
-                                        ||
-                                        TextUtils.isEmpty(cPassword)
-                        ) {
-
-                            Toast.makeText(
-                                    registration.this,
-                                    "Please Enter Valid Information",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-
+                        if (TextUtils.isEmpty(namee) || TextUtils.isEmpty(emaill) || TextUtils.isEmpty(Password) || TextUtils.isEmpty(cPassword)) {
+                            Toast.makeText(registration.this, "Please Enter Valid Information", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
