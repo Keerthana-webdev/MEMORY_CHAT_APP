@@ -43,22 +43,13 @@ public class login extends AppCompatActivity {
         progressDialog.setMessage("Please Wait...");
         progressDialog.setCancelable(false);
 
+        button = findViewById(R.id.logbutton);
 
-        // --------------------------------------------------
-        // Find Views
-        // --------------------------------------------------
+        email = findViewById(R.id.editTexLogEmail);
 
-        button =
-                findViewById(R.id.logbutton);
+        password = findViewById(R.id.editTextLogPassword);
 
-        email =
-                findViewById(R.id.editTexLogEmail);
-
-        password =
-                findViewById(R.id.editTextLogPassword);
-
-        logsignup =
-                findViewById(R.id.logsignup);
+        logsignup = findViewById(R.id.logsignup);
 
 
         // --------------------------------------------------
