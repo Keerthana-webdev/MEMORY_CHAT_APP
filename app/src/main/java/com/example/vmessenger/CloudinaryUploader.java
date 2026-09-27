@@ -76,10 +76,6 @@ public class CloudinaryUploader {
 
                 outputStream.writeBytes(UPLOAD_PRESET + "\r\n");
 
-                // ------------------------------------------------
-                // file
-                // ------------------------------------------------
-
                 outputStream.writeBytes("--" + boundary + "\r\n");
 
                 outputStream.writeBytes(
