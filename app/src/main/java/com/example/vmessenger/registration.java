@@ -62,10 +62,6 @@ public class registration extends AppCompatActivity {
 
         progressDialog.setCancelable(false);
 
-        // -------------------------------------------------------
-        // Hide action bar
-        // -------------------------------------------------------
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
