@@ -101,11 +101,6 @@ public class registration extends AppCompatActivity {
                 }
         );
 
-
-        // =======================================================
-        // SIGN UP BUTTON
-        // =======================================================
-
         rg_signup.setOnClickListener(
                 new View.OnClickListener() {
 
