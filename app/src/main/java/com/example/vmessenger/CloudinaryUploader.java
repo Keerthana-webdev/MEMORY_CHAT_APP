@@ -17,9 +17,6 @@ import java.net.URLEncoder;
 public class CloudinaryUploader {
     private static final String CLOUD_NAME = "YOUR_CLOUD_NAME";
     private static final String UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
-
-    // ============================================================
-
     public interface UploadCallback {
         void onSuccess(String downloadUrl);
         void onFailure(String error);
