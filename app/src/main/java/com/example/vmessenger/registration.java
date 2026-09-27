@@ -106,28 +106,14 @@ public class registration extends AppCompatActivity {
                 }
         );
 
-        rg_profileImg.setOnClickListener(
-                new View.OnClickListener() {
+        rg_profileImg.setOnClickListener(new View.OnClickListener() {
 
                     @Override
-                    public void onClick(View v) {
-
-                        Intent intent =
-                                new Intent();
-
+                    public void onClick(View v) {Intent intent = new Intent();
                         intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
 
-                        intent.setAction(
-                                Intent.ACTION_GET_CONTENT
-                        );
-
-                        startActivityForResult(
-                                Intent.createChooser(
-                                        intent,
-                                        "Select Profile Picture"
-                                ),
-                                10
-                        );
+                        startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), 10);
                     }
                 }
         );
