@@ -93,11 +93,6 @@ public class registration extends AppCompatActivity {
         rg_signup =
                 findViewById(R.id.signupbutton);
 
-
-        // =======================================================
-        // LOGIN BUTTON
-        // =======================================================
-
         loginbut.setOnClickListener(
                 new View.OnClickListener() {
 
