@@ -72,10 +72,6 @@ public class registration extends AppCompatActivity {
         auth =
                 FirebaseAuth.getInstance();
 
-        // -------------------------------------------------------
-        // Find views
-        // -------------------------------------------------------
-
         loginbut =
                 findViewById(R.id.loginbut);
 
