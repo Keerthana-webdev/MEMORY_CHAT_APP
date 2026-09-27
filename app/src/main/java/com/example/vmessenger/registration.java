@@ -137,22 +137,12 @@ public class registration extends AppCompatActivity {
                         }
 
 
-                        if (Password.length() < 6) {
-
-                            rg_password.setError(
-                                    "Password must be 6 characters or more"
-                            );
-
+                        if (Password.length() < 6) {rg_password.setError("Password must be 6 characters or more");
                             return;
                         }
 
 
-                        if (!Password.equals(cPassword)) {
-
-                            rg_repassword.setError(
-                                    "Password doesn't match"
-                            );
-
+                        if (!Password.equals(cPassword)) {rg_repassword.setError("Password doesn't match");
                             return;
                         }
 
