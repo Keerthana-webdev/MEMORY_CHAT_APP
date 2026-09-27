@@ -101,36 +101,30 @@ public class registration extends AppCompatActivity {
                 }
         );
 
-        rg_signup.setOnClickListener(
-                new View.OnClickListener() {
+        rg_signup.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
 
-                        String namee =
-                                rg_username
+                        String namee = rg_username
                                         .getText()
                                         .toString()
                                         .trim();
 
-                        String emaill =
-                                rg_email
+                        String emaill = rg_email
                                         .getText()
                                         .toString()
                                         .trim();
 
-                        String Password =
-                                rg_password
+                        String Password = rg_password
                                         .getText()
                                         .toString();
 
-                        String cPassword =
-                                rg_repassword
+                        String cPassword = rg_repassword
                                         .getText()
                                         .toString();
 
-                        String status =
-                                "Hey I'm Using MemoryChat";
+                        String status = "Hey I'm Using MemoryChat";
 
 
                         // ------------------------------------------------
