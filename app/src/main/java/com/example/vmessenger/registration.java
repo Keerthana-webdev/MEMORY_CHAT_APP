@@ -159,31 +159,12 @@ public class registration extends AppCompatActivity {
 
                                             DatabaseReference reference = database.getReference().child("user").child(id);
 
+                                            if (imageURI != null) {progressDialog.setMessage("Uploading profile picture...");
 
-                                            // =================================================
-                                            // IF USER SELECTED PROFILE PHOTO
-                                            // =================================================
+                                                CloudinaryUploader.uploadMedia(registration.this, imageURI, new CloudinaryUploader.UploadCallback() {
+                                                            @Override public void onSuccess(String downloadUrl) {
 
-                                            if (imageURI != null) {
-
-                                                progressDialog.setMessage(
-                                                        "Uploading profile picture..."
-                                                );
-
-
-                                                CloudinaryUploader.uploadMedia(
-                                                        registration.this,
-                                                        imageURI,
-                                                        new CloudinaryUploader.UploadCallback() {
-
-                                                            @Override
-                                                            public void onSuccess(
-                                                                    String downloadUrl
-                                                            ) {
-
-                                                                imageuri =
-                                                                        downloadUrl;
-
+                                                                imageuri = downloadUrl;
 
                                                                 saveUserToFirebase(
                                                                         reference,
@@ -197,23 +178,12 @@ public class registration extends AppCompatActivity {
                                                             }
 
 
-                                                            @Override
-                                                            public void onFailure(
-                                                                    String error
-                                                            ) {
-
+                                                            @Override public void onFailure(String error) {
                                                                 progressDialog.dismiss();
-
-                                                                Toast.makeText(
-                                                                        registration.this,
-                                                                        "Image upload failed: "
-                                                                                + error,
-                                                                        Toast.LENGTH_LONG
-                                                                ).show();
+                                                                Toast.makeText(registration.this, "Image upload failed: " + error, Toast.LENGTH_LONG).show();
                                                             }
                                                         }
                                                 );
-
 
                                             } else {
 
