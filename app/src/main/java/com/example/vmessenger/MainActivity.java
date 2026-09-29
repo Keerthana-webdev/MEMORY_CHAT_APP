@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     RecyclerView mainUserRecyclerView;
-    UserAdpter adpter;
+    UserAdpter adapter;
     FirebaseDatabase database;
     ArrayList<Users> usersArrayList;
 
@@ -58,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
         mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mainUserRecyclerView.setAdapter(adpter);
+        adapter = new UserAdpter(MainActivity.this,usersArrayList);
+        mainUserRecyclerView.setAdapter(adapter);
 
         if (auth.getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, login.class);
