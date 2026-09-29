@@ -16,22 +16,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
-
     FirebaseAuth auth;
     RecyclerView mainUserRecyclerView;
     UserAdpter adpter;
     FirebaseDatabase database;
+    ArrayList<Users> usersArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         database=FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
 
         DatabaseReference reference = database.getReference().child("user");
+
+        usersArrayList = new ArrayList<>();
+
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
         mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mainUserRecyclerView.setAdapter(adpter);
