@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">V.Messenger</string>
+    <string name="title_activity_chat_win">chatWin</string>
 </resources>

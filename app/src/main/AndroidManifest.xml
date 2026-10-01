@@ -35,6 +35,16 @@
             android:name=".registration"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".chatWin"
+            android:exported="false"
+            android:label="@string/title_activity_chat_win"
+            android:theme="@style/Theme.VMessenger"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".chatwindo"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

@@ -13,10 +13,13 @@
         <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
     <style name="dialoge">
         <item name="android:windowBackground">@drawable/empty_background</item>
         <item name="windowNoTitle">true</item>
         <item name="windowMinWidthMajor">80%</item>
         <item name="windowActionBar">false</item>
     </style>
+
+    <style name="Theme.VMessenger" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
