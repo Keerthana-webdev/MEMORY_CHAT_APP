@@ -1,8 +1,13 @@
 package com.example.vmessenger;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     UserAdpter adapter;
     FirebaseDatabase database;
     ArrayList<Users> usersArrayList;
+    ImageView imglogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        imglogout = findViewById(R.id.logoutimg);
+
+        imglogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new Dialog(MainActivity.this,R.style.dialoge);
+                dialog.setContentView(R.layout.dialog_layout);
+                Button no,yes;
+                yes = dialog.findViewById(R.id.yesbnt);
+                no = dialog.findViewById(R.id.nobnt);
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(MainActivity.this,login.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
 
