@@ -135,28 +135,13 @@ public class setting extends AppCompatActivity {
                     }
                 });
 
-        // ---------------------------------------------------
-        // PROFILE IMAGE CLICK
-        // ---------------------------------------------------
-
         setprofile.setOnClickListener(v -> {
-
             Intent intent = new Intent();
-
             intent.setType("image/*");
-
-            intent.setAction(
-                    Intent.ACTION_GET_CONTENT
+            intent.setAction(Intent.ACTION_GET_CONTENT
             );
 
-            startActivityForResult(
-                    Intent.createChooser(
-                            intent,
-                            "Select Profile Picture"
-                    ),
-                    IMAGE_REQUEST
-            );
-        });
+            startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), IMAGE_REQUEST);});
 
         // ---------------------------------------------------
         // SAVE BUTTON
