@@ -34,8 +34,8 @@ public class chatwindo extends AppCompatActivity {
     TextView reciverNName;
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
-    public  static String senderImg;
-    public  static String reciverIImg;
+    public  static String senderImg = "";
+    public  static String reciverIImg = "";
     CardView sendbtn;
     EditText textmsg;
 
@@ -56,6 +56,8 @@ public class chatwindo extends AppCompatActivity {
         reciverName = getIntent().getStringExtra("nameeee");
         reciverimg = getIntent().getStringExtra("reciverImg");
         reciverUid = getIntent().getStringExtra("uid");
+
+        reciverIImg = reciverimg != null ? reciverimg : "";
 
         messagesArrayList = new ArrayList<>();
 
@@ -79,8 +81,10 @@ public class chatwindo extends AppCompatActivity {
 
         SenderUID =  firebaseAuth.getUid();
 
-        senderRoom = SenderUID+reciverUid;
-        reciverRoom = reciverUid+SenderUID;
+        if (SenderUID != null && reciverUid != null) {
+            senderRoom = SenderUID + reciverUid;
+            reciverRoom = reciverUid + SenderUID;
+        }
 
         DatabaseReference  reference = database.getReference().child("user").child(firebaseAuth.getUid());
         DatabaseReference  chatreference = database.getReference().child("chats").child(senderRoom).child("messages");
@@ -108,8 +112,10 @@ public class chatwindo extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists() && snapshot.child("profilepic").getValue() != null) {
                     senderImg = snapshot.child("profilepic").getValue().toString();
+                } else {
+                    senderImg = "";
                 }
-                reciverIImg = reciverimg;
+                mmessagesAdpter.notifyDataSetChanged();
             }
 
             @Override
@@ -121,7 +127,7 @@ public class chatwindo extends AppCompatActivity {
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = textmsg.getText().toString();
+                String message = textmsg.getText().toString().trim();
                 if (message.isEmpty()){
                     Toast.makeText(chatwindo.this, "Enter The Message First", Toast.LENGTH_SHORT).show();
                     return;
@@ -130,24 +136,17 @@ public class chatwindo extends AppCompatActivity {
                 Date date = new Date();
                 msgModelclass messagess = new msgModelclass(message,SenderUID,date.getTime());
 
-                database=FirebaseDatabase.getInstance();
-                database.getReference().child("chats")
-                        .child(senderRoom)
-                        .child("messages")
-                        .push().setValue(messagess).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                database.getReference().child("chats")
-                                        .child(reciverRoom)
-                                        .child("messages")
-                                        .push().setValue(messagess).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
+                if (senderRoom != null && reciverRoom != null) {
+                    database.getReference().child("chats")
+                            .child(senderRoom)
+                            .child("messages")
+                            .push().setValue(messagess);
 
-                                            }
-                                        });
-                            }
-                        });
+                    database.getReference().child("chats")
+                            .child(reciverRoom)
+                            .child("messages")
+                            .push().setValue(messagess);
+                }
             }
         });
 

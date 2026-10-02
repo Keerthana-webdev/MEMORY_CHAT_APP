@@ -53,8 +53,13 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren())
                 {
                     Users users = dataSnapshot.getValue(Users.class);
-                    if (users != null && auth.getCurrentUser() != null && !users.getUserId().equals(auth.getCurrentUser().getUid())) {
-                        usersArrayList.add(users);
+                    if (users != null) {
+                        if (users.getUserId() == null || users.getUserId().isEmpty()) {
+                            users.setUserId(dataSnapshot.getKey());
+                        }
+                        if (auth.getCurrentUser() != null && users.getUserId() != null && !users.getUserId().equals(auth.getCurrentUser().getUid())) {
+                            usersArrayList.add(users);
+                        }
                     }
                 }
                 adapter.notifyDataSetChanged();
