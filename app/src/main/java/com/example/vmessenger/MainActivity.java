@@ -57,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
         settingBut = findViewById(R.id.settingBut);
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
 
-        // ---------------------------------------------------
-        // USER RECYCLER VIEW
-        // ---------------------------------------------------
-
         mainUserRecyclerView.setLayoutManager(
                 new LinearLayoutManager(MainActivity.this)
         );
