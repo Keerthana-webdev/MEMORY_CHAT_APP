@@ -35,7 +35,7 @@ public class msgAdapter extends RecyclerView.Adapter {
             View view = LayoutInflater.from(context).inflate(R.layout.sender_layout, parent, false);
             return new senderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.receiver_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.reciver_layout, parent, false);
             return new receiverViewHolder(view);
         }
     }

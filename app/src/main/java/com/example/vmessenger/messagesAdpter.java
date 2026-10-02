@@ -1,7 +1,7 @@
 package com.example.vmessenger;
 
-import static com.v.vmessenger.chatwindo.reciverIImg;
-import static com.v.vmessenger.chatwindo.senderImg;
+import static com.example.vmessenger.chatwindo.reciverIImg;
+import static com.example.vmessenger.chatwindo.senderImg;
 
 import android.app.AlertDialog;
 import android.content.Context;
