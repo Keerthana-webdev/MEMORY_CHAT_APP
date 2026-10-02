@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         chatBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SelectUserActivity.class);
+                Intent intent = new Intent(MainActivity.this, chatwindo.class);
                 startActivity(intent);
             }
         });
