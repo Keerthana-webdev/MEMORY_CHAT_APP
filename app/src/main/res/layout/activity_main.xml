@@ -39,15 +39,20 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainUserRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="376dp"
+        android:layout_height="380dp"
         android:layout_below="@id/toolBar"
-        android:layout_above="@+id/bottomBar"
-        android:layout_marginTop="@dimen/_105sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:clipToPadding="false"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_8sdp" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="167dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="104dp" />
 
     <LinearLayout
         android:id="@+id/bottomBar"
