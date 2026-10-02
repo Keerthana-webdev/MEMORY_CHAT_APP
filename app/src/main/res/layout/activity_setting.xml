@@ -50,8 +50,8 @@
     <Button
         android:id="@+id/donebutt"
         android:backgroundTint="@color/black"
-        android:layout_width="130.00dp"
-        android:layout_height="45.50dp"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_35sdp"
         android:text="Save"
         app:cornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
