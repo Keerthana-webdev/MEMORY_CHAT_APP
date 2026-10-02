@@ -38,7 +38,6 @@ public class chatwindo extends AppCompatActivity {
     public  static String reciverIImg = "";
     CardView sendbtn;
     EditText textmsg;
-
     String senderRoom,reciverRoom;
     RecyclerView messageAdpter;
     ArrayList<msgModelclass> messagesArrayList;
