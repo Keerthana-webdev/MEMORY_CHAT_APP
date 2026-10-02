@@ -15,13 +15,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
 public class msgAdapter extends RecyclerView.Adapter {
-
     Context context;
     ArrayList<msgModel> messagesArrayList;
     String receiverImg;
-
     int ITEM_SEND = 1;
     int ITEM_RECIVE = 2;
 
