@@ -10,7 +10,6 @@ public class msgModelclass {
         this.senderid = senderid;
         this.timeStamp = timeStamp;
     }
-
     public String getMessage() {
         return message;
     }
