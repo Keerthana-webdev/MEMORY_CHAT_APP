@@ -72,25 +72,17 @@ public class MainActivity extends AppCompatActivity {
                     Users users = dataSnapshot.getValue(Users.class);
 
                     if (users != null) {
-
-                        // If userId is missing, use Firebase key
-                        if (users.getUserId() == null ||
-                                users.getUserId().isEmpty()) {
-
+                        if (users.getUserId() == null || users.getUserId().isEmpty()) {
                             users.setUserId(dataSnapshot.getKey());
                         }
 
-                        // Don't display current logged-in user
                         if (auth.getCurrentUser() != null &&
                                 users.getUserId() != null &&
-                                !users.getUserId().equals(
-                                        auth.getCurrentUser().getUid())) {
-
+                                !users.getUserId().equals(auth.getCurrentUser().getUid())) {
                             usersArrayList.add(users);
                         }
                     }
                 }
-
                 adapter.notifyDataSetChanged();
             }
 
