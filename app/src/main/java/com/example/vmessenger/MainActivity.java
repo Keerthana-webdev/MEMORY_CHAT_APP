@@ -97,10 +97,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ---------------------------------------------------
-        // CAMERA BUTTON
-        // ---------------------------------------------------
-
         camBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
