@@ -154,46 +154,22 @@ public class setting extends AppCompatActivity {
             }
             progressDialog.show();
 
-            // ------------------------------------------------
-            // IF NEW IMAGE SELECTED
-            // ------------------------------------------------
-
             if (setImageUri != null) {
-
-                CloudinaryUploader.uploadMedia(
-                        setting.this,
-                        setImageUri,
-                        new CloudinaryUploader.UploadCallback() {
-
-                            @Override
-                            public void onSuccess(
-                                    String downloadUrl) {
-
+                CloudinaryUploader.uploadMedia(setting.this, setImageUri, new CloudinaryUploader.UploadCallback() {
+                            @Override public void onSuccess(String downloadUrl) {
                                 profilePicUrl = downloadUrl;
-
                                 saveUserData(
                                         reference,
                                         name,
                                         status
                                 );
                             }
-
-                            @Override
-                            public void onFailure(
-                                    String error) {
-
+                            @Override public void onFailure(String error) {
                                 progressDialog.dismiss();
-
-                                Toast.makeText(
-                                        setting.this,
-                                        "Image upload failed: "
-                                                + error,
-                                        Toast.LENGTH_LONG
-                                ).show();
+                                Toast.makeText(setting.this, "Image upload failed: " + error, Toast.LENGTH_LONG).show();
                             }
                         }
                 );
-
             } else {
 
                 // --------------------------------------------
