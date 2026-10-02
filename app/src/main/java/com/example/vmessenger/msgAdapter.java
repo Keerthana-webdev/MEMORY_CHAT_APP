@@ -77,8 +77,8 @@ public class msgAdapter extends RecyclerView.Adapter {
 
         public senderViewHolder(@NonNull View itemView) {
             super(itemView);
-            circleImageView = itemView.findViewById(R.id.profilerigth);
-            msgtxt = itemView.findViewById(R.id.msgtxt);
+            circleImageView = itemView.findViewById(R.id.profilerggg);
+            msgtxt = itemView.findViewById(R.id.msgsendertyp);
         }
     }
 
@@ -88,8 +88,8 @@ public class msgAdapter extends RecyclerView.Adapter {
 
         public receiverViewHolder(@NonNull View itemView) {
             super(itemView);
-            circleImageView = itemView.findViewById(R.id.proflie);
-            msgtxt = itemView.findViewById(R.id.msgtxt);
+            circleImageView = itemView.findViewById(R.id.pro);
+            msgtxt = itemView.findViewById(R.id.recivertextset);
         }
     }
 }
