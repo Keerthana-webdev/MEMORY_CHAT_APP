@@ -56,32 +56,19 @@ public class MainActivity extends AppCompatActivity {
         chatBut = findViewById(R.id.chatBut);
         settingBut = findViewById(R.id.settingBut);
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
-
-        mainUserRecyclerView.setLayoutManager(
-                new LinearLayoutManager(MainActivity.this)
-        );
+        mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
         usersArrayList = new ArrayList<>();
-
-        adapter = new UserAdpter(
-                MainActivity.this,
-                usersArrayList
+        adapter = new UserAdpter(MainActivity.this, usersArrayList
         );
 
         mainUserRecyclerView.setAdapter(adapter);
 
-        DatabaseReference reference =
-                database.getReference().child("user");
-
+        DatabaseReference reference = database.getReference().child("user");
         reference.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
                 usersArrayList.clear();
-
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
                     Users users = dataSnapshot.getValue(Users.class);
 
                     if (users != null) {
