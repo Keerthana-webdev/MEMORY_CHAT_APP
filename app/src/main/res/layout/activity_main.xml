@@ -65,8 +65,6 @@
         android:layout_marginRight="19dp"
         android:layout_marginBottom="104dp" />
 
-    <!-- CAMERA BUTTON -->
-
     <ImageView
         android:id="@+id/camBut"
         android:layout_width="47dp"
@@ -82,8 +80,6 @@
         android:focusable="true"
         android:contentDescription="Camera" />
 
-    <!-- CHAT BUTTON -->
-
     <ImageView
         android:id="@+id/chatBut"
         android:layout_width="47dp"
@@ -98,8 +94,6 @@
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="Chat" />
-
-    <!-- SETTINGS BUTTON -->
 
     <ImageView
         android:id="@+id/settingBut"
