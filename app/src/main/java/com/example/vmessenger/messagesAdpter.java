@@ -62,13 +62,22 @@ public class messagesAdpter extends RecyclerView.Adapter {
                 return false;
             }
         });
-        if (holder.getClass()==senderVierwHolder.class){
+        if (holder.getClass() == senderVierwHolder.class) {
             senderVierwHolder viewHolder = (senderVierwHolder) holder;
             viewHolder.msgtxt.setText(messages.getMessage());
-            Picasso.get().load(senderImg).into(viewHolder.circleImageView);
-        }else { reciverViewHolder viewHolder = (reciverViewHolder) holder;
+            if (senderImg != null && !senderImg.isEmpty()) {
+                Picasso.get().load(senderImg).into(viewHolder.circleImageView);
+            } else {
+                viewHolder.circleImageView.setImageResource(R.drawable.photocamera);
+            }
+        } else {
+            reciverViewHolder viewHolder = (reciverViewHolder) holder;
             viewHolder.msgtxt.setText(messages.getMessage());
-            Picasso.get().load(reciverIImg).into(viewHolder.circleImageView);
+            if (reciverIImg != null && !reciverIImg.isEmpty()) {
+                Picasso.get().load(reciverIImg).into(viewHolder.circleImageView);
+            } else {
+                viewHolder.circleImageView.setImageResource(R.drawable.photocamera);
+            }
         }
     }
 
