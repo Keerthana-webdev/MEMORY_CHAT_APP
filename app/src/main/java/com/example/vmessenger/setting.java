@@ -51,101 +51,61 @@ public class setting extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        // Check login
         if (auth.getCurrentUser() == null) {
-
-            Intent intent =
-                    new Intent(setting.this, login.class);
-
+            Intent intent = new Intent(setting.this, login.class);
             startActivity(intent);
             finish();
-
             return;
         }
-
-        // ---------------------------------------------------
-        // FIND VIEWS
-        // ---------------------------------------------------
 
         setprofile = findViewById(R.id.settingprofile);
         setname = findViewById(R.id.settingname);
         setstatus = findViewById(R.id.settingstatus);
         donebut = findViewById(R.id.donebutt);
 
-        // ---------------------------------------------------
-        // PROGRESS DIALOG
-        // ---------------------------------------------------
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Saving...");
         progressDialog.setCancelable(false);
 
-        // ---------------------------------------------------
-        // USER DATABASE REFERENCE
-        // ---------------------------------------------------
+        DatabaseReference reference = database.getReference().child("user").child(auth.getCurrentUser().getUid());
 
-        DatabaseReference reference =
-                database
-                        .getReference()
-                        .child("user")
-                        .child(auth.getCurrentUser().getUid());
-
-        // ---------------------------------------------------
-        // LOAD CURRENT USER DATA
-        // ---------------------------------------------------
-
-        reference.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot) {
-
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (!snapshot.exists()) {
                             return;
                         }
 
-                        // Email
                         if (snapshot.child("mail").getValue() != null) {
-
                             email = snapshot
                                     .child("mail")
                                     .getValue()
                                     .toString();
                         }
 
-                        // Password
                         if (snapshot.child("password").getValue() != null) {
-
                             password = snapshot
                                     .child("password")
                                     .getValue()
                                     .toString();
                         }
 
-                        // Username
-                        if (snapshot.child("userName").getValue() != null) {
 
-                            String name =
-                                    snapshot
+                        if (snapshot.child("userName").getValue() != null) {
+                            String name = snapshot
                                             .child("userName")
                                             .getValue()
                                             .toString();
-
                             setname.setText(name);
                         }
 
-                        // Profile picture
                         if (snapshot.child("profilepic").getValue() != null) {
-
-                            profilePicUrl =
-                                    snapshot
+                            profilePicUrl = snapshot
                                             .child("profilepic")
                                             .getValue()
                                             .toString();
 
                             if (!profilePicUrl.isEmpty()) {
-
                                 Picasso.get()
                                         .load(profilePicUrl)
                                         .placeholder(R.drawable.photocamera)
@@ -154,11 +114,9 @@ public class setting extends AppCompatActivity {
                             }
                         }
 
-                        // Status
-                        if (snapshot.child("status").getValue() != null) {
 
-                            String status =
-                                    snapshot
+                        if (snapshot.child("status").getValue() != null) {
+                            String status = snapshot
                                             .child("status")
                                             .getValue()
                                             .toString();
@@ -168,9 +126,7 @@ public class setting extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error) {
-
+                    public void onCancelled(@NonNull DatabaseError error) {
                         Toast.makeText(
                                 setting.this,
                                 "Unable to load profile",
