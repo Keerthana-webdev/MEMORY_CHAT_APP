@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="13.00dp"
+    android:layout_marginStart="@dimen/_12sdp"
+    android:layout_marginEnd="@dimen/_12sdp"
+    android:layout_marginTop="@dimen/_6sdp"
+    android:layout_marginBottom="@dimen/_6sdp"
     android:background="@drawable/bordermain"
     android:clickable="true"
     android:focusable="true">
@@ -11,16 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="@dimen/_6sdp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/userimg"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
             android:src="@drawable/photocamera"/>
 
         <LinearLayout
@@ -36,7 +40,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:text="Name"
                 android:textColor="@color/black"
-                android:textSize="23.40dp"/>
+                android:textSize="@dimen/_14sdp"/>
 
             <TextView
                 android:id="@+id/userstatus"
@@ -44,11 +48,10 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:fontFamily="@font/poppins_regular"
-                android:textSize="10.40dp"
+                android:textSize="@dimen/_9sdp"
                 android:text="Status"/>
 
         </LinearLayout>
-
 
     </LinearLayout>
 
