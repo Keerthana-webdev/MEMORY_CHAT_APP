@@ -25,23 +25,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class setting extends AppCompatActivity {
-
     ImageView setprofile;
     EditText setname;
     EditText setstatus;
     Button donebut;
-
     FirebaseAuth auth;
     FirebaseDatabase database;
-
     Uri setImageUri;
-
     String email = "";
     String password = "";
     String profilePicUrl = "";
-
     ProgressDialog progressDialog;
-
     private static final int IMAGE_REQUEST = 10;
 
     @Override
@@ -53,10 +47,6 @@ public class setting extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
-        // ---------------------------------------------------
-        // FIREBASE
-        // ---------------------------------------------------
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
