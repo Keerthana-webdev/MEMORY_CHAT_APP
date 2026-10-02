@@ -133,31 +133,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ---------------------------------------------------
-        // SETTINGS BUTTON
-        // ---------------------------------------------------
-
         settingBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(
-                        MainActivity.this,
-                        setting.class
-                );
-
+                Intent intent = new Intent(MainActivity.this, setting.class);
                 startActivity(intent);
             }
         });
 
-        // ---------------------------------------------------
-        // LOGOUT BUTTON
-        // ---------------------------------------------------
-
         imglogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Dialog dialog = new Dialog(
                         MainActivity.this,
                         R.style.dialoge
@@ -174,21 +160,11 @@ public class MainActivity extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         FirebaseAuth.getInstance().signOut();
-
                         dialog.dismiss();
+                        Intent intent = new Intent(MainActivity.this, login.class);
 
-                        Intent intent = new Intent(
-                                MainActivity.this,
-                                login.class
-                        );
-
-                        intent.setFlags(
-                                Intent.FLAG_ACTIVITY_NEW_TASK |
-                                        Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        );
-
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                     }
@@ -197,11 +173,9 @@ public class MainActivity extends AppCompatActivity {
                 no.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         dialog.dismiss();
                     }
                 });
-
                 dialog.show();
             }
         });
@@ -220,14 +194,8 @@ public class MainActivity extends AppCompatActivity {
         );
 
         if (requestCode == CAMERA_REQUEST) {
-
             if (resultCode == RESULT_OK) {
-
-                Toast.makeText(
-                        MainActivity.this,
-                        "Photo captured",
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(MainActivity.this, "Photo captured", Toast.LENGTH_SHORT).show();
             }
         }
     }
