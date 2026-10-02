@@ -171,32 +171,17 @@ public class setting extends AppCompatActivity {
                         }
                 );
             } else {
-
-                // --------------------------------------------
-                // NO NEW IMAGE
-                // Keep existing Cloudinary URL
-                // --------------------------------------------
-
-                saveUserData(
-                        reference,
-                        name,
-                        status
+                saveUserData(reference, name, status
                 );
             }
         });
     }
-
-    // =======================================================
-    // SAVE USER DATA
-    // =======================================================
-
     private void saveUserData(
             DatabaseReference reference,
             String name,
             String status) {
 
-        String userId =
-                auth.getCurrentUser().getUid();
+        String userId = auth.getCurrentUser().getUid();
 
         Users users = new Users(
                 userId,
@@ -207,35 +192,20 @@ public class setting extends AppCompatActivity {
                 status
         );
 
-        reference.setValue(users)
-                .addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-
-                            @Override
-                            public void onComplete(
-                                    @NonNull Task<Void> task) {
-
+        reference.setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override public void onComplete(@NonNull Task<Void> task) {
                                 progressDialog.dismiss();
-
                                 if (task.isSuccessful()) {
-
                                     Toast.makeText(
                                             setting.this,
                                             "Profile updated successfully",
                                             Toast.LENGTH_SHORT
                                     ).show();
 
-                                    Intent intent =
-                                            new Intent(
-                                                    setting.this,
-                                                    MainActivity.class
-                                            );
-
+                                    Intent intent  = new Intent(setting.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
-
                                 } else {
-
                                     Toast.makeText(
                                             setting.this,
                                             "Something went wrong",
