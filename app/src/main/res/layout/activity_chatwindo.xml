@@ -31,7 +31,7 @@
             android:id="@+id/recivername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ayushvishwakarma"
+            android:text="Keerthana"
             android:gravity="center"
             android:textColor="@color/white"
             android:fontFamily="@font/poppins_regular"

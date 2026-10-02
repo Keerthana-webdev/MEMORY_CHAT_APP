@@ -1,5 +1,7 @@
 package com.example.vmessenger;
 
+import static android.os.Build.VERSION_CODES_FULL.R;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
