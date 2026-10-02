@@ -102,20 +102,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 try {
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    Intent cameraIntent =
-                            new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                    if (cameraIntent.resolveActivity(
-                            getPackageManager()) != null) {
-
-                        startActivityForResult(
-                                cameraIntent,
-                                CAMERA_REQUEST
-                        );
+                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
                     } else {
-
                         Toast.makeText(
                                 MainActivity.this,
                                 "Camera is not available",
@@ -124,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
-
                     Toast.makeText(
                             MainActivity.this,
                             "Unable to open camera",
