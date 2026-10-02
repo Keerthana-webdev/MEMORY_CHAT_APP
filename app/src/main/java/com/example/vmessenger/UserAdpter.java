@@ -32,7 +32,11 @@ public class UserAdpter extends RecyclerView.Adapter<UserAdpter.viewholder> {
         Users users = usersArrayList.get(position);
         holder.username.setText(users.userName);
         holder.userstatus.setText(users.status);
-        Picasso.get().load(users.profilepic).into(holder.userimg);
+        if (users.profilepic != null && !users.profilepic.isEmpty()) {
+            Picasso.get().load(users.profilepic).into(holder.userimg);
+        } else {
+            holder.userimg.setImageResource(R.drawable.photocamera);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
