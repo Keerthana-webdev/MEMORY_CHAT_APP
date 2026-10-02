@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
-
 public class UserAdpter extends RecyclerView.Adapter<UserAdpter.viewholder> {
     Context mainActivity;
     ArrayList<Users> usersArrayList;
