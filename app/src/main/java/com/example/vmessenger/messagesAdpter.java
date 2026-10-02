@@ -23,7 +23,6 @@ public class messagesAdpter extends RecyclerView.Adapter {
     ArrayList<msgModelclass> messagesAdpterArrayList;
     int ITEM_SEND=1;
     int ITEM_RECIVE=2;
-
     public messagesAdpter(Context context, ArrayList<msgModelclass> messagesAdpterArrayList) {
         this.context = context;
         this.messagesAdpterArrayList = messagesAdpterArrayList;
@@ -60,7 +59,6 @@ public class messagesAdpter extends RecyclerView.Adapter {
                                 dialogInterface.dismiss();
                             }
                         }).show();
-
                 return false;
             }
         });
