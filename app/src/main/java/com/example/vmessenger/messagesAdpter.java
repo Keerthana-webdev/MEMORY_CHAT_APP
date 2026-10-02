@@ -13,12 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class messagesAdpter extends RecyclerView.Adapter {
@@ -42,7 +39,6 @@ public class messagesAdpter extends RecyclerView.Adapter {
             View view = LayoutInflater.from(context).inflate(R.layout.reciver_layout, parent, false);
             return new reciverViewHolder(view);
         }
-
     }
 
     @Override
@@ -92,7 +88,6 @@ public class messagesAdpter extends RecyclerView.Adapter {
             return ITEM_RECIVE;
         }
     }
-
     class  senderVierwHolder extends RecyclerView.ViewHolder {
         CircleImageView circleImageView;
         TextView msgtxt;
