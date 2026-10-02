@@ -217,20 +217,12 @@ public class setting extends AppCompatActivity {
                 );
     }
 
-    // =======================================================
-    // IMAGE RESULT
-    // =======================================================
-
-    @Override
-    protected void onActivityResult(
+    @Override protected void onActivityResult(
             int requestCode,
             int resultCode,
             @Nullable Intent data) {
 
-        super.onActivityResult(
-                requestCode,
-                resultCode,
-                data
+        super.onActivityResult(requestCode, resultCode, data
         );
 
         if (requestCode == IMAGE_REQUEST &&
@@ -239,8 +231,6 @@ public class setting extends AppCompatActivity {
                 data.getData() != null) {
 
             setImageUri = data.getData();
-
-            // Show selected image immediately
             setprofile.setImageURI(setImageUri);
         }
     }
