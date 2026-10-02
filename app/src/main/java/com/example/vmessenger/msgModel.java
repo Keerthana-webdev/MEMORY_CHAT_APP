@@ -1,10 +1,8 @@
 package com.example.vmessenger;
-
 public class msgModel {
     String message;
     String senderid;
     long timeStamp;
-
     public msgModel() {
     }
 
