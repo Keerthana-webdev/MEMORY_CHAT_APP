@@ -30,7 +30,7 @@
         android:background="@drawable/sender_shape"
         android:fontFamily="@font/poppins_regular"
         android:padding="@dimen/_7sdp"
-        android:text="Keerthana"
+        android:text="Harshitha"
         android:textColor="@color/black"
         android:textStyle="bold" />
 
