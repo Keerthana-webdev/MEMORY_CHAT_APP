@@ -47,7 +47,9 @@ public class chatwindo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatwindo);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -68,8 +70,12 @@ public class chatwindo extends AppCompatActivity {
         mmessagesAdpter = new messagesAdpter(chatwindo.this,messagesArrayList);
         messageAdpter.setAdapter(mmessagesAdpter);
 
-        Picasso.get().load(reciverimg).into(profile);
-        reciverNName.setText(""+reciverName);
+        if (reciverimg != null && !reciverimg.isEmpty()) {
+            Picasso.get().load(reciverimg).into(profile);
+        } else {
+            profile.setImageResource(R.drawable.photocamera);
+        }
+        reciverNName.setText("" + (reciverName != null ? reciverName : ""));
 
         SenderUID =  firebaseAuth.getUid();
 
@@ -85,7 +91,9 @@ public class chatwindo extends AppCompatActivity {
                 messagesArrayList.clear();
                 for (DataSnapshot dataSnapshot:snapshot.getChildren()){
                     msgModelclass messages = dataSnapshot.getValue(msgModelclass.class);
-                    messagesArrayList.add(messages);
+                    if (messages != null) {
+                        messagesArrayList.add(messages);
+                    }
                 }
                 mmessagesAdpter.notifyDataSetChanged();
             }
@@ -98,8 +106,10 @@ public class chatwindo extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                senderImg= snapshot.child("profilepic").getValue().toString();
-                reciverIImg=reciverimg;
+                if (snapshot.exists() && snapshot.child("profilepic").getValue() != null) {
+                    senderImg = snapshot.child("profilepic").getValue().toString();
+                }
+                reciverIImg = reciverimg;
             }
 
             @Override
