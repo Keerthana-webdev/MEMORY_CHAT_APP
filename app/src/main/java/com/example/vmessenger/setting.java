@@ -143,28 +143,15 @@ public class setting extends AppCompatActivity {
 
             startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), IMAGE_REQUEST);});
 
-        // ---------------------------------------------------
-        // SAVE BUTTON
-        // ---------------------------------------------------
-
         donebut.setOnClickListener(v -> {
 
-            String name =
-                    setname.getText()
-                            .toString()
-                            .trim();
-
-            String status =
-                    setstatus.getText()
-                            .toString()
-                            .trim();
+            String name = setname.getText().toString().trim();
+            String status = setstatus.getText().toString().trim();
 
             if (name.isEmpty()) {
-
                 setname.setError("Enter your name");
                 return;
             }
-
             progressDialog.show();
 
             // ------------------------------------------------
