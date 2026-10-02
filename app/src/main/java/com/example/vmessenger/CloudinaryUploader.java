@@ -21,7 +21,6 @@ public class CloudinaryUploader {
         void onSuccess(String downloadUrl);
         void onFailure(String error);
     }
-
     public static void uploadMedia(
             Context context,
             Uri fileUri,
