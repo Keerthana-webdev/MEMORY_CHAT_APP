@@ -25,14 +25,11 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
     FirebaseAuth auth;
     RecyclerView mainUserRecyclerView;
     UserAdpter adapter;
     FirebaseDatabase database;
-
     ArrayList<Users> usersArrayList;
-
     ImageView imglogout;
     ImageView camBut;
     ImageView chatBut;
@@ -40,16 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 100;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Firebase
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Check login
         if (auth.getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, login.class);
             startActivity(intent);
@@ -57,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Find views
         imglogout = findViewById(R.id.logoutimg);
         camBut = findViewById(R.id.camBut);
         chatBut = findViewById(R.id.chatBut);
