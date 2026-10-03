@@ -105,22 +105,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // -------------------------------------------------
-        // LOGOUT
-        // -------------------------------------------------
-
         imglogout.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 Dialog dialog = new Dialog(
                         MainActivity.this,
                         R.style.dialoge
                 );
-
                 dialog.setContentView(R.layout.dialog_layout);
-
                 Button no = dialog.findViewById(R.id.nobnt);
                 Button yes = dialog.findViewById(R.id.yesbnt);
 
@@ -128,36 +120,22 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(View v) {
-
                         FirebaseAuth.getInstance().signOut();
-
                         dialog.dismiss();
 
-                        Intent intent = new Intent(
-                                MainActivity.this,
-                                login.class
-                        );
-
-                        intent.setFlags(
-                                Intent.FLAG_ACTIVITY_NEW_TASK |
-                                        Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        );
-
+                        Intent intent = new Intent(MainActivity.this, login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
-
                         finish();
                     }
                 });
 
                 no.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View v) {
-
                         dialog.dismiss();
                     }
                 });
-
                 dialog.show();
             }
         });
