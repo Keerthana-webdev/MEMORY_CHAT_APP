@@ -77,7 +77,6 @@
         android:src="@drawable/camera" />
 
     <ImageView
-        android:id="@+id/chatBut"
         android:layout_width="47dp"
         android:layout_height="38dp"
         android:layout_alignParentEnd="true"
