@@ -156,10 +156,6 @@ app.post("/index-message", async (req, res) => {
             });
         }
 
-        // -----------------------------
-        // CREATE GEMINI EMBEDDING
-        // -----------------------------
-
         const response = await ai.models.embedContent({
             model: "gemini-embedding-001",
             contents: text,
