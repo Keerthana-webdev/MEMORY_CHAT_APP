@@ -212,23 +212,14 @@ app.post("/index-message", async (req, res) => {
     }
 });
 
-// --------------------------------------------------
-// SEARCH MESSAGES
-// --------------------------------------------------
-
 app.post("/search", async (req, res) => {
 
     try {
-
         const {
             query,
             topK,
             conversationId
         } = req.body;
-
-        // -----------------------------
-        // VALIDATION
-        // -----------------------------
 
         if (!query || query.trim().length === 0) {
             return res.status(400).json({
@@ -236,10 +227,6 @@ app.post("/search", async (req, res) => {
                 message: "Search query is required"
             });
         }
-
-        // -----------------------------
-        // CREATE QUERY EMBEDDING
-        // -----------------------------
 
         const response = await ai.models.embedContent({
             model: "gemini-embedding-001",
