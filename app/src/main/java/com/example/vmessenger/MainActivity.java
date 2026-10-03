@@ -23,14 +23,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
     FirebaseAuth auth;
     FirebaseDatabase database;
-
     RecyclerView mainUserRecyclerView;
     UserAdpter adapter;
     ArrayList<Users> usersArrayList;
-
     ImageView imglogout;
     ImageView camBut;
     ImageView chatBut;
@@ -39,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         // Hide action bar
@@ -50,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
         // Firebase
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
-        // -------------------------------------------------
-        // CHECK LOGIN
-        // -------------------------------------------------
 
         if (auth.getCurrentUser() == null) {
             Intent intent = new Intent(MainActivity.this, login.class);
