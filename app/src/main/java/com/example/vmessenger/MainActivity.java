@@ -58,24 +58,10 @@ public class MainActivity extends AppCompatActivity {
         camBut = findViewById(R.id.camBut);
         chatBut = findViewById(R.id.chatBut);
         settingBut = findViewById(R.id.settingBut);
-
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
-
-        // -------------------------------------------------
-        // USER RECYCLER VIEW
-        // -------------------------------------------------
-
         usersArrayList = new ArrayList<>();
-
-        mainUserRecyclerView.setLayoutManager(
-                new LinearLayoutManager(MainActivity.this)
-        );
-
-        adapter = new UserAdpter(
-                MainActivity.this,
-                usersArrayList
-        );
-
+        mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        adapter = new UserAdpter(MainActivity.this, usersArrayList);
         mainUserRecyclerView.setAdapter(adapter);
 
         // -------------------------------------------------
