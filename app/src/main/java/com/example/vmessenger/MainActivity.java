@@ -64,10 +64,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new UserAdpter(MainActivity.this, usersArrayList);
         mainUserRecyclerView.setAdapter(adapter);
 
-        // -------------------------------------------------
-        // LOAD USERS
-        // -------------------------------------------------
-
         DatabaseReference reference =
                 database.getReference().child("user");
 
