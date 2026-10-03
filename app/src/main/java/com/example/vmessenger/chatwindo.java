@@ -39,10 +39,8 @@ public class chatwindo extends AppCompatActivity {
     String reciverUid;
     String reciverName;
     String SenderUID;
-
     CircleImageView profile;
     TextView reciverNName;
-
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
 
@@ -51,12 +49,9 @@ public class chatwindo extends AppCompatActivity {
 
     CardView sendbtn;
     EditText textmsg;
-
     String senderRoom;
     String reciverRoom;
-
     RecyclerView messageAdpter;
-
     ArrayList<msgModelclass> messagesArrayList;
     messagesAdpter mmessagesAdpter;
 
