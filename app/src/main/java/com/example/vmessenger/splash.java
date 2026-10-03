@@ -18,6 +18,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class splash extends AppCompatActivity {
     ImageView logo;
     TextView name, own1, own2;
@@ -48,10 +50,15 @@ public class splash extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(splash.this,registration.class);
-                startActivity(intent);
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Intent intent = new Intent(splash.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(splash.this, login.class);
+                    startActivity(intent);
+                }
                 finish();
             }
-        },4000);
+        },3000);
     }
 }
