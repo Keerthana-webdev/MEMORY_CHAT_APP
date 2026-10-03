@@ -115,7 +115,6 @@ app.post("/test-embedding", async (req, res) => {
 app.post("/index-message", async (req, res) => {
 
     try {
-
         const {
             messageId,
             conversationId,
@@ -123,10 +122,6 @@ app.post("/index-message", async (req, res) => {
             text,
             timestamp
         } = req.body;
-
-        // -----------------------------
-        // VALIDATION
-        // -----------------------------
 
         if (!messageId) {
             return res.status(400).json({
