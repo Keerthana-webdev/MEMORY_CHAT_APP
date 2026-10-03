@@ -3,13 +3,16 @@ package com.example.vmessenger;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,57 +34,25 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase database;
     ArrayList<Users> usersArrayList;
     ImageView imglogout;
-    ImageView camBut;
-    ImageView chatBut;
-    ImageView settingBut;
 
-    private static final int CAMERA_REQUEST = 100;
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        database = FirebaseDatabase.getInstance();
+        database=FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        if (auth.getCurrentUser() == null) {
-            Intent intent = new Intent(MainActivity.this, login.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
-        imglogout = findViewById(R.id.logoutimg);
-        camBut = findViewById(R.id.camBut);
-        chatBut = findViewById(R.id.chatBut);
-        settingBut = findViewById(R.id.settingBut);
-        mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
-        mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        DatabaseReference reference = database.getReference().child("user");
 
         usersArrayList = new ArrayList<>();
-        adapter = new UserAdpter(MainActivity.this, usersArrayList
-        );
-
-        mainUserRecyclerView.setAdapter(adapter);
-
-        DatabaseReference reference = database.getReference().child("user");
         reference.addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
-                usersArrayList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
                     Users users = dataSnapshot.getValue(Users.class);
-
-                    if (users != null) {
-                        if (users.getUserId() == null || users.getUserId().isEmpty()) {
-                            users.setUserId(dataSnapshot.getKey());
-                        }
-
-                        if (auth.getCurrentUser() != null &&
-                                users.getUserId() != null &&
-                                !users.getUserId().equals(auth.getCurrentUser().getUid())) {
-                            usersArrayList.add(users);
-                        }
-                    }
+                    usersArrayList.add(users);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -89,87 +60,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(
-                        MainActivity.this,
-                        "Failed to load users",
-                        Toast.LENGTH_SHORT
-                ).show();
             }
         });
 
-        camBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
-                    } else {
-                        Toast.makeText(
-                                MainActivity.this,
-                                "Camera is not available",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
-
-                } catch (Exception e) {
-                    Toast.makeText(
-                            MainActivity.this,
-                            "Unable to open camera",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            }
-        });
-
-        chatBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, chatwindo.class);
-                startActivity(intent);
-            }
-        });
-
-        settingBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, setting.class);
-                startActivity(intent);
-            }
-        });
+        imglogout = findViewById(R.id.logoutimg);
 
         imglogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(
-                        MainActivity.this,
-                        R.style.dialoge
-                );
-
+                Dialog dialog = new Dialog(MainActivity.this,R.style.dialoge);
                 dialog.setContentView(R.layout.dialog_layout);
-
-                Button no;
-                Button yes;
-
+                Button no,yes;
                 yes = dialog.findViewById(R.id.yesbnt);
                 no = dialog.findViewById(R.id.nobnt);
-
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         FirebaseAuth.getInstance().signOut();
-                        dialog.dismiss();
-                        Intent intent = new Intent(MainActivity.this, login.class);
-
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Intent intent = new Intent(MainActivity.this,login.class);
                         startActivity(intent);
                         finish();
                     }
                 });
-
                 no.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -179,24 +91,16 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-    }
 
-    @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data) {
+        mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
+        mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new UserAdpter(MainActivity.this,usersArrayList);
+        mainUserRecyclerView.setAdapter(adapter);
 
-        super.onActivityResult(
-                requestCode,
-                resultCode,
-                data
-        );
-
-        if (requestCode == CAMERA_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(MainActivity.this, "Photo captured", Toast.LENGTH_SHORT).show();
-            }
+        if (auth.getCurrentUser() == null) {
+            Intent intent = new Intent(MainActivity.this, login.class);
+            startActivity(intent);
         }
+
     }
 }
