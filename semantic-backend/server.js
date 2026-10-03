@@ -32,10 +32,6 @@ if (!process.env.PINECONE_INDEX_NAME) {
     process.exit(1);
 }
 
-// --------------------------------------------------
-// GEMINI
-// --------------------------------------------------
-
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
 });
