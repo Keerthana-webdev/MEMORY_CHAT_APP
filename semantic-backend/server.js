@@ -189,10 +189,6 @@ app.post("/index-message", async (req, res) => {
             }
         ]);
 
-        // -----------------------------
-        // SUCCESS
-        // -----------------------------
-
         res.json({
             success: true,
             message: "Message indexed successfully",
