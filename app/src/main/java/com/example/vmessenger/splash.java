@@ -12,13 +12,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class splash extends AppCompatActivity {
-
     ImageView logo;
-
     TextView name;
     TextView own1;
     TextView own2;
-
     Animation topAnim;
     Animation bottomAnim;
 
