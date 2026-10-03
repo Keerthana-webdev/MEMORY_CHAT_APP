@@ -272,10 +272,6 @@ app.post("/search", async (req, res) => {
 
         const searchResults = await index.query(searchOptions);
 
-        // -----------------------------
-        // FORMAT RESULTS
-        // -----------------------------
-
         const results = (searchResults.matches || []).map(match => {
 
             return {
@@ -288,10 +284,6 @@ app.post("/search", async (req, res) => {
             };
 
         });
-
-        // -----------------------------
-        // RESPONSE
-        // -----------------------------
 
         res.json({
             success: true,
