@@ -1,5 +1,4 @@
-```java
-        package com.example.vmessenger;
+package com.example.vmessenger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -632,4 +631,3 @@ public class chatwindo extends AppCompatActivity {
         }).start();
     }
 }
-```

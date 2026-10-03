@@ -417,13 +417,8 @@ app.post("/search", async (req, res) => {
 // START SERVER
 // ----------------------------------------------------
 
-app.listen(PORT, () => {
-
-    console.log("----------------------------------------");
-    console.log("MemoryChat backend running");
-    console.log(`Port: ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`MemoryChat backend running on port ${PORT}`);
     console.log("Gemini Embeddings: Connected");
     console.log("Pinecone: Connected");
-    console.log("----------------------------------------");
-
 });
