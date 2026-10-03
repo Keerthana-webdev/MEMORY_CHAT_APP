@@ -251,10 +251,6 @@ app.post("/search", async (req, res) => {
 
         const queryEmbedding = response.embeddings[0].values;
 
-        // -----------------------------
-        // PINECONE SEARCH
-        // -----------------------------
-
         const searchOptions = {
             vector: queryEmbedding,
             topK: topK || 10,
