@@ -40,10 +40,6 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
 });
 
-// --------------------------------------------------
-// PINECONE
-// --------------------------------------------------
-
 const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY
 });
