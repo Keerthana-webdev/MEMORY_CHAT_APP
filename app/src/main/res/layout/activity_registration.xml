@@ -180,6 +180,7 @@
         android:layout_height="@dimen/_45sdp"
         android:backgroundTint="@color/black"
         android:text="signup"
+        android:textColor="@color/white"
         android:textSize="@dimen/_20sdp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
