@@ -50,10 +50,6 @@ const pc = new Pinecone({
 
 const index = pc.index(process.env.PINECONE_INDEX_NAME);
 
-// --------------------------------------------------
-// HOME
-// --------------------------------------------------
-
 app.get("/", (req, res) => {
     res.json({
         success: true,
