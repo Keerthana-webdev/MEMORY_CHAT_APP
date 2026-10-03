@@ -53,24 +53,11 @@ public class splash extends AppCompatActivity {
             own2.setAnimation(bottomAnim);
         }
 
-        // ---------------------------------------------
-        // OPEN MAIN SCREEN
-        // ---------------------------------------------
+        new Handler().postDelayed(new Runnable() {
 
-        new Handler().postDelayed(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        Intent intent =
-                                new Intent(
-                                        splash.this,
-                                        MainActivity.class
-                                );
-
+                    @Override public void run() {
+                        Intent intent = new Intent(splash.this, MainActivity.class);
                         startActivity(intent);
-
                         finish();
                     }
                 },
