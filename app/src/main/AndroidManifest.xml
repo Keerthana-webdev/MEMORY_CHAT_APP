@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -14,36 +13,61 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VMessenger">
+
+        <!-- MAIN -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- SPLASH -->
         <activity
             android:name=".splash"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action
+                    android:name="android.intent.action.MAIN" />
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- LOGIN -->
         <activity
             android:name=".login"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- REGISTRATION -->
         <activity
             android:name=".registration"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".chatwindo"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".setting"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- CHAT -->
+        <activity
+            android:name=".chatWin"
+            android:exported="false"
+            android:label="@string/title_activity_chat_win"
+            android:theme="@style/Theme.VMessenger"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".chatwindo"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- SETTINGS -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
