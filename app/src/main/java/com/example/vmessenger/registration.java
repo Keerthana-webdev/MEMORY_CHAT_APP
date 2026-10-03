@@ -38,7 +38,6 @@ public class registration extends AppCompatActivity {
     String imageuri;
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
@@ -52,23 +51,14 @@ public class registration extends AppCompatActivity {
         }
 
         database = FirebaseDatabase.getInstance();
-
         auth = FirebaseAuth.getInstance();
-
         loginbut = findViewById(R.id.loginbut);
-
         rg_username = findViewById(R.id.rgusername);
-
         rg_email = findViewById(R.id.rgemail);
-
         rg_password = findViewById(R.id.rgpassword);
-
         rg_repassword = findViewById(R.id.rgrepassword);
-
         rg_profileImg = findViewById(R.id.profilerg0);
-
         rg_signup = findViewById(R.id.signupbutton);
-
         loginbut.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -82,8 +72,7 @@ public class registration extends AppCompatActivity {
 
         rg_profileImg.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {Intent intent = new Intent();
+                    @Override public void onClick(View v) {Intent intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), 10);
@@ -93,8 +82,7 @@ public class registration extends AppCompatActivity {
 
         rg_signup.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
+                    @Override public void onClick(View v) {
 
                         String namee = rg_username
                                         .getText()
@@ -166,7 +154,6 @@ public class registration extends AppCompatActivity {
                                                                         status
                                                                 );
                                                             }
-
 
                                                             @Override public void onFailure(String error) {
                                                                 progressDialog.dismiss();
