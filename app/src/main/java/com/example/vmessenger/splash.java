@@ -34,19 +34,8 @@ public class splash extends AppCompatActivity {
         own1 = findViewById(R.id.ownone);
         own2 = findViewById(R.id.owntwo);
 
-        // ---------------------------------------------
-        // ANIMATIONS
-        // ---------------------------------------------
-
-        topAnim = AnimationUtils.loadAnimation(
-                this,
-                R.anim.top_animation
-        );
-
-        bottomAnim = AnimationUtils.loadAnimation(
-                this,
-                R.anim.bottom_animation
-        );
+        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
 
         if (logo != null) {
             logo.setAnimation(topAnim);
