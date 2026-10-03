@@ -135,18 +135,20 @@ app.post("/index-message", async (req, res) => {
 
         const embedding = response.embeddings[0].values;
 
-        await index.upsert([
-            {
-                id: messageId,
-                values: embedding,
-                metadata: {
-                    conversationId: conversationId,
-                    senderId: senderId,
-                    text: text,
-                    timestamp: timestamp || Date.now()
+        await index.upsert({
+            records: [
+                {
+                    id: messageId,
+                    values: embedding,
+                    metadata: {
+                        conversationId: conversationId,
+                        senderId: senderId,
+                        text: text,
+                        timestamp: timestamp || Date.now()
+                    }
                 }
-            }
-        ]);
+            ]
+        });
 
         res.json({
             success: true,
