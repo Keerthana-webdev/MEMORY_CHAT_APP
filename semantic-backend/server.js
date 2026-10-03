@@ -68,7 +68,6 @@ app.get("/", (req, res) => {
 app.post("/test-embedding", async (req, res) => {
 
     try {
-
         const text = req.body.text;
 
         if (!text || text.trim().length === 0) {
@@ -107,10 +106,6 @@ app.post("/test-embedding", async (req, res) => {
         });
     }
 });
-
-// --------------------------------------------------
-// INDEX A CHAT MESSAGE
-// --------------------------------------------------
 
 app.post("/index-message", async (req, res) => {
 
