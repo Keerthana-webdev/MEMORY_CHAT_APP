@@ -58,28 +58,28 @@ public class MainActivity extends AppCompatActivity {
         camBut = findViewById(R.id.camBut);
         chatBut = findViewById(R.id.chatBut);
         settingBut = findViewById(R.id.settingBut);
+
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
+
         usersArrayList = new ArrayList<>();
+
         mainUserRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
         adapter = new UserAdpter(MainActivity.this, usersArrayList);
+
         mainUserRecyclerView.setAdapter(adapter);
 
-        DatabaseReference reference =
-                database.getReference().child("user");
+        DatabaseReference reference = database.getReference().child("user");
 
         String currentUserId = auth.getCurrentUser().getUid();
 
         reference.addValueEventListener(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
                 usersArrayList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
-                    Users users =
-                            dataSnapshot.getValue(Users.class);
+                    Users users = dataSnapshot.getValue(Users.class);
 
                     if (users == null) {
                         continue;
@@ -88,19 +88,15 @@ public class MainActivity extends AppCompatActivity {
                     // DO NOT SHOW CURRENT LOGGED-IN USER
                     if (users.getUserId() != null &&
                             users.getUserId().equals(currentUserId)) {
-
                         continue;
                     }
-
                     usersArrayList.add(users);
                 }
-
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-
                 Toast.makeText(
                         MainActivity.this,
                         "Unable to load users",
