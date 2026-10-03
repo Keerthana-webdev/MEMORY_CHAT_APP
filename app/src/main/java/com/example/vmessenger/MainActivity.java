@@ -166,15 +166,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // -------------------------------------------------
-        // CHAT BUTTON
-        // -------------------------------------------------
-
         chatBut.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 Toast.makeText(
                         MainActivity.this,
                         "Select a user above to start chatting",
