@@ -17,17 +17,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.414"
-        app:srcCompat="@drawable/av" />
+        app:srcCompat="@drawable/logo_no_back" />
 
     <TextView
         android:id="@+id/logonameimg"
-        android:layout_width="@dimen/_337sdp"
-        android:layout_height="@dimen/_103sdp"
-        android:fontFamily="@font/apptext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
         android:gravity="center"
         android:text="M.C Messenger"
         android:textColor="@color/black"
-        android:textSize="@dimen/_30sdp"
+        android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.518"

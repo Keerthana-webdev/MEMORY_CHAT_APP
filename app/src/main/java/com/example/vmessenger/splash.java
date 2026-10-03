@@ -42,10 +42,10 @@ public class splash extends AppCompatActivity {
         topAnim = AnimationUtils.loadAnimation(this,R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this,R.anim.bottom_animation);
 
-        logo.setAnimation(topAnim);
-        name.setAnimation(bottomAnim);
-        own1.setAnimation(bottomAnim);
-        own2.setAnimation(bottomAnim);
+        logo.startAnimation(topAnim);
+        name.startAnimation(bottomAnim);
+        own1.startAnimation(bottomAnim);
+        own2.startAnimation(bottomAnim);
 
         new Handler().postDelayed(new Runnable() {
             @Override
