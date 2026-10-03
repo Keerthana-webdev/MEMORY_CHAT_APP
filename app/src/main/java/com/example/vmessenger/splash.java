@@ -29,16 +29,9 @@ public class splash extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // ---------------------------------------------
-        // FIND VIEWS
-        // ---------------------------------------------
-
         logo = findViewById(R.id.logoimg);
-
         name = findViewById(R.id.logonameimg);
-
         own1 = findViewById(R.id.ownone);
-
         own2 = findViewById(R.id.owntwo);
 
         // ---------------------------------------------
