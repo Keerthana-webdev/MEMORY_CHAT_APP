@@ -54,10 +54,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // -------------------------------------------------
-        // FIND VIEWS
-        // -------------------------------------------------
-
         imglogout = findViewById(R.id.logoutimg);
         camBut = findViewById(R.id.camBut);
         chatBut = findViewById(R.id.chatBut);
