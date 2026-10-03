@@ -60,18 +60,7 @@ public class chatwindo extends AppCompatActivity {
     ArrayList<msgModelclass> messagesArrayList;
     messagesAdpter mmessagesAdpter;
 
-    /*
-     * IMPORTANT:
-     *
-     * Android Emulator:
-     * http://10.0.2.2:3000
-     *
-     * Physical Android phone:
-     * Replace 10.0.2.2 with your computer's
-     * local IPv4 address.
-     */
-    private static final String BACKEND_URL =
-            "http://10.0.2.2:3000";
+    private static final String BACKEND_URL = "http://10.94.66.49:3000/...";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
