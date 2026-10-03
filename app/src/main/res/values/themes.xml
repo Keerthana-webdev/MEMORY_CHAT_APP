@@ -1,8 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.VMessenger" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Window background -->
-        <item name="android:windowBackground">@color/white</item>
+    <style name="Theme.VMessenger" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/white</item>
@@ -13,10 +11,8 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="21">?attr/colorPrimaryVariant</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <!-- Customize your theme here. -->
     </style>
-
     <style name="dialoge">
         <item name="android:windowBackground">@drawable/empty_background</item>
         <item name="windowNoTitle">true</item>
