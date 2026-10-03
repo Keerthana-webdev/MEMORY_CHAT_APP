@@ -170,16 +170,10 @@ app.post("/index-message", async (req, res) => {
 
         const embedding = response.embeddings[0].values;
 
-        // -----------------------------
-        // STORE IN PINECONE
-        // -----------------------------
-
         await index.upsert([
             {
                 id: messageId,
-
                 values: embedding,
-
                 metadata: {
                     conversationId: conversationId,
                     senderId: senderId,
