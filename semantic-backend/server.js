@@ -1,4 +1,3 @@
-```javascript
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -12,10 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-
-// --------------------------------------------------
-// CHECK ENVIRONMENT VARIABLES
-// --------------------------------------------------
 
 if (!process.env.GEMINI_API_KEY) {
     console.error("ERROR: GEMINI_API_KEY is missing in .env");
