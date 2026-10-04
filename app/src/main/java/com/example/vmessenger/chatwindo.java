@@ -335,6 +335,9 @@ public class chatwindo extends AppCompatActivity {
 
                 Log.d(TAG, "Request: " + jsonString);
 
+                // ------------------------------------------------
+                // SEND REQUEST
+                // ------------------------------------------------
                 OutputStream outputStream = connection.getOutputStream();
 
                 outputStream.write(jsonString.getBytes("UTF-8"));
@@ -345,7 +348,6 @@ public class chatwindo extends AppCompatActivity {
                 // ------------------------------------------------
                 // READ RESPONSE
                 // ------------------------------------------------
-
                 int responseCode = connection.getResponseCode();
 
                 InputStream inputStream;
