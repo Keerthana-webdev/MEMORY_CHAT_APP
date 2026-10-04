@@ -279,10 +279,6 @@ public class chatwindo extends AppCompatActivity {
         );
     }
 
-    // ============================================================
-    // INDEX MESSAGE INTO GEMINI + PINECONE
-    // ============================================================
-
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
@@ -292,12 +288,10 @@ public class chatwindo extends AppCompatActivity {
     ) {
 
         new Thread(() -> {
-
             HttpURLConnection connection =
                     null;
 
             try {
-
                 Log.d(
                         TAG,
                         "Sending message to semantic backend..."
