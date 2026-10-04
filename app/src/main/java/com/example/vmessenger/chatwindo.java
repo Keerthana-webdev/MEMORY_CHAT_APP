@@ -64,9 +64,7 @@ public class chatwindo extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_chatwindo);
 
         if (getSupportActionBar() != null) {
@@ -75,25 +73,11 @@ public class chatwindo extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
-
-        // ----------------------------------------------------
-        // RECEIVER DETAILS
-        // ----------------------------------------------------
-
-        reciverName =
-                getIntent().getStringExtra("nameeee");
-
-        reciverimg =
-                getIntent().getStringExtra("reciverImg");
-
-        reciverUid =
-                getIntent().getStringExtra("uid");
-
-        reciverIImg =
-                reciverimg != null ? reciverimg : "";
-
-        messagesArrayList =
-                new ArrayList<>();
+        reciverName = getIntent().getStringExtra("nameeee");
+        reciverimg = getIntent().getStringExtra("reciverImg");
+        reciverUid = getIntent().getStringExtra("uid");
+        reciverIImg = reciverimg != null ? reciverimg : "";
+        messagesArrayList = new ArrayList<>();
 
         // ----------------------------------------------------
         // FIND VIEWS
