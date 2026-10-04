@@ -435,39 +435,19 @@ public class chatwindo extends AppCompatActivity {
                 connection.setReadTimeout(15000);
                 connection.setDoOutput(true);
 
-                // ------------------------------------------------
-                // SEARCH JSON
-                // ------------------------------------------------
+                JSONObject json = new JSONObject();
 
-                JSONObject json =
-                        new JSONObject();
+                json.put("query", query);
 
-                json.put(
-                        "query",
-                        query
-                );
-
-                json.put(
-                        "topK",
-                        10
-                );
+                json.put("topK", 10);
 
                 if (senderRoom != null) {
-
-                    json.put(
-                            "conversationId",
-                            senderRoom
-                    );
+                    json.put("conversationId", senderRoom);
                 }
 
-                String jsonString =
-                        json.toString();
+                String jsonString = json.toString();
 
-                Log.d(
-                        TAG,
-                        "Search request: "
-                                + jsonString
-                );
+                Log.d(TAG, "Search request: " + jsonString);
 
                 // ------------------------------------------------
                 // SEND SEARCH REQUEST
