@@ -335,119 +335,63 @@ public class chatwindo extends AppCompatActivity {
 
                 Log.d(TAG, "Request: " + jsonString);
 
-                // ------------------------------------------------
-                // SEND REQUEST
-                // ------------------------------------------------
+                OutputStream outputStream = connection.getOutputStream();
 
-                OutputStream outputStream =
-                        connection.getOutputStream();
-
-                outputStream.write(
-                        jsonString.getBytes("UTF-8")
-                );
+                outputStream.write(jsonString.getBytes("UTF-8"));
 
                 outputStream.flush();
                 outputStream.close();
 
-                // ------------------------------------------------
-                // READ RESPONSE
-                // ------------------------------------------------
-
-                int responseCode =
-                        connection.getResponseCode();
+                int responseCode = connection.getResponseCode();
 
                 InputStream inputStream;
-
-                if (responseCode >= 200
-                        && responseCode < 300) {
-
-                    inputStream =
-                            connection.getInputStream();
-
+                if (responseCode >= 200 && responseCode < 300) {
+                    inputStream = connection.getInputStream();
                 } else {
-
-                    inputStream =
-                            connection.getErrorStream();
+                    inputStream = connection.getErrorStream();
                 }
 
-                BufferedReader reader =
-                        new BufferedReader(
-                                new InputStreamReader(
-                                        inputStream
-                                )
-                        );
-
-                StringBuilder response =
-                        new StringBuilder();
-
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder response = new StringBuilder();
                 String line;
-
                 while (
                         (line = reader.readLine())
                                 != null
                 ) {
-
                     response.append(line);
                 }
-
                 reader.close();
 
-                Log.d(
-                        TAG,
-                        "Backend response code: "
-                                + responseCode
-                );
+                Log.d(TAG, "Backend response code: " + responseCode);
 
-                Log.d(
-                        TAG,
-                        "Backend response: "
-                                + response
-                );
+                Log.d(TAG, "Backend response: " + response);
 
                 if (responseCode >= 200
                         && responseCode < 300) {
 
                     runOnUiThread(() -> {
-
-                        Log.d(
-                                TAG,
-                                "SEMANTIC SEARCH INDEX SUCCESS"
-                        );
-                    });
+                        Log.d(TAG, "SEMANTIC SEARCH INDEX SUCCESS");});
 
                 } else {
-
                     runOnUiThread(() -> {
-
                         Toast.makeText(
                                 chatwindo.this,
                                 "Semantic indexing failed",
                                 Toast.LENGTH_SHORT
                         ).show();
 
-                        Log.e(
-                                TAG,
-                                "Semantic indexing failed"
-                        );
+                        Log.e(TAG, "Semantic indexing failed");
                     });
                 }
 
             } catch (Exception e) {
-
-                Log.e(
-                        TAG,
-                        "SEMANTIC BACKEND CONNECTION ERROR",
-                        e
-                );
+                Log.e(TAG, "SEMANTIC BACKEND CONNECTION ERROR", e);
 
             } finally {
-
                 if (connection != null) {
-
                     connection.disconnect();
                 }
             }
-
         }).start();
     }
 
