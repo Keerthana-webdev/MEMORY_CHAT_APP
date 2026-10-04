@@ -155,40 +155,27 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
 
-        // ----------------------------------------------------
-        // LOAD SENDER IMAGE
-        // ----------------------------------------------------
-
-        reference.addValueEventListener(
-                new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot) {
+        reference.addValueEventListener(new ValueEventListener() {
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                         if (snapshot.exists()
                                 && snapshot.child(
                                 "profilepic"
                         ).getValue() != null) {
 
-                            senderImg =
-                                    snapshot.child(
-                                                    "profilepic"
+                            senderImg = snapshot.child(
+                                    "profilepic"
                                             )
                                             .getValue()
                                             .toString();
 
                         } else {
-
                             senderImg = "";
                         }
-
                         mmessagesAdpter.notifyDataSetChanged();
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error) {
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
                     }
                 }
         );
