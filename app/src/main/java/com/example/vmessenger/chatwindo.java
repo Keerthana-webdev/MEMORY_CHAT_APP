@@ -395,7 +395,9 @@ public class chatwindo extends AppCompatActivity {
         }).start();
     }
 
-    // semantic search
+    // ============================================================
+    // SEMANTIC SEARCH
+    // ============================================================
     private void performSemanticSearch(
             String query
     ) {
