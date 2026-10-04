@@ -155,6 +155,9 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
 
+        // ----------------------------------------------------
+        // LOAD SENDER IMAGE
+        // ----------------------------------------------------
         reference.addValueEventListener(new ValueEventListener() {
                     @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
