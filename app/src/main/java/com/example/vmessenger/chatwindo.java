@@ -548,7 +548,6 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // SHOW SEARCH RESULTS
     // ============================================================
-
     private void showSearchResults(
             String query,
             JSONArray results
@@ -556,7 +555,6 @@ public class chatwindo extends AppCompatActivity {
 
         if (results == null ||
                 results.length() == 0) {
-
             new AlertDialog.Builder(
                     chatwindo.this
             )
@@ -582,11 +580,7 @@ public class chatwindo extends AppCompatActivity {
                 LinearLayout.VERTICAL
         );
 
-        int padding =
-                (int) (16 *
-                        getResources()
-                                .getDisplayMetrics()
-                                .density);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
 
         container.setPadding(
                 padding,
@@ -596,43 +590,24 @@ public class chatwindo extends AppCompatActivity {
         );
 
         try {
-
             for (int i = 0;
                  i < results.length();
                  i++) {
 
-                JSONObject item =
-                        results.getJSONObject(i);
+                JSONObject item = results.getJSONObject(i);
 
-                String text =
-                        item.optString(
-                                "text",
-                                ""
-                        );
+                String text = item.optString("text", "");
 
-                double score =
-                        item.optDouble(
+                double score = item.optDouble(
                                 "score",
                                 0
                         );
 
-                TextView resultText =
-                        new TextView(
-                                chatwindo.this
-                        );
+                TextView resultText = new TextView(chatwindo.this);
 
-                resultText.setText(
-                        text
-                                + "\n\nSimilarity: "
-                                + String.format(
-                                "%.2f",
-                                score
-                        )
-                );
+                resultText.setText(text + "\n\nSimilarity: " + String.format("%.2f", score));
 
-                resultText.setTextSize(
-                        16
-                );
+                resultText.setTextSize(16);
 
                 resultText.setPadding(
                         12,
@@ -647,12 +622,7 @@ public class chatwindo extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-
-            Log.e(
-                    TAG,
-                    "Result parsing error",
-                    e
-            );
+            Log.e(TAG, "Result parsing error", e);
         }
 
         AlertDialog dialog =
