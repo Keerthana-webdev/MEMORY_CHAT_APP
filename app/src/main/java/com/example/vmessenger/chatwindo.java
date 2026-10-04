@@ -645,9 +645,7 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // OPEN SEARCH DIALOG
     // ============================================================
-
     public void openSemanticSearch() {
-
         final EditText searchInput =
                 new EditText(
                         chatwindo.this
@@ -661,11 +659,7 @@ public class chatwindo extends AppCompatActivity {
                 false
         );
 
-        int padding =
-                (int) (20 *
-                        getResources()
-                                .getDisplayMetrics()
-                                .density);
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
 
         searchInput.setPadding(
                 padding,
@@ -674,8 +668,7 @@ public class chatwindo extends AppCompatActivity {
                 padding
         );
 
-        AlertDialog dialog =
-                new AlertDialog.Builder(
+        AlertDialog dialog = new AlertDialog.Builder(
                         chatwindo.this
                 )
                         .setTitle(
@@ -694,39 +687,27 @@ public class chatwindo extends AppCompatActivity {
                         )
                         .create();
 
-        dialog.setOnShowListener(
-                dialogInterface -> {
+        dialog.setOnShowListener(dialogInterface -> {
 
-                    dialog.getButton(
-                            AlertDialog.BUTTON_POSITIVE
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE
                     ).setOnClickListener(
                             v -> {
-
-                                String query =
-                                        searchInput
+                                String query = searchInput
                                                 .getText()
                                                 .toString()
                                                 .trim();
 
                                 if (query.isEmpty()) {
-
-                                    searchInput.setError(
-                                            "Enter a search query"
-                                    );
-
+                                    searchInput.setError("Enter a search query");
                                     return;
                                 }
 
                                 dialog.dismiss();
-
-                                performSemanticSearch(
-                                        query
-                                );
+                                performSemanticSearch(query);
                             }
                     );
                 }
         );
-
         dialog.show();
     }
 }
