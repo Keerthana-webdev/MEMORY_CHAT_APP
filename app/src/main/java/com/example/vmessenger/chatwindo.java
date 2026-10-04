@@ -449,16 +449,9 @@ public class chatwindo extends AppCompatActivity {
 
                 Log.d(TAG, "Search request: " + jsonString);
 
-                // ------------------------------------------------
-                // SEND SEARCH REQUEST
-                // ------------------------------------------------
+                OutputStream outputStream = connection.getOutputStream();
 
-                OutputStream outputStream =
-                        connection.getOutputStream();
-
-                outputStream.write(
-                        jsonString.getBytes("UTF-8")
-                );
+                outputStream.write(jsonString.getBytes("UTF-8"));
 
                 outputStream.flush();
                 outputStream.close();
