@@ -342,6 +342,10 @@ public class chatwindo extends AppCompatActivity {
                 outputStream.flush();
                 outputStream.close();
 
+                // ------------------------------------------------
+                // READ RESPONSE
+                // ------------------------------------------------
+
                 int responseCode = connection.getResponseCode();
 
                 InputStream inputStream;
