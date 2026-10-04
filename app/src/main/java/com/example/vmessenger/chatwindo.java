@@ -127,32 +127,19 @@ public class chatwindo extends AppCompatActivity {
                         .child(senderRoom)
                         .child("messages");
 
-        // ----------------------------------------------------
-        // LOAD CHAT MESSAGES
-        // ----------------------------------------------------
-
         chatreference.addValueEventListener(
                 new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(
+                    @Override public void onDataChange(
                             @NonNull DataSnapshot snapshot) {
 
                         messagesArrayList.clear();
 
-                        for (DataSnapshot dataSnapshot :
-                                snapshot.getChildren()) {
-
-                            msgModelclass messages =
-                                    dataSnapshot.getValue(
-                                            msgModelclass.class
-                                    );
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            msgModelclass messages = dataSnapshot.getValue(msgModelclass.class);
 
                             if (messages != null) {
-
-                                messagesArrayList.add(
-                                        messages
-                                );
+                                messagesArrayList.add(messages);
                             }
                         }
 
