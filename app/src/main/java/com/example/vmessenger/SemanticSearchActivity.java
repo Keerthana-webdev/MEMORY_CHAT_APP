@@ -37,35 +37,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SemanticSearchActivity extends AppCompatActivity {
-
     private static final String TAG = "SEMANTIC_SEARCH";
-
     /*
      * Android Emulator -> Windows localhost
-     *
      * Make sure this is running:
      * adb reverse tcp:3000 tcp:3000
      */
-    private static final String SEARCH_URL =
-            "http://127.0.0.1:3000/search";
-
+    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
     private EditText searchInput;
     private ImageView searchButton;
     private ImageView backButton;
     private ProgressBar progressBar;
     private TextView emptyText;
     private RecyclerView searchRecyclerView;
-
     private ArrayList<SearchResult> resultsList;
     private SemanticSearchAdapter adapter;
-
-    private final Handler mainHandler =
-            new Handler(Looper.getMainLooper());
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(
@@ -80,7 +71,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // ---------------------------------------------------------
         // FIND VIEWS
         // ---------------------------------------------------------
-
         searchInput =
                 findViewById(R.id.searchInput);
 
@@ -103,15 +93,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // ---------------------------------------------------------
         // RESULT LIST
         // ---------------------------------------------------------
-
-        resultsList =
-                new ArrayList<>();
-
+        resultsList = new ArrayList<>();
 
         // ---------------------------------------------------------
         // RECYCLER VIEW
         // ---------------------------------------------------------
-
         searchRecyclerView.setLayoutManager(
                 new LinearLayoutManager(
                         SemanticSearchActivity.this
@@ -122,13 +108,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // ---------------------------------------------------------
         // ADAPTER
         // ---------------------------------------------------------
-
         adapter =
                 new SemanticSearchAdapter(
                         SemanticSearchActivity.this,
                         resultsList,
                         new SemanticSearchAdapter.OnResultClickListener() {
-
                             @Override
                             public void onResultClick(
                                     SearchResult result
@@ -136,20 +120,15 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
                                 /*
                                  * IMPORTANT:
-                                 *
                                  * Pass the COMPLETE SearchResult.
-                                 *
                                  * This fixes the previous
                                  * "cannot find symbol variable result"
                                  * error.
                                  */
-                                openChatFromSearchResult(
-                                        result
-                                );
+                                openChatFromSearchResult(result);
                             }
                         }
                 );
-
 
         searchRecyclerView.setAdapter(
                 adapter
@@ -159,14 +138,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // ---------------------------------------------------------
         // INITIAL UI
         // ---------------------------------------------------------
-
         progressBar.setVisibility(
                 View.GONE
         );
 
-        emptyText.setText(
-                "Search your memories"
-        );
+        emptyText.setText("Search your memories");
 
         emptyText.setVisibility(
                 View.VISIBLE
@@ -176,7 +152,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // ---------------------------------------------------------
         // BACK BUTTON
         // ---------------------------------------------------------
-
         backButton.setOnClickListener(
                 v -> finish()
         );
