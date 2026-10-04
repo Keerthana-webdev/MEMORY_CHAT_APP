@@ -25,32 +25,26 @@ public class SearchResult {
     }
 
     public String getMessageId() {
-
         return messageId;
     }
 
     public String getText() {
-
         return text;
     }
 
     public String getSenderId() {
-
         return senderId;
     }
 
     public String getConversationId() {
-
         return conversationId;
     }
 
     public double getScore() {
-
         return score;
     }
 
     public long getTimestamp() {
-
         return timestamp;
     }
 }
