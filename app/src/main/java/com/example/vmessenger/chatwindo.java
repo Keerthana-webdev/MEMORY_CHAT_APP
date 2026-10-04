@@ -127,6 +127,9 @@ public class chatwindo extends AppCompatActivity {
                         .child(senderRoom)
                         .child("messages");
 
+        // ----------------------------------------------------
+        // LOAD CHAT MESSAGES
+        // ----------------------------------------------------
         chatreference.addValueEventListener(
                 new ValueEventListener() {
 
