@@ -556,26 +556,16 @@ public class chatwindo extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT
                                         ).show();
 
-                                        Log.e(
-                                                TAG,
-                                                "Semantic indexing failed"
-                                        );
+                                        Log.e(TAG, "Semantic indexing failed");
                                     }
                             );
                         }
 
                     } catch (Exception e) {
-
-                        Log.e(
-                                TAG,
-                                "SEMANTIC BACKEND CONNECTION ERROR",
-                                e
-                        );
+                        Log.e(TAG, "SEMANTIC BACKEND CONNECTION ERROR", e);
 
                     } finally {
-
                         if (connection != null) {
-
                             connection.disconnect();
                         }
                     }
@@ -586,144 +576,64 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // SEMANTIC SEARCH
     // ============================================================
-
-    private void performSemanticSearch(
-            String query
-    ) {
-
-        if (
-                query == null
-                        ||
-                        query.trim().isEmpty()
-        ) {
-
+    private void performSemanticSearch(String query) {
+        if (query == null || query.trim().isEmpty()) {
             Toast.makeText(
                     chatwindo.this,
                     "Enter something to search",
                     Toast.LENGTH_SHORT
             ).show();
-
             return;
         }
-
-        new Thread(
-                () -> {
-
-                    HttpURLConnection connection =
-                            null;
-
+        new Thread(() -> {HttpURLConnection connection = null;
                     try {
+                        Log.d(TAG, "Starting semantic search...");
 
-                        Log.d(
-                                TAG,
-                                "Starting semantic search..."
-                        );
+                        URL url = new URL(SEARCH_URL);
 
-                        URL url =
-                                new URL(SEARCH_URL);
+                        connection = (HttpURLConnection)
+                                url.openConnection();
 
-                        connection =
-                                (HttpURLConnection)
-                                        url.openConnection();
+                        connection.setRequestMethod("POST");
 
-                        connection.setRequestMethod(
-                                "POST"
-                        );
+                        connection.setRequestProperty("Content-Type", "application/json");
 
-                        connection.setRequestProperty(
-                                "Content-Type",
-                                "application/json"
-                        );
+                        connection.setRequestProperty("Accept", "application/json");
 
-                        connection.setRequestProperty(
-                                "Accept",
-                                "application/json"
-                        );
+                        connection.setConnectTimeout(10000);
 
-                        connection.setConnectTimeout(
-                                10000
-                        );
+                        connection.setReadTimeout(15000);
 
-                        connection.setReadTimeout(
-                                15000
-                        );
+                        connection.setDoOutput(true);
 
-                        connection.setDoOutput(
-                                true
-                        );
+                        JSONObject json = new JSONObject();
 
-                        JSONObject json =
-                                new JSONObject();
+                        json.put("query", query);
 
-                        json.put(
-                                "query",
-                                query
-                        );
+                        json.put("topK", 10);
 
-                        json.put(
-                                "topK",
-                                10
-                        );
+                        if (senderRoom != null) {json.put("conversationId", senderRoom);}
 
-                        if (senderRoom != null) {
+                        String jsonString = json.toString();
 
-                            json.put(
-                                    "conversationId",
-                                    senderRoom
-                            );
-                        }
+                        Log.d(TAG, "Search request: " + jsonString);
 
-                        String jsonString =
-                                json.toString();
-
-                        Log.d(
-                                TAG,
-                                "Search request: "
-                                        + jsonString
-                        );
-
-                        OutputStream outputStream =
-                                connection
-                                        .getOutputStream();
-
-                        outputStream.write(
-                                jsonString.getBytes(
-                                        "UTF-8"
-                                )
-                        );
-
+                        OutputStream outputStream = connection.getOutputStream();
+                        outputStream.write(jsonString.getBytes("UTF-8"));
                         outputStream.flush();
                         outputStream.close();
 
-                        int responseCode =
-                                connection
-                                        .getResponseCode();
-
+                        int responseCode = connection.getResponseCode();
                         InputStream inputStream;
 
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
-
-                            inputStream =
-                                    connection
-                                            .getInputStream();
-
+                        if (responseCode >= 200 && responseCode < 300) {
+                            inputStream = connection.getInputStream();
                         } else {
+                            inputStream = connection.getErrorStream();}
 
-                            inputStream =
-                                    connection
-                                            .getErrorStream();
-                        }
+                        StringBuilder response = new StringBuilder();
 
-                        StringBuilder response =
-                                new StringBuilder();
-
-                        if (inputStream != null) {
-
-                            BufferedReader reader =
+                        if (inputStream != null) {BufferedReader reader =
                                     new BufferedReader(
                                             new InputStreamReader(
                                                     inputStream
@@ -732,8 +642,7 @@ public class chatwindo extends AppCompatActivity {
 
                             String line;
 
-                            while (
-                                    (line =
+                            while ((line =
                                             reader.readLine())
                                             != null
                             ) {
