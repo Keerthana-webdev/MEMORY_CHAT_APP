@@ -395,14 +395,10 @@ public class chatwindo extends AppCompatActivity {
         }).start();
     }
 
-    // ============================================================
-    // SEMANTIC SEARCH
-    // ============================================================
-
+    // semantic search
     private void performSemanticSearch(
             String query
     ) {
-
         if (query == null ||
                 query.trim().isEmpty()) {
 
@@ -415,28 +411,15 @@ public class chatwindo extends AppCompatActivity {
             return;
         }
 
-        new Thread(() -> {
-
-            HttpURLConnection connection =
-                    null;
-
+        new Thread(() -> {HttpURLConnection connection = null;
             try {
+                Log.d(TAG, "Starting semantic search...");
 
-                Log.d(
-                        TAG,
-                        "Starting semantic search..."
-                );
+                URL url = new URL(SEARCH_URL);
 
-                URL url =
-                        new URL(SEARCH_URL);
+                connection = (HttpURLConnection) url.openConnection();
 
-                connection =
-                        (HttpURLConnection)
-                                url.openConnection();
-
-                connection.setRequestMethod(
-                        "POST"
-                );
+                connection.setRequestMethod("POST");
 
                 connection.setRequestProperty(
                         "Content-Type",
@@ -448,14 +431,8 @@ public class chatwindo extends AppCompatActivity {
                         "application/json"
                 );
 
-                connection.setConnectTimeout(
-                        10000
-                );
-
-                connection.setReadTimeout(
-                        15000
-                );
-
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(15000);
                 connection.setDoOutput(true);
 
                 // ------------------------------------------------
