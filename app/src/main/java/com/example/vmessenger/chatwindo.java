@@ -40,7 +40,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatwindo extends AppCompatActivity {
     private static final String TAG = "SEMANTIC_SEARCH";
-
     // Android Emulator -> Windows localhost
     private static final String BACKEND_URL = "http://127.0.0.1:3000/index-message";
     private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
@@ -73,18 +72,28 @@ public class chatwindo extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+
+        // ----------------------------------------------------
+        // RECEIVER DETAILS
+        // ----------------------------------------------------
         reciverName = getIntent().getStringExtra("nameeee");
         reciverimg = getIntent().getStringExtra("reciverImg");
         reciverUid = getIntent().getStringExtra("uid");
         reciverIImg = reciverimg != null ? reciverimg : "";
         messagesArrayList = new ArrayList<>();
 
+        // ----------------------------------------------------
+        // FIND VIEWS
+        // ----------------------------------------------------
         sendbtn = findViewById(R.id.sendbtnn);
         textmsg = findViewById(R.id.textmsg);
         reciverNName = findViewById(R.id.recivername);
         profile = findViewById(R.id.profileimgg);
         messageAdpter = findViewById(R.id.msgadpter);
 
+        // ----------------------------------------------------
+        // RECYCLER VIEW
+        // ----------------------------------------------------
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
         linearLayoutManager.setStackFromEnd(true);
@@ -95,6 +104,9 @@ public class chatwindo extends AppCompatActivity {
 
         messageAdpter.setAdapter(mmessagesAdpter);
 
+        // ----------------------------------------------------
+        // RECEIVER PROFILE
+        // ----------------------------------------------------
         if (reciverimg != null && !reciverimg.isEmpty()) {
 
             Picasso.get()
@@ -109,6 +121,9 @@ public class chatwindo extends AppCompatActivity {
 
         reciverNName.setText(reciverName != null ? reciverName : "");
 
+        // ----------------------------------------------------
+        // CURRENT USER
+        // ----------------------------------------------------
         SenderUID = firebaseAuth.getUid();
 
         if (SenderUID != null && reciverUid != null) {
@@ -116,6 +131,9 @@ public class chatwindo extends AppCompatActivity {
             reciverRoom = reciverUid + SenderUID;
         }
 
+        // ----------------------------------------------------
+        // FIREBASE REFERENCES
+        // ----------------------------------------------------
         DatabaseReference reference =
                 database.getReference()
                         .child("user")
