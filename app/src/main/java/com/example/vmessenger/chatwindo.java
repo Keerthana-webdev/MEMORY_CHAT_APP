@@ -40,36 +40,24 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatwindo extends AppCompatActivity {
-
     private static final String TAG = "SEMANTIC_SEARCH";
-
     // Android Emulator -> Windows PC
-    private static final String BACKEND_URL =
-            "http://10.0.2.2:3000/index-message";
-
-    private static final String SEARCH_URL =
-            "http://10.0.2.2:3000/search";
-
+    private static final String BACKEND_URL = "http://10.0.2.2:3000/index-message";
+    private static final String SEARCH_URL = "http://10.0.2.2:3000/search";
     String reciverimg;
     String reciverUid;
     String reciverName;
     String SenderUID;
-
     CircleImageView profile;
     TextView reciverNName;
-
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
-
     public static String senderImg = "";
     public static String reciverIImg = "";
-
     CardView sendbtn;
     EditText textmsg;
-
     String senderRoom;
     String reciverRoom;
-
     RecyclerView messageAdpter;
     ArrayList<msgModelclass> messagesArrayList;
     messagesAdpter mmessagesAdpter;
