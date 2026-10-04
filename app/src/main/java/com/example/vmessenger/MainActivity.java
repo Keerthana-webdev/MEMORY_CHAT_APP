@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView camBut;
     ImageView chatBut;
     ImageView settingBut;
+    ImageView searchBut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         camBut = findViewById(R.id.camBut);
         chatBut = findViewById(R.id.chatBut);
         settingBut = findViewById(R.id.settingBut);
+        searchBut = findViewById(R.id.searchBut);
 
         mainUserRecyclerView = findViewById(R.id.mainUserRecyclerView);
 
@@ -174,6 +176,15 @@ public class MainActivity extends AppCompatActivity {
                         "Select a user above to start chatting",
                         Toast.LENGTH_SHORT
                 ).show();
+            }
+        });
+
+        searchBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SemanticSearchActivity.class);
+                startActivity(intent);
+
             }
         });
     }

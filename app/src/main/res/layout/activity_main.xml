@@ -35,6 +35,14 @@
             android:textSize="@dimen/_20sdp"
             android:layout_marginLeft="@dimen/_10sdp" />
 
+        <ImageView
+            android:id="@+id/searchBut"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/search"
+            android:contentDescription="Search" />
 
         <ImageView
             android:id="@+id/logoutimg"

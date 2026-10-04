@@ -18,22 +18,36 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class login extends AppCompatActivity {
+
     TextView logsignup;
     Button button;
     EditText email, password;
+
     FirebaseAuth auth;
-    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     ProgressDialog progressDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
-        if (getSupportActionBar() != null) {getSupportActionBar().hide();}
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         auth = FirebaseAuth.getInstance();
 
-        if (auth.getCurrentUser() != null) {Intent intent = new Intent(login.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // If already logged in, go directly to MainActivity
+        if (auth.getCurrentUser() != null) {
+
+            Intent intent = new Intent(login.this, MainActivity.class);
+
+            intent.setFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
+            );
+
             startActivity(intent);
             finish();
             return;
@@ -44,65 +58,120 @@ public class login extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
         button = findViewById(R.id.logbutton);
-
         email = findViewById(R.id.editTexLogEmail);
-
         password = findViewById(R.id.editTextLogPassword);
-
         logsignup = findViewById(R.id.logsignup);
 
-        logsignup.setOnClickListener(v -> {Intent intent = new Intent(login.this, registration.class);
+        // SIGN UP
+        logsignup.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    login.this,
+                    registration.class
+            );
+
             startActivity(intent);
-            finish();
         });
 
-        button.setOnClickListener(v -> {String Email = email.getText().toString().trim();
+        // LOGIN
+        button.setOnClickListener(v -> {
+
+            String Email = email.getText().toString().trim();
             String pass = password.getText().toString();
 
-            if (TextUtils.isEmpty(Email)) {email.setError("Enter your email");
+            // Email empty
+            if (TextUtils.isEmpty(Email)) {
+
+                email.setError("Enter your email");
                 email.requestFocus();
                 return;
             }
 
-            if (TextUtils.isEmpty(pass)) {password.setError("Enter your password");
+            // Password empty
+            if (TextUtils.isEmpty(pass)) {
+
+                password.setError("Enter your password");
                 password.requestFocus();
                 return;
             }
 
+            // Basic email validation
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
 
-            if (!Email.matches(emailPattern)) {email.setError("Enter a valid email address");
+                email.setError("Enter a valid email address");
                 email.requestFocus();
                 return;
             }
 
+            // Password validation
+            if (pass.length() < 6) {
 
-            if (pass.length() < 6) {password.setError("Password must contain at least 6 characters");
+                password.setError(
+                        "Password must contain at least 6 characters"
+                );
+
                 password.requestFocus();
                 return;
             }
 
             progressDialog.show();
 
-            auth.signInWithEmailAndPassword(Email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            auth.signInWithEmailAndPassword(Email, pass)
+                    .addOnCompleteListener(
+                            login.this,
+                            new OnCompleteListener<AuthResult>() {
 
-                        @Override public void onComplete(@NonNull Task<AuthResult> task) {
-                            progressDialog.dismiss();
+                                @Override
+                                public void onComplete(
+                                        @NonNull Task<AuthResult> task) {
 
-                            if (task.isSuccessful()) {Toast.makeText(login.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(login.this, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                String errorMsg = "Login failed";
-                                if (task.getException() != null) {errorMsg = task.getException().getMessage();
+                                    progressDialog.dismiss();
+
+                                    if (task.isSuccessful()) {
+
+                                        Toast.makeText(
+                                                login.this,
+                                                "Login Successful",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
+
+                                        Intent intent = new Intent(
+                                                login.this,
+                                                MainActivity.class
+                                        );
+
+                                        intent.setFlags(
+                                                Intent.FLAG_ACTIVITY_NEW_TASK |
+                                                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        );
+
+                                        startActivity(intent);
+                                        finish();
+
+                                    } else {
+
+                                        Exception exception =
+                                                task.getException();
+
+                                        String errorMessage;
+
+                                        if (exception != null) {
+                                            errorMessage =
+                                                    exception.getMessage();
+                                        } else {
+                                            errorMessage =
+                                                    "Unknown Firebase login error";
+                                        }
+
+                                        Toast.makeText(
+                                                login.this,
+                                                errorMessage,
+                                                Toast.LENGTH_LONG
+                                        ).show();
+                                    }
                                 }
-
-                                Toast.makeText(login.this, errorMsg, Toast.LENGTH_LONG).show();
                             }
-                        }
-                    }
-            );
+                    );
         });
     }
 }
