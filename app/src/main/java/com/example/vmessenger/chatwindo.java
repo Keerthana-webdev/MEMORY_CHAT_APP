@@ -642,52 +642,24 @@ public class chatwindo extends AppCompatActivity {
 
                             String line;
 
-                            while ((line =
-                                            reader.readLine())
-                                            != null
-                            ) {
-
-                                response.append(
-                                        line
+                            while ((line = reader.readLine()) != null) {
+                                response.append(line
                                 );
                             }
-
                             reader.close();
                         }
 
-                        Log.d(
-                                TAG,
-                                "Search response code: "
-                                        + responseCode
-                        );
+                        Log.d(TAG, "Search response code: " + responseCode);
 
-                        Log.d(
-                                TAG,
-                                "Search response: "
-                                        + response
-                        );
+                        Log.d(TAG, "Search response: " + response);
 
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
+                        if (responseCode >= 200 && responseCode < 300) {
+                            JSONObject result = new JSONObject(response.toString());
 
-                            JSONObject result =
-                                    new JSONObject(
-                                            response.toString()
-                                    );
+                            JSONArray results = result.optJSONArray("results");
 
-                            JSONArray results =
-                                    result.optJSONArray(
-                                            "results"
-                                    );
-
-                            runOnUiThread(
-                                    () -> {
-
+                            runOnUiThread(() -> {
                                         try {
-
                                             showSearchResults(
                                                     query,
                                                     results
@@ -696,12 +668,7 @@ public class chatwindo extends AppCompatActivity {
                                         } catch (
                                                 Exception e
                                         ) {
-
-                                            Log.e(
-                                                    TAG,
-                                                    "Error showing search results",
-                                                    e
-                                            );
+                                            Log.e(TAG, "Error showing search results", e);
 
                                             Toast.makeText(
                                                     chatwindo.this,
@@ -713,7 +680,6 @@ public class chatwindo extends AppCompatActivity {
                             );
 
                         } else {
-
                             runOnUiThread(
                                     () -> Toast.makeText(
                                             chatwindo.this,
@@ -724,7 +690,6 @@ public class chatwindo extends AppCompatActivity {
                         }
 
                     } catch (Exception e) {
-
                         Log.e(
                                 TAG,
                                 "SEMANTIC SEARCH ERROR",
@@ -753,7 +718,6 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // SHOW SEARCH RESULTS
     // ============================================================
-
     private void showSearchResults(
             String query,
             JSONArray results
@@ -792,15 +756,7 @@ public class chatwindo extends AppCompatActivity {
                 LinearLayout.VERTICAL
         );
 
-        int padding =
-                (int)
-                        (
-                                16 *
-                                        getResources()
-                                                .getDisplayMetrics()
-                                                .density
-                        );
-
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
         container.setPadding(
                 padding,
                 padding,
@@ -809,15 +765,8 @@ public class chatwindo extends AppCompatActivity {
         );
 
         try {
-
-            for (
-                    int i = 0;
-                    i < results.length();
-                    i++
-            ) {
-
-                JSONObject item =
-                        results.getJSONObject(i);
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject item = results.getJSONObject(i);
 
                 String text =
                         item.optString(
@@ -831,26 +780,11 @@ public class chatwindo extends AppCompatActivity {
                                 0
                         );
 
-                TextView resultText =
-                        new TextView(
-                                chatwindo.this
-                        );
+                TextView resultText = new TextView(chatwindo.this);
 
-                resultText.setText(
-                        text
-                                +
-                                "\n\nSimilarity: "
-                                +
-                                String.format(
-                                        Locale.getDefault(),
-                                        "%.2f",
-                                        score
-                                )
-                );
+                resultText.setText(text + "\n\nSimilarity: " + String.format(Locale.getDefault(), "%.2f", score));
 
-                resultText.setTextSize(
-                        16
-                );
+                resultText.setTextSize(16);
 
                 resultText.setPadding(
                         12,
@@ -865,7 +799,6 @@ public class chatwindo extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-
             Log.e(
                     TAG,
                     "Result parsing error",
