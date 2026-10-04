@@ -250,10 +250,6 @@ public class chatwindo extends AppCompatActivity {
                                                     .child(messageId)
                                                     .setValue(messagess);
 
-                                            // --------------------------------
-                                            // INDEX MESSAGE
-                                            // --------------------------------
-
                                             indexMessageToBackend(
                                                     messageId,
                                                     senderRoom,
@@ -265,7 +261,6 @@ public class chatwindo extends AppCompatActivity {
                                 )
                                 .addOnFailureListener(
                                         error -> {
-
                                             Toast.makeText(
                                                     chatwindo.this,
                                                     "Message failed to send",
