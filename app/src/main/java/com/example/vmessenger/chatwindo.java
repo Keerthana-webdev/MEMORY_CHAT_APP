@@ -319,20 +319,16 @@ public class chatwindo extends AppCompatActivity {
                 connection.setReadTimeout(15000);
                 connection.setDoOutput(true);
 
+                // ------------------------------------------------
+                // CREATE JSON
+                // ------------------------------------------------
                 JSONObject json = new JSONObject();
-
                 json.put("messageId", messageId);
-
                 json.put("conversationId", conversationId);
-
                 json.put("senderId", senderId);
-
                 json.put("text", text);
-
                 json.put("timestamp", timestamp);
-
                 String jsonString = json.toString();
-
                 Log.d(TAG, "Request: " + jsonString);
 
                 // ------------------------------------------------
