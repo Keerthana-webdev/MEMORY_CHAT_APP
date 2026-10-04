@@ -79,24 +79,11 @@ public class chatwindo extends AppCompatActivity {
         reciverIImg = reciverimg != null ? reciverimg : "";
         messagesArrayList = new ArrayList<>();
 
-        // ----------------------------------------------------
-        // FIND VIEWS
-        // ----------------------------------------------------
-
-        sendbtn =
-                findViewById(R.id.sendbtnn);
-
-        textmsg =
-                findViewById(R.id.textmsg);
-
-        reciverNName =
-                findViewById(R.id.recivername);
-
-        profile =
-                findViewById(R.id.profileimgg);
-
-        messageAdpter =
-                findViewById(R.id.msgadpter);
+        sendbtn = findViewById(R.id.sendbtnn);
+        textmsg = findViewById(R.id.textmsg);
+        reciverNName = findViewById(R.id.recivername);
+        profile = findViewById(R.id.profileimgg);
+        messageAdpter = findViewById(R.id.msgadpter);
 
         // ----------------------------------------------------
         // RECYCLER VIEW
