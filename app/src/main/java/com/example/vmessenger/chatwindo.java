@@ -278,7 +278,6 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
     }
-
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
@@ -316,55 +315,25 @@ public class chatwindo extends AppCompatActivity {
                         "application/json"
                 );
 
-                connection.setConnectTimeout(
-                        10000
-                );
-
-                connection.setReadTimeout(
-                        15000
-                );
-
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(15000);
                 connection.setDoOutput(true);
 
-                // ------------------------------------------------
-                // CREATE JSON
-                // ------------------------------------------------
+                JSONObject json = new JSONObject();
 
-                JSONObject json =
-                        new JSONObject();
+                json.put("messageId", messageId);
 
-                json.put(
-                        "messageId",
-                        messageId
-                );
+                json.put("conversationId", conversationId);
 
-                json.put(
-                        "conversationId",
-                        conversationId
-                );
+                json.put("senderId", senderId);
 
-                json.put(
-                        "senderId",
-                        senderId
-                );
+                json.put("text", text);
 
-                json.put(
-                        "text",
-                        text
-                );
+                json.put("timestamp", timestamp);
 
-                json.put(
-                        "timestamp",
-                        timestamp
-                );
+                String jsonString = json.toString();
 
-                String jsonString =
-                        json.toString();
-
-                Log.d(
-                        TAG,
-                        "Request: " + jsonString
-                );
+                Log.d(TAG, "Request: " + jsonString);
 
                 // ------------------------------------------------
                 // SEND REQUEST
