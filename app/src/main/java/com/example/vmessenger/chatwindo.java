@@ -164,20 +164,16 @@ public class chatwindo extends AppCompatActivity {
                     "Could not identify chat user",
                     Toast.LENGTH_SHORT
             ).show();
-
             return;
         }
 
-        senderRoom =
-                SenderUID + reciverUid;
+        senderRoom = SenderUID + reciverUid;
 
-        reciverRoom =
-                reciverUid + SenderUID;
+        reciverRoom = reciverUid + SenderUID;
 
         // ----------------------------------------------------
         // FIREBASE REFERENCES
         // ----------------------------------------------------
-
         DatabaseReference reference =
                 database.getReference()
                         .child("user")
@@ -192,20 +188,14 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // LOAD CHAT MESSAGES
         // ----------------------------------------------------
-
         chatreference.addValueEventListener(
                 new ValueEventListener() {
-
                     @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                         messagesArrayList.clear();
-
                         targetMessagePosition = -1;
-
                         int currentPosition = 0;
-
                         for (
                                 DataSnapshot dataSnapshot :
                                 snapshot.getChildren()
@@ -225,7 +215,6 @@ public class chatwindo extends AppCompatActivity {
                                 // --------------------------------
                                 // FIND SEARCHED MESSAGE
                                 // --------------------------------
-
                                 String firebaseMessageId =
                                         dataSnapshot.getKey();
 
@@ -238,7 +227,6 @@ public class chatwindo extends AppCompatActivity {
                                                         firebaseMessageId
                                                 )
                                 ) {
-
                                     targetMessagePosition =
                                             currentPosition;
 
@@ -248,7 +236,6 @@ public class chatwindo extends AppCompatActivity {
                                                     + targetMessagePosition
                                     );
                                 }
-
                                 currentPosition++;
                             }
                         }
@@ -258,18 +245,14 @@ public class chatwindo extends AppCompatActivity {
                         // --------------------------------
                         // OPEN AT SEARCHED MESSAGE
                         // --------------------------------
-
                         if (targetMessagePosition >= 0) {
 
                             final int finalPosition =
                                     targetMessagePosition;
 
-                            messageAdpter.post(
-                                    new Runnable() {
+                            messageAdpter.post(new Runnable() {
 
-                                        @Override
-                                        public void run() {
-
+                                        @Override public void run() {
                                             RecyclerView.LayoutManager
                                                     layoutManager =
                                                     messageAdpter
@@ -292,28 +275,21 @@ public class chatwindo extends AppCompatActivity {
                                                                 200
                                                         );
 
-                                                Log.d(
-                                                        TAG,
-                                                        "Scrolled to searched message"
-                                                );
+                                                Log.d(TAG, "Scrolled to searched message");
                                             }
                                         }
                                     }
                             );
 
                         } else {
-
                             // Normal chat opening:
                             // scroll to latest message.
 
                             if (!messagesArrayList.isEmpty()) {
-
                                 messageAdpter.post(
                                         new Runnable() {
 
-                                            @Override
-                                            public void run() {
-
+                                            @Override public void run() {
                                                 messageAdpter
                                                         .scrollToPosition(
                                                                 messagesArrayList
@@ -327,16 +303,9 @@ public class chatwindo extends AppCompatActivity {
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
+                    @Override public void onCancelled(@NonNull DatabaseError error
                     ) {
-
-                        Log.e(
-                                TAG,
-                                "Chat messages error",
-                                error.toException()
-                        );
+                        Log.e(TAG, "Chat messages error", error.toException());
                     }
                 }
         );
@@ -344,15 +313,9 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // LOAD SENDER IMAGE
         // ----------------------------------------------------
-
         reference.addValueEventListener(
                 new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
-
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (
                                 snapshot.exists()
                                         &&
@@ -360,7 +323,6 @@ public class chatwindo extends AppCompatActivity {
                                                 "profilepic"
                                         ).getValue() != null
                         ) {
-
                             senderImg =
                                     snapshot.child(
                                                     "profilepic"
@@ -372,21 +334,11 @@ public class chatwindo extends AppCompatActivity {
 
                             senderImg = "";
                         }
-
-                        mmessagesAdpter
-                                .notifyDataSetChanged();
+                        mmessagesAdpter.notifyDataSetChanged();
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Profile image error",
-                                error.toException()
-                        );
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Profile image error", error.toException());
                     }
                 }
         );
@@ -394,33 +346,24 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // SEND MESSAGE
         // ----------------------------------------------------
-
-        sendbtn.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-
+        sendbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View view) {
                         String message =
                                 textmsg.getText()
                                         .toString()
                                         .trim();
 
                         if (message.isEmpty()) {
-
                             Toast.makeText(
                                     chatwindo.this,
                                     "Enter The Message First",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         textmsg.setText("");
-
                         Date date = new Date();
-
                         msgModelclass messagess =
                                 new msgModelclass(
                                         message,
@@ -439,14 +382,12 @@ public class chatwindo extends AppCompatActivity {
                                     "Chat connection error",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         // ----------------------------------------
                         // CREATE ONE FIREBASE MESSAGE ID
                         // ----------------------------------------
-
                         DatabaseReference senderMessageRef =
                                 database.getReference()
                                         .child("chats")
@@ -454,24 +395,20 @@ public class chatwindo extends AppCompatActivity {
                                         .child("messages")
                                         .push();
 
-                        String messageId =
-                                senderMessageRef.getKey();
+                        String messageId = senderMessageRef.getKey();
 
                         if (messageId == null) {
-
                             Toast.makeText(
                                     chatwindo.this,
                                     "Could not create message",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         // ----------------------------------------
                         // SAVE TO SENDER CHAT
                         // ----------------------------------------
-
                         senderMessageRef
                                 .setValue(messagess)
                                 .addOnSuccessListener(
