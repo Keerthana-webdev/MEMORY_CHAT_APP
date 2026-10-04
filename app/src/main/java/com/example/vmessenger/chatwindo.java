@@ -95,29 +95,19 @@ public class chatwindo extends AppCompatActivity {
 
         messageAdpter.setAdapter(mmessagesAdpter);
 
-        // ----------------------------------------------------
-        // RECEIVER PROFILE
-        // ----------------------------------------------------
-
-        if (reciverimg != null &&
-                !reciverimg.isEmpty()) {
+        if (reciverimg != null && !reciverimg.isEmpty()) {
 
             Picasso.get()
                     .load(reciverimg)
                     .into(profile);
 
         } else {
-
             profile.setImageResource(
                     R.drawable.photocamera
             );
         }
 
-        reciverNName.setText(
-                reciverName != null
-                        ? reciverName
-                        : ""
-        );
+        reciverNName.setText(reciverName != null ? reciverName : "");
 
         // ----------------------------------------------------
         // CURRENT USER
