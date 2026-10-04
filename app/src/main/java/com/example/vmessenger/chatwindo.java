@@ -456,12 +456,7 @@ public class chatwindo extends AppCompatActivity {
                 outputStream.flush();
                 outputStream.close();
 
-                // ------------------------------------------------
-                // READ SEARCH RESPONSE
-                // ------------------------------------------------
-
-                int responseCode =
-                        connection.getResponseCode();
+                int responseCode = connection.getResponseCode();
 
                 InputStream inputStream;
 
@@ -489,57 +484,29 @@ public class chatwindo extends AppCompatActivity {
 
                 String line;
 
-                while (
-                        (line = reader.readLine())
-                                != null
-                ) {
-
+                while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
 
                 reader.close();
+                Log.d(TAG, "Search response code: " + responseCode);
 
-                Log.d(
-                        TAG,
-                        "Search response code: "
-                                + responseCode
-                );
+                Log.d(TAG, "Search response: " + response);
 
-                Log.d(
-                        TAG,
-                        "Search response: "
-                                + response
-                );
+                if (responseCode >= 200 && responseCode < 300) {
+                    JSONObject result = new JSONObject(response.toString());
 
-                if (responseCode >= 200
-                        && responseCode < 300) {
-
-                    JSONObject result =
-                            new JSONObject(
-                                    response.toString()
-                            );
-
-                    JSONArray results =
-                            result.optJSONArray(
-                                    "results"
-                            );
+                    JSONArray results = result.optJSONArray("results");
 
                     runOnUiThread(() -> {
-
                         try {
-
                             showSearchResults(
                                     query,
                                     results
                             );
 
                         } catch (Exception e) {
-
-                            Log.e(
-                                    TAG,
-                                    "Error showing search results",
-                                    e
-                            );
+                            Log.e(TAG, "Error showing search results", e);
 
                             Toast.makeText(
                                     chatwindo.this,
@@ -550,9 +517,7 @@ public class chatwindo extends AppCompatActivity {
                     });
 
                 } else {
-
                     runOnUiThread(() -> {
-
                         Toast.makeText(
                                 chatwindo.this,
                                 "Semantic search failed",
@@ -562,15 +527,9 @@ public class chatwindo extends AppCompatActivity {
                 }
 
             } catch (Exception e) {
-
-                Log.e(
-                        TAG,
-                        "SEMANTIC SEARCH ERROR",
-                        e
-                );
+                Log.e(TAG, "SEMANTIC SEARCH ERROR", e);
 
                 runOnUiThread(() -> {
-
                     Toast.makeText(
                             chatwindo.this,
                             "Unable to connect to semantic backend",
@@ -579,13 +538,10 @@ public class chatwindo extends AppCompatActivity {
                 });
 
             } finally {
-
                 if (connection != null) {
-
                     connection.disconnect();
                 }
             }
-
         }).start();
     }
 
