@@ -28,21 +28,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SemanticSearchActivity extends AppCompatActivity {
-
     private static final String TAG = "SEMANTIC_SEARCH";
     private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
-
     EditText searchInput;
     ImageView searchButton;
     ImageView backButton;
     ProgressBar progressBar;
     TextView emptyText;
-
     RecyclerView searchRecyclerView;
-
     ArrayList<SearchResult> resultsList;
     SemanticSearchAdapter adapter;
-
     Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -109,7 +104,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
             }
         });
     }
-
     private void performSemanticSearch(String query) {
 
         progressBar.setVisibility(View.VISIBLE);
