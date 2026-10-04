@@ -278,6 +278,10 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
     }
+
+    // ============================================================
+    // INDEX MESSAGE INTO GEMINI + PINECONE
+    // ============================================================
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
