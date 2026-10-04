@@ -85,28 +85,15 @@ public class chatwindo extends AppCompatActivity {
         profile = findViewById(R.id.profileimgg);
         messageAdpter = findViewById(R.id.msgadpter);
 
-        // ----------------------------------------------------
-        // RECYCLER VIEW
-        // ----------------------------------------------------
-
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
         linearLayoutManager.setStackFromEnd(true);
 
-        messageAdpter.setLayoutManager(
-                linearLayoutManager
-        );
+        messageAdpter.setLayoutManager(linearLayoutManager);
 
-        mmessagesAdpter =
-                new messagesAdpter(
-                        chatwindo.this,
-                        messagesArrayList
-                );
+        mmessagesAdpter = new messagesAdpter(chatwindo.this, messagesArrayList);
 
-        messageAdpter.setAdapter(
-                mmessagesAdpter
-        );
+        messageAdpter.setAdapter(mmessagesAdpter);
 
         // ----------------------------------------------------
         // RECEIVER PROFILE
