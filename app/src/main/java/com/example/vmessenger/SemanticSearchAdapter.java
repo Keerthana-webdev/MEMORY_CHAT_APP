@@ -12,16 +12,33 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
-    Context context;
-    ArrayList<SearchResult> results;
+public class SemanticSearchAdapter
+        extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
+
+    private final Context context;
+    private final ArrayList<SearchResult> results;
+    private final OnResultClickListener listener;
+
+
+    public interface OnResultClickListener {
+
+        void onResultClick(
+                SearchResult result
+        );
+    }
+
+
     public SemanticSearchAdapter(
             Context context,
-            ArrayList<SearchResult> results
+            ArrayList<SearchResult> results,
+            OnResultClickListener listener
     ) {
+
         this.context = context;
         this.results = results;
+        this.listener = listener;
     }
+
 
     @NonNull
     @Override
@@ -30,26 +47,33 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
             int viewType
     ) {
 
-        View view = LayoutInflater.from(context)
-                .inflate(
-                        R.layout.search_result_item,
-                        parent,
-                        false
-                );
+        View view =
+                LayoutInflater
+                        .from(context)
+                        .inflate(
+                                R.layout.search_result_item,
+                                parent,
+                                false
+                        );
+
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(
             @NonNull ViewHolder holder,
             int position
     ) {
+
         SearchResult result =
                 results.get(position);
+
 
         holder.messageText.setText(
                 result.getText()
         );
+
 
         holder.scoreText.setText(
                 String.format(
@@ -58,23 +82,48 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
                         result.getScore()
                 )
         );
+
+
+        holder.itemView.setOnClickListener(
+                v -> {
+
+                    if (listener != null) {
+
+                        listener.onResultClick(
+                                result
+                        );
+                    }
+                }
+        );
     }
+
 
     @Override
     public int getItemCount() {
+
         return results.size();
     }
+
+
     public static class ViewHolder
             extends RecyclerView.ViewHolder {
+
         TextView messageText;
         TextView scoreText;
-        public ViewHolder(@NonNull View itemView) {
+
+
+        public ViewHolder(
+                @NonNull View itemView
+        ) {
+
             super(itemView);
+
 
             messageText =
                     itemView.findViewById(
                             R.id.resultMessage
                     );
+
 
             scoreText =
                     itemView.findViewById(

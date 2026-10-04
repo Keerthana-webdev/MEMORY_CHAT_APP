@@ -35,35 +35,55 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatwindo extends AppCompatActivity {
+
     private static final String TAG = "SEMANTIC_SEARCH";
-    // Android Emulator -> Windows localhost
-    private static final String BACKEND_URL = "http://127.0.0.1:3000/index-message";
-    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
+
+    // Android Emulator -> Windows PC
+    private static final String BACKEND_URL =
+            "http://10.0.2.2:3000/index-message";
+
+    private static final String SEARCH_URL =
+            "http://10.0.2.2:3000/search";
+
     String reciverimg;
     String reciverUid;
     String reciverName;
     String SenderUID;
+
     CircleImageView profile;
     TextView reciverNName;
+
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
+
     public static String senderImg = "";
     public static String reciverIImg = "";
+
     CardView sendbtn;
     EditText textmsg;
+
     String senderRoom;
     String reciverRoom;
+
     RecyclerView messageAdpter;
     ArrayList<msgModelclass> messagesArrayList;
     messagesAdpter mmessagesAdpter;
 
+    // Message ID received from Semantic Search
+    private String targetMessageId = null;
+
+    // Position of searched message
+    private int targetMessagePosition = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_chatwindo);
 
         if (getSupportActionBar() != null) {
@@ -76,15 +96,35 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // RECEIVER DETAILS
         // ----------------------------------------------------
+
         reciverName = getIntent().getStringExtra("nameeee");
         reciverimg = getIntent().getStringExtra("reciverImg");
         reciverUid = getIntent().getStringExtra("uid");
-        reciverIImg = reciverimg != null ? reciverimg : "";
+
+        // IMPORTANT:
+        // SemanticSearchActivity sends this when a result is clicked.
+        targetMessageId =
+                getIntent().getStringExtra("targetMessageId");
+
+        reciverIImg =
+                reciverimg != null ? reciverimg : "";
+
         messagesArrayList = new ArrayList<>();
+
+        Log.d(
+                TAG,
+                "Opened chat. Receiver UID = " + reciverUid
+        );
+
+        Log.d(
+                TAG,
+                "Target Message ID = " + targetMessageId
+        );
 
         // ----------------------------------------------------
         // FIND VIEWS
         // ----------------------------------------------------
+
         sendbtn = findViewById(R.id.sendbtnn);
         textmsg = findViewById(R.id.textmsg);
         reciverNName = findViewById(R.id.recivername);
@@ -94,50 +134,93 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // RECYCLER VIEW
         // ----------------------------------------------------
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        LinearLayoutManager linearLayoutManager =
+                new LinearLayoutManager(this);
 
         linearLayoutManager.setStackFromEnd(true);
 
-        messageAdpter.setLayoutManager(linearLayoutManager);
+        messageAdpter.setLayoutManager(
+                linearLayoutManager
+        );
 
-        mmessagesAdpter = new messagesAdpter(chatwindo.this, messagesArrayList);
+        mmessagesAdpter =
+                new messagesAdpter(
+                        chatwindo.this,
+                        messagesArrayList
+                );
 
-        messageAdpter.setAdapter(mmessagesAdpter);
+        messageAdpter.setAdapter(
+                mmessagesAdpter
+        );
 
         // ----------------------------------------------------
         // RECEIVER PROFILE
         // ----------------------------------------------------
-        if (reciverimg != null && !reciverimg.isEmpty()) {
+
+        if (reciverimg != null &&
+                !reciverimg.isEmpty()) {
 
             Picasso.get()
                     .load(reciverimg)
                     .into(profile);
 
         } else {
+
             profile.setImageResource(
                     R.drawable.photocamera
             );
         }
 
-        reciverNName.setText(reciverName != null ? reciverName : "");
+        reciverNName.setText(
+                reciverName != null
+                        ? reciverName
+                        : ""
+        );
 
         // ----------------------------------------------------
         // CURRENT USER
         // ----------------------------------------------------
+
         SenderUID = firebaseAuth.getUid();
 
-        if (SenderUID != null && reciverUid != null) {
-            senderRoom = SenderUID + reciverUid;
-            reciverRoom = reciverUid + SenderUID;
+        if (SenderUID == null) {
+
+            Toast.makeText(
+                    chatwindo.this,
+                    "User not logged in",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            return;
         }
+
+        if (reciverUid == null ||
+                reciverUid.isEmpty()) {
+
+            Toast.makeText(
+                    chatwindo.this,
+                    "Could not identify chat user",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            return;
+        }
+
+        senderRoom =
+                SenderUID + reciverUid;
+
+        reciverRoom =
+                reciverUid + SenderUID;
 
         // ----------------------------------------------------
         // FIREBASE REFERENCES
         // ----------------------------------------------------
+
         DatabaseReference reference =
                 database.getReference()
                         .child("user")
-                        .child(firebaseAuth.getUid());
+                        .child(SenderUID);
 
         DatabaseReference chatreference =
                 database.getReference()
@@ -148,30 +231,151 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // LOAD CHAT MESSAGES
         // ----------------------------------------------------
+
         chatreference.addValueEventListener(
                 new ValueEventListener() {
 
-                    @Override public void onDataChange(
+                    @Override
+                    public void onDataChange(
                             @NonNull DataSnapshot snapshot) {
 
                         messagesArrayList.clear();
 
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            msgModelclass messages = dataSnapshot.getValue(msgModelclass.class);
+                        targetMessagePosition = -1;
+
+                        int currentPosition = 0;
+
+                        for (
+                                DataSnapshot dataSnapshot :
+                                snapshot.getChildren()
+                        ) {
+
+                            msgModelclass messages =
+                                    dataSnapshot.getValue(
+                                            msgModelclass.class
+                                    );
 
                             if (messages != null) {
-                                messagesArrayList.add(messages);
+
+                                messagesArrayList.add(
+                                        messages
+                                );
+
+                                // --------------------------------
+                                // FIND SEARCHED MESSAGE
+                                // --------------------------------
+
+                                String firebaseMessageId =
+                                        dataSnapshot.getKey();
+
+                                if (
+                                        targetMessageId != null
+                                                &&
+                                                firebaseMessageId != null
+                                                &&
+                                                targetMessageId.equals(
+                                                        firebaseMessageId
+                                                )
+                                ) {
+
+                                    targetMessagePosition =
+                                            currentPosition;
+
+                                    Log.d(
+                                            TAG,
+                                            "FOUND TARGET MESSAGE AT POSITION: "
+                                                    + targetMessagePosition
+                                    );
+                                }
+
+                                currentPosition++;
                             }
                         }
 
                         mmessagesAdpter.notifyDataSetChanged();
 
-                        if (!messagesArrayList.isEmpty()) {
-                            messageAdpter.scrollToPosition(messagesArrayList.size() - 1);
+                        // --------------------------------
+                        // OPEN AT SEARCHED MESSAGE
+                        // --------------------------------
+
+                        if (targetMessagePosition >= 0) {
+
+                            final int finalPosition =
+                                    targetMessagePosition;
+
+                            messageAdpter.post(
+                                    new Runnable() {
+
+                                        @Override
+                                        public void run() {
+
+                                            RecyclerView.LayoutManager
+                                                    layoutManager =
+                                                    messageAdpter
+                                                            .getLayoutManager();
+
+                                            if (
+                                                    layoutManager
+                                                            instanceof
+                                                            LinearLayoutManager
+                                            ) {
+
+                                                LinearLayoutManager
+                                                        linearLayoutManager =
+                                                        (LinearLayoutManager)
+                                                                layoutManager;
+
+                                                linearLayoutManager
+                                                        .scrollToPositionWithOffset(
+                                                                finalPosition,
+                                                                200
+                                                        );
+
+                                                Log.d(
+                                                        TAG,
+                                                        "Scrolled to searched message"
+                                                );
+                                            }
+                                        }
+                                    }
+                            );
+
+                        } else {
+
+                            // Normal chat opening:
+                            // scroll to latest message.
+
+                            if (!messagesArrayList.isEmpty()) {
+
+                                messageAdpter.post(
+                                        new Runnable() {
+
+                                            @Override
+                                            public void run() {
+
+                                                messageAdpter
+                                                        .scrollToPosition(
+                                                                messagesArrayList
+                                                                        .size()
+                                                                        - 1
+                                                        );
+                                            }
+                                        }
+                                );
+                            }
                         }
                     }
 
-                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        Log.e(
+                                TAG,
+                                "Chat messages error",
+                                error.toException()
+                        );
                     }
                 }
         );
@@ -179,27 +383,49 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // LOAD SENDER IMAGE
         // ----------------------------------------------------
-        reference.addValueEventListener(new ValueEventListener() {
-                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists()
-                                && snapshot.child(
-                                "profilepic"
-                        ).getValue() != null) {
+        reference.addValueEventListener(
+                new ValueEventListener() {
 
-                            senderImg = snapshot.child(
-                                    "profilepic"
+                    @Override
+                    public void onDataChange(
+                            @NonNull DataSnapshot snapshot
+                    ) {
+
+                        if (
+                                snapshot.exists()
+                                        &&
+                                        snapshot.child(
+                                                "profilepic"
+                                        ).getValue() != null
+                        ) {
+
+                            senderImg =
+                                    snapshot.child(
+                                                    "profilepic"
                                             )
                                             .getValue()
                                             .toString();
 
                         } else {
+
                             senderImg = "";
                         }
-                        mmessagesAdpter.notifyDataSetChanged();
+
+                        mmessagesAdpter
+                                .notifyDataSetChanged();
                     }
 
-                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        Log.e(
+                                TAG,
+                                "Profile image error",
+                                error.toException()
+                        );
                     }
                 }
         );
@@ -207,24 +433,33 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // SEND MESSAGE
         // ----------------------------------------------------
-        sendbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override public void onClick(View view) {
+
+        sendbtn.setOnClickListener(
+                new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+
                         String message =
                                 textmsg.getText()
                                         .toString()
                                         .trim();
 
                         if (message.isEmpty()) {
+
                             Toast.makeText(
                                     chatwindo.this,
                                     "Enter The Message First",
                                     Toast.LENGTH_SHORT
                             ).show();
+
                             return;
                         }
 
                         textmsg.setText("");
+
                         Date date = new Date();
+
                         msgModelclass messagess =
                                 new msgModelclass(
                                         message,
@@ -232,8 +467,11 @@ public class chatwindo extends AppCompatActivity {
                                         date.getTime()
                                 );
 
-                        if (senderRoom == null
-                                || reciverRoom == null) {
+                        if (
+                                senderRoom == null
+                                        ||
+                                        reciverRoom == null
+                        ) {
 
                             Toast.makeText(
                                     chatwindo.this,
@@ -244,9 +482,10 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
-                        // ------------------------------------------------
+                        // ----------------------------------------
                         // CREATE ONE FIREBASE MESSAGE ID
-                        // ------------------------------------------------
+                        // ----------------------------------------
+
                         DatabaseReference senderMessageRef =
                                 database.getReference()
                                         .child("chats")
@@ -268,20 +507,32 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
-                        // ------------------------------------------------
+                        // ----------------------------------------
                         // SAVE TO SENDER CHAT
-                        // ------------------------------------------------
+                        // ----------------------------------------
+
                         senderMessageRef
                                 .setValue(messagess)
                                 .addOnSuccessListener(
                                         unused -> {
 
-                                            database.getReference()
+                                            // --------------------------------
+                                            // SAVE SAME MESSAGE TO RECEIVER
+                                            // --------------------------------
+
+                                            database
+                                                    .getReference()
                                                     .child("chats")
                                                     .child(reciverRoom)
                                                     .child("messages")
                                                     .child(messageId)
-                                                    .setValue(messagess);
+                                                    .setValue(
+                                                            messagess
+                                                    );
+
+                                            // --------------------------------
+                                            // INDEX MESSAGE
+                                            // --------------------------------
 
                                             indexMessageToBackend(
                                                     messageId,
@@ -294,6 +545,7 @@ public class chatwindo extends AppCompatActivity {
                                 )
                                 .addOnFailureListener(
                                         error -> {
+
                                             Toast.makeText(
                                                     chatwindo.this,
                                                     "Message failed to send",
@@ -315,6 +567,7 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // INDEX MESSAGE INTO GEMINI + PINECONE
     // ============================================================
+
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
@@ -323,125 +576,241 @@ public class chatwindo extends AppCompatActivity {
             long timestamp
     ) {
 
-        new Thread(() -> {
-            HttpURLConnection connection =
-                    null;
+        new Thread(
+                () -> {
 
-            try {
-                Log.d(
-                        TAG,
-                        "Sending message to semantic backend..."
-                );
+                    HttpURLConnection connection =
+                            null;
 
-                URL url =
-                        new URL(BACKEND_URL);
+                    try {
 
-                connection =
-                        (HttpURLConnection)
-                                url.openConnection();
+                        Log.d(
+                                TAG,
+                                "Sending message to semantic backend..."
+                        );
 
-                connection.setRequestMethod("POST");
+                        URL url =
+                                new URL(BACKEND_URL);
 
-                connection.setRequestProperty(
-                        "Content-Type",
-                        "application/json"
-                );
+                        connection =
+                                (HttpURLConnection)
+                                        url.openConnection();
 
-                connection.setRequestProperty(
-                        "Accept",
-                        "application/json"
-                );
+                        connection.setRequestMethod(
+                                "POST"
+                        );
 
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(15000);
-                connection.setDoOutput(true);
+                        connection.setRequestProperty(
+                                "Content-Type",
+                                "application/json"
+                        );
 
-                // ------------------------------------------------
-                // CREATE JSON
-                // ------------------------------------------------
-                JSONObject json = new JSONObject();
-                json.put("messageId", messageId);
-                json.put("conversationId", conversationId);
-                json.put("senderId", senderId);
-                json.put("text", text);
-                json.put("timestamp", timestamp);
-                String jsonString = json.toString();
-                Log.d(TAG, "Request: " + jsonString);
+                        connection.setRequestProperty(
+                                "Accept",
+                                "application/json"
+                        );
 
-                // ------------------------------------------------
-                // SEND REQUEST
-                // ------------------------------------------------
-                OutputStream outputStream = connection.getOutputStream();
+                        connection.setConnectTimeout(
+                                10000
+                        );
 
-                outputStream.write(jsonString.getBytes("UTF-8"));
+                        connection.setReadTimeout(
+                                15000
+                        );
 
-                outputStream.flush();
-                outputStream.close();
+                        connection.setDoOutput(
+                                true
+                        );
 
-                // ------------------------------------------------
-                // READ RESPONSE
-                // ------------------------------------------------
-                int responseCode = connection.getResponseCode();
+                        // --------------------------------
+                        // CREATE JSON
+                        // --------------------------------
 
-                InputStream inputStream;
-                if (responseCode >= 200 && responseCode < 300) {
-                    inputStream = connection.getInputStream();
-                } else {
-                    inputStream = connection.getErrorStream();
+                        JSONObject json =
+                                new JSONObject();
+
+                        json.put(
+                                "messageId",
+                                messageId
+                        );
+
+                        json.put(
+                                "conversationId",
+                                conversationId
+                        );
+
+                        json.put(
+                                "senderId",
+                                senderId
+                        );
+
+                        json.put(
+                                "text",
+                                text
+                        );
+
+                        json.put(
+                                "timestamp",
+                                timestamp
+                        );
+
+                        String jsonString =
+                                json.toString();
+
+                        Log.d(
+                                TAG,
+                                "Request: "
+                                        + jsonString
+                        );
+
+                        // --------------------------------
+                        // SEND REQUEST
+                        // --------------------------------
+
+                        OutputStream outputStream =
+                                connection
+                                        .getOutputStream();
+
+                        outputStream.write(
+                                jsonString.getBytes(
+                                        "UTF-8"
+                                )
+                        );
+
+                        outputStream.flush();
+                        outputStream.close();
+
+                        // --------------------------------
+                        // READ RESPONSE
+                        // --------------------------------
+
+                        int responseCode =
+                                connection
+                                        .getResponseCode();
+
+                        InputStream inputStream;
+
+                        if (
+                                responseCode >= 200
+                                        &&
+                                        responseCode < 300
+                        ) {
+
+                            inputStream =
+                                    connection
+                                            .getInputStream();
+
+                        } else {
+
+                            inputStream =
+                                    connection
+                                            .getErrorStream();
+                        }
+
+                        StringBuilder response =
+                                new StringBuilder();
+
+                        if (inputStream != null) {
+
+                            BufferedReader reader =
+                                    new BufferedReader(
+                                            new InputStreamReader(
+                                                    inputStream
+                                            )
+                                    );
+
+                            String line;
+
+                            while (
+                                    (line =
+                                            reader.readLine())
+                                            != null
+                            ) {
+
+                                response.append(
+                                        line
+                                );
+                            }
+
+                            reader.close();
+                        }
+
+                        Log.d(
+                                TAG,
+                                "Backend response code: "
+                                        + responseCode
+                        );
+
+                        Log.d(
+                                TAG,
+                                "Backend response: "
+                                        + response
+                        );
+
+                        if (
+                                responseCode >= 200
+                                        &&
+                                        responseCode < 300
+                        ) {
+
+                            runOnUiThread(
+                                    () -> Log.d(
+                                            TAG,
+                                            "SEMANTIC SEARCH INDEX SUCCESS"
+                                    )
+                            );
+
+                        } else {
+
+                            runOnUiThread(
+                                    () -> {
+
+                                        Toast.makeText(
+                                                chatwindo.this,
+                                                "Semantic indexing failed",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
+
+                                        Log.e(
+                                                TAG,
+                                                "Semantic indexing failed"
+                                        );
+                                    }
+                            );
+                        }
+
+                    } catch (Exception e) {
+
+                        Log.e(
+                                TAG,
+                                "SEMANTIC BACKEND CONNECTION ERROR",
+                                e
+                        );
+
+                    } finally {
+
+                        if (connection != null) {
+
+                            connection.disconnect();
+                        }
+                    }
                 }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while (
-                        (line = reader.readLine())
-                                != null
-                ) {
-                    response.append(line);
-                }
-                reader.close();
-
-                Log.d(TAG, "Backend response code: " + responseCode);
-
-                Log.d(TAG, "Backend response: " + response);
-
-                if (responseCode >= 200
-                        && responseCode < 300) {
-
-                    runOnUiThread(() -> {
-                        Log.d(TAG, "SEMANTIC SEARCH INDEX SUCCESS");});
-
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(
-                                chatwindo.this,
-                                "Semantic indexing failed",
-                                Toast.LENGTH_SHORT
-                        ).show();
-
-                        Log.e(TAG, "Semantic indexing failed");
-                    });
-                }
-
-            } catch (Exception e) {
-                Log.e(TAG, "SEMANTIC BACKEND CONNECTION ERROR", e);
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-        }).start();
+        ).start();
     }
 
     // ============================================================
     // SEMANTIC SEARCH
     // ============================================================
+
     private void performSemanticSearch(
             String query
     ) {
-        if (query == null ||
-                query.trim().isEmpty()) {
+
+        if (
+                query == null
+                        ||
+                        query.trim().isEmpty()
+        ) {
 
             Toast.makeText(
                     chatwindo.this,
@@ -452,154 +821,262 @@ public class chatwindo extends AppCompatActivity {
             return;
         }
 
-        new Thread(() -> {HttpURLConnection connection = null;
-            try {
-                Log.d(TAG, "Starting semantic search...");
+        new Thread(
+                () -> {
 
-                URL url = new URL(SEARCH_URL);
+                    HttpURLConnection connection =
+                            null;
 
-                connection = (HttpURLConnection) url.openConnection();
+                    try {
 
-                connection.setRequestMethod("POST");
+                        Log.d(
+                                TAG,
+                                "Starting semantic search..."
+                        );
 
-                connection.setRequestProperty(
-                        "Content-Type",
-                        "application/json"
-                );
+                        URL url =
+                                new URL(SEARCH_URL);
 
-                connection.setRequestProperty(
-                        "Accept",
-                        "application/json"
-                );
+                        connection =
+                                (HttpURLConnection)
+                                        url.openConnection();
 
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(15000);
-                connection.setDoOutput(true);
+                        connection.setRequestMethod(
+                                "POST"
+                        );
 
-                JSONObject json = new JSONObject();
+                        connection.setRequestProperty(
+                                "Content-Type",
+                                "application/json"
+                        );
 
-                json.put("query", query);
+                        connection.setRequestProperty(
+                                "Accept",
+                                "application/json"
+                        );
 
-                json.put("topK", 10);
+                        connection.setConnectTimeout(
+                                10000
+                        );
 
-                if (senderRoom != null) {
-                    json.put("conversationId", senderRoom);
-                }
+                        connection.setReadTimeout(
+                                15000
+                        );
 
-                String jsonString = json.toString();
+                        connection.setDoOutput(
+                                true
+                        );
 
-                Log.d(TAG, "Search request: " + jsonString);
+                        JSONObject json =
+                                new JSONObject();
 
-                OutputStream outputStream = connection.getOutputStream();
+                        json.put(
+                                "query",
+                                query
+                        );
 
-                outputStream.write(jsonString.getBytes("UTF-8"));
+                        json.put(
+                                "topK",
+                                10
+                        );
 
-                outputStream.flush();
-                outputStream.close();
+                        if (senderRoom != null) {
 
-                int responseCode = connection.getResponseCode();
+                            json.put(
+                                    "conversationId",
+                                    senderRoom
+                            );
+                        }
 
-                InputStream inputStream;
+                        String jsonString =
+                                json.toString();
 
-                if (responseCode >= 200
-                        && responseCode < 300) {
+                        Log.d(
+                                TAG,
+                                "Search request: "
+                                        + jsonString
+                        );
 
-                    inputStream =
-                            connection.getInputStream();
+                        OutputStream outputStream =
+                                connection
+                                        .getOutputStream();
 
-                } else {
-
-                    inputStream =
-                            connection.getErrorStream();
-                }
-
-                BufferedReader reader =
-                        new BufferedReader(
-                                new InputStreamReader(
-                                        inputStream
+                        outputStream.write(
+                                jsonString.getBytes(
+                                        "UTF-8"
                                 )
                         );
 
-                StringBuilder response =
-                        new StringBuilder();
+                        outputStream.flush();
+                        outputStream.close();
 
-                String line;
+                        int responseCode =
+                                connection
+                                        .getResponseCode();
 
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
+                        InputStream inputStream;
 
-                reader.close();
-                Log.d(TAG, "Search response code: " + responseCode);
+                        if (
+                                responseCode >= 200
+                                        &&
+                                        responseCode < 300
+                        ) {
 
-                Log.d(TAG, "Search response: " + response);
+                            inputStream =
+                                    connection
+                                            .getInputStream();
 
-                if (responseCode >= 200 && responseCode < 300) {
-                    JSONObject result = new JSONObject(response.toString());
+                        } else {
 
-                    JSONArray results = result.optJSONArray("results");
+                            inputStream =
+                                    connection
+                                            .getErrorStream();
+                        }
 
-                    runOnUiThread(() -> {
-                        try {
-                            showSearchResults(
-                                    query,
-                                    results
+                        StringBuilder response =
+                                new StringBuilder();
+
+                        if (inputStream != null) {
+
+                            BufferedReader reader =
+                                    new BufferedReader(
+                                            new InputStreamReader(
+                                                    inputStream
+                                            )
+                                    );
+
+                            String line;
+
+                            while (
+                                    (line =
+                                            reader.readLine())
+                                            != null
+                            ) {
+
+                                response.append(
+                                        line
+                                );
+                            }
+
+                            reader.close();
+                        }
+
+                        Log.d(
+                                TAG,
+                                "Search response code: "
+                                        + responseCode
+                        );
+
+                        Log.d(
+                                TAG,
+                                "Search response: "
+                                        + response
+                        );
+
+                        if (
+                                responseCode >= 200
+                                        &&
+                                        responseCode < 300
+                        ) {
+
+                            JSONObject result =
+                                    new JSONObject(
+                                            response.toString()
+                                    );
+
+                            JSONArray results =
+                                    result.optJSONArray(
+                                            "results"
+                                    );
+
+                            runOnUiThread(
+                                    () -> {
+
+                                        try {
+
+                                            showSearchResults(
+                                                    query,
+                                                    results
+                                            );
+
+                                        } catch (
+                                                Exception e
+                                        ) {
+
+                                            Log.e(
+                                                    TAG,
+                                                    "Error showing search results",
+                                                    e
+                                            );
+
+                                            Toast.makeText(
+                                                    chatwindo.this,
+                                                    "Could not display results",
+                                                    Toast.LENGTH_SHORT
+                                            ).show();
+                                        }
+                                    }
                             );
 
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error showing search results", e);
+                        } else {
 
-                            Toast.makeText(
-                                    chatwindo.this,
-                                    "Could not display results",
-                                    Toast.LENGTH_SHORT
-                            ).show();
+                            runOnUiThread(
+                                    () -> Toast.makeText(
+                                            chatwindo.this,
+                                            "Semantic search failed",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
+                            );
                         }
-                    });
 
-                } else {
-                    runOnUiThread(() -> {
-                        Toast.makeText(
-                                chatwindo.this,
-                                "Semantic search failed",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    });
+                    } catch (Exception e) {
+
+                        Log.e(
+                                TAG,
+                                "SEMANTIC SEARCH ERROR",
+                                e
+                        );
+
+                        runOnUiThread(
+                                () -> Toast.makeText(
+                                        chatwindo.this,
+                                        "Unable to connect to semantic backend",
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                        );
+
+                    } finally {
+
+                        if (connection != null) {
+
+                            connection.disconnect();
+                        }
+                    }
                 }
-
-            } catch (Exception e) {
-                Log.e(TAG, "SEMANTIC SEARCH ERROR", e);
-
-                runOnUiThread(() -> {
-                    Toast.makeText(
-                            chatwindo.this,
-                            "Unable to connect to semantic backend",
-                            Toast.LENGTH_SHORT
-                    ).show();
-                });
-
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-        }).start();
+        ).start();
     }
 
     // ============================================================
     // SHOW SEARCH RESULTS
     // ============================================================
+
     private void showSearchResults(
             String query,
             JSONArray results
     ) {
 
-        if (results == null ||
-                results.length() == 0) {
+        if (
+                results == null
+                        ||
+                        results.length() == 0
+        ) {
+
             new AlertDialog.Builder(
                     chatwindo.this
             )
-                    .setTitle("Semantic Search")
+                    .setTitle(
+                            "Semantic Search"
+                    )
                     .setMessage(
                             "No related messages found."
                     )
@@ -621,7 +1098,14 @@ public class chatwindo extends AppCompatActivity {
                 LinearLayout.VERTICAL
         );
 
-        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        int padding =
+                (int)
+                        (
+                                16 *
+                                        getResources()
+                                                .getDisplayMetrics()
+                                                .density
+                        );
 
         container.setPadding(
                 padding,
@@ -631,24 +1115,48 @@ public class chatwindo extends AppCompatActivity {
         );
 
         try {
-            for (int i = 0;
-                 i < results.length();
-                 i++) {
 
-                JSONObject item = results.getJSONObject(i);
+            for (
+                    int i = 0;
+                    i < results.length();
+                    i++
+            ) {
 
-                String text = item.optString("text", "");
+                JSONObject item =
+                        results.getJSONObject(i);
 
-                double score = item.optDouble(
+                String text =
+                        item.optString(
+                                "text",
+                                ""
+                        );
+
+                double score =
+                        item.optDouble(
                                 "score",
                                 0
                         );
 
-                TextView resultText = new TextView(chatwindo.this);
+                TextView resultText =
+                        new TextView(
+                                chatwindo.this
+                        );
 
-                resultText.setText(text + "\n\nSimilarity: " + String.format("%.2f", score));
+                resultText.setText(
+                        text
+                                +
+                                "\n\nSimilarity: "
+                                +
+                                String.format(
+                                        Locale.getDefault(),
+                                        "%.2f",
+                                        score
+                                )
+                );
 
-                resultText.setTextSize(16);
+                resultText.setTextSize(
+                        16
+                );
 
                 resultText.setPadding(
                         12,
@@ -663,7 +1171,12 @@ public class chatwindo extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "Result parsing error", e);
+
+            Log.e(
+                    TAG,
+                    "Result parsing error",
+                    e
+            );
         }
 
         AlertDialog dialog =
@@ -673,7 +1186,9 @@ public class chatwindo extends AppCompatActivity {
                         .setTitle(
                                 "Search: " + query
                         )
-                        .setView(container)
+                        .setView(
+                                container
+                        )
                         .setPositiveButton(
                                 "CLOSE",
                                 null
@@ -686,7 +1201,9 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // OPEN SEARCH DIALOG
     // ============================================================
+
     public void openSemanticSearch() {
+
         final EditText searchInput =
                 new EditText(
                         chatwindo.this
@@ -700,7 +1217,14 @@ public class chatwindo extends AppCompatActivity {
                 false
         );
 
-        int padding = (int) (20 * getResources().getDisplayMetrics().density);
+        int padding =
+                (int)
+                        (
+                                20 *
+                                        getResources()
+                                                .getDisplayMetrics()
+                                                .density
+                        );
 
         searchInput.setPadding(
                 padding,
@@ -709,7 +1233,8 @@ public class chatwindo extends AppCompatActivity {
                 padding
         );
 
-        AlertDialog dialog = new AlertDialog.Builder(
+        AlertDialog dialog =
+                new AlertDialog.Builder(
                         chatwindo.this
                 )
                         .setTitle(
@@ -728,27 +1253,39 @@ public class chatwindo extends AppCompatActivity {
                         )
                         .create();
 
-        dialog.setOnShowListener(dialogInterface -> {
+        dialog.setOnShowListener(
+                dialogInterface -> {
 
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE
+                    dialog.getButton(
+                            AlertDialog.BUTTON_POSITIVE
                     ).setOnClickListener(
                             v -> {
-                                String query = searchInput
+
+                                String query =
+                                        searchInput
                                                 .getText()
                                                 .toString()
                                                 .trim();
 
                                 if (query.isEmpty()) {
-                                    searchInput.setError("Enter a search query");
+
+                                    searchInput.setError(
+                                            "Enter a search query"
+                                    );
+
                                     return;
                                 }
 
                                 dialog.dismiss();
-                                performSemanticSearch(query);
+
+                                performSemanticSearch(
+                                        query
+                                );
                             }
                     );
                 }
         );
+
         dialog.show();
     }
 }
