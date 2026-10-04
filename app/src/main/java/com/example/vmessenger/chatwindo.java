@@ -180,37 +180,24 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
 
-        // ----------------------------------------------------
-        // SEND MESSAGE
-        // ----------------------------------------------------
-
-        sendbtn.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-
+        sendbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View view) {
                         String message =
                                 textmsg.getText()
                                         .toString()
                                         .trim();
 
                         if (message.isEmpty()) {
-
                             Toast.makeText(
                                     chatwindo.this,
                                     "Enter The Message First",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         textmsg.setText("");
-
-                        Date date =
-                                new Date();
-
+                        Date date = new Date();
                         msgModelclass messagess =
                                 new msgModelclass(
                                         message,
