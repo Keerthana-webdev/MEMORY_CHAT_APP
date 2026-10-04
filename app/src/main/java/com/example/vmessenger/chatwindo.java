@@ -84,35 +84,25 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // RECEIVER DETAILS
         // ----------------------------------------------------
-
         reciverName = getIntent().getStringExtra("nameeee");
         reciverimg = getIntent().getStringExtra("reciverImg");
         reciverUid = getIntent().getStringExtra("uid");
 
         // IMPORTANT:
         // SemanticSearchActivity sends this when a result is clicked.
-        targetMessageId =
-                getIntent().getStringExtra("targetMessageId");
+        targetMessageId = getIntent().getStringExtra("targetMessageId");
 
-        reciverIImg =
-                reciverimg != null ? reciverimg : "";
+        reciverIImg = reciverimg != null ? reciverimg : "";
 
         messagesArrayList = new ArrayList<>();
 
-        Log.d(
-                TAG,
-                "Opened chat. Receiver UID = " + reciverUid
-        );
+        Log.d(TAG, "Opened chat. Receiver UID = " + reciverUid);
 
-        Log.d(
-                TAG,
-                "Target Message ID = " + targetMessageId
-        );
+        Log.d(TAG, "Target Message ID = " + targetMessageId);
 
         // ----------------------------------------------------
         // FIND VIEWS
         // ----------------------------------------------------
-
         sendbtn = findViewById(R.id.sendbtnn);
         textmsg = findViewById(R.id.textmsg);
         reciverNName = findViewById(R.id.recivername);
@@ -122,30 +112,16 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // RECYCLER VIEW
         // ----------------------------------------------------
-
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(this);
-
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
 
-        messageAdpter.setLayoutManager(
-                linearLayoutManager
-        );
-
-        mmessagesAdpter =
-                new messagesAdpter(
-                        chatwindo.this,
-                        messagesArrayList
-                );
-
-        messageAdpter.setAdapter(
-                mmessagesAdpter
-        );
+        messageAdpter.setLayoutManager(linearLayoutManager);
+        mmessagesAdpter = new messagesAdpter(chatwindo.this, messagesArrayList);
+        messageAdpter.setAdapter(mmessagesAdpter);
 
         // ----------------------------------------------------
         // RECEIVER PROFILE
         // ----------------------------------------------------
-
         if (reciverimg != null &&
                 !reciverimg.isEmpty()) {
 
@@ -159,7 +135,6 @@ public class chatwindo extends AppCompatActivity {
                     R.drawable.photocamera
             );
         }
-
         reciverNName.setText(
                 reciverName != null
                         ? reciverName
@@ -169,7 +144,6 @@ public class chatwindo extends AppCompatActivity {
         // ----------------------------------------------------
         // CURRENT USER
         // ----------------------------------------------------
-
         SenderUID = firebaseAuth.getUid();
 
         if (SenderUID == null) {
@@ -179,7 +153,6 @@ public class chatwindo extends AppCompatActivity {
                     "User not logged in",
                     Toast.LENGTH_SHORT
             ).show();
-
             return;
         }
 
