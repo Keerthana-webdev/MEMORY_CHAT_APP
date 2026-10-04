@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SemanticSearchAdapter
-        extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
+public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
 
     private final Context context;
     private final ArrayList<SearchResult> results;
@@ -21,24 +20,20 @@ public class SemanticSearchAdapter
 
 
     public interface OnResultClickListener {
-
         void onResultClick(
                 SearchResult result
         );
     }
-
 
     public SemanticSearchAdapter(
             Context context,
             ArrayList<SearchResult> results,
             OnResultClickListener listener
     ) {
-
         this.context = context;
         this.results = results;
         this.listener = listener;
     }
-
 
     @NonNull
     @Override
@@ -46,7 +41,6 @@ public class SemanticSearchAdapter
             @NonNull ViewGroup parent,
             int viewType
     ) {
-
         View view =
                 LayoutInflater
                         .from(context)
@@ -58,7 +52,6 @@ public class SemanticSearchAdapter
 
         return new ViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(
@@ -97,38 +90,21 @@ public class SemanticSearchAdapter
         );
     }
 
-
     @Override
     public int getItemCount() {
-
         return results.size();
     }
 
-
-    public static class ViewHolder
-            extends RecyclerView.ViewHolder {
-
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         TextView scoreText;
 
-
-        public ViewHolder(
-                @NonNull View itemView
-        ) {
-
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            messageText = itemView.findViewById(R.id.resultMessage);
 
-            messageText =
-                    itemView.findViewById(
-                            R.id.resultMessage
-                    );
-
-
-            scoreText =
-                    itemView.findViewById(
-                            R.id.resultScore
-                    );
+            scoreText = itemView.findViewById(R.id.resultScore);
         }
     }
 }
