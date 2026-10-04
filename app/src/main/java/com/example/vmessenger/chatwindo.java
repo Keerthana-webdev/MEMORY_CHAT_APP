@@ -180,6 +180,9 @@ public class chatwindo extends AppCompatActivity {
                 }
         );
 
+        // ----------------------------------------------------
+        // SEND MESSAGE
+        // ----------------------------------------------------
         sendbtn.setOnClickListener(new View.OnClickListener() {
                     @Override public void onClick(View view) {
                         String message =
