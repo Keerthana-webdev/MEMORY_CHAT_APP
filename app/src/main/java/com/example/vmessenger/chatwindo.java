@@ -217,10 +217,6 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
-                        // ------------------------------------------------
-                        // CREATE ONE FIREBASE MESSAGE ID
-                        // ------------------------------------------------
-
                         DatabaseReference senderMessageRef =
                                 database.getReference()
                                         .child("chats")
