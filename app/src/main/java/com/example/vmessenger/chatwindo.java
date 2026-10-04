@@ -243,10 +243,6 @@ public class chatwindo extends AppCompatActivity {
                                 .addOnSuccessListener(
                                         unused -> {
 
-                                            // --------------------------------
-                                            // SAVE TO RECEIVER CHAT
-                                            // --------------------------------
-
                                             database.getReference()
                                                     .child("chats")
                                                     .child(reciverRoom)
