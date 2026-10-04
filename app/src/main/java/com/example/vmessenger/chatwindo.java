@@ -145,21 +145,12 @@ public class chatwindo extends AppCompatActivity {
 
                         mmessagesAdpter.notifyDataSetChanged();
 
-                        // ------------------------------------------------
-                        // ALWAYS SHOW NEWEST MESSAGE
-                        // ------------------------------------------------
-
                         if (!messagesArrayList.isEmpty()) {
-
-                            messageAdpter.scrollToPosition(
-                                    messagesArrayList.size() - 1
-                            );
+                            messageAdpter.scrollToPosition(messagesArrayList.size() - 1);
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error) {
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
                     }
                 }
         );
