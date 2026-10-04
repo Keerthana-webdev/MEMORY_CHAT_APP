@@ -116,10 +116,6 @@ public class chatwindo extends AppCompatActivity {
             reciverRoom = reciverUid + SenderUID;
         }
 
-        // ----------------------------------------------------
-        // FIREBASE REFERENCES
-        // ----------------------------------------------------
-
         DatabaseReference reference =
                 database.getReference()
                         .child("user")
