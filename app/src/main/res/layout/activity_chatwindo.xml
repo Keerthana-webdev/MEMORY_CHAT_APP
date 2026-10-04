@@ -27,7 +27,6 @@
             android:layout_height="@dimen/_80sdp"
             android:layout_marginTop="@dimen/_7sdp"
             android:src="@drawable/photocamera"
-
             app:civ_border_color="@color/white"
             app:civ_border_width="@dimen/_2sdp" />
 
@@ -65,7 +64,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-
         android:clipToPadding="false"
         android:padding="@dimen/_10sdp"
         android:scrollbars="vertical" />
@@ -79,11 +77,9 @@
         android:id="@+id/ll2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_45sdp"
-
         android:layout_marginStart="@dimen/_2sdp"
         android:layout_marginEnd="@dimen/_2sdp"
         android:layout_marginBottom="@dimen/_2sdp"
-
         android:orientation="horizontal">
 
         <!-- Message box -->
@@ -92,11 +88,9 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/_35sdp"
             android:layout_weight="1"
-
             android:layout_marginStart="@dimen/_4sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_7sdp"
-
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_25sdp">
 
@@ -104,17 +98,13 @@
                 android:id="@+id/textmsg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
-
                 android:background="@null"
-
                 android:fontFamily="@font/poppins_regular"
                 android:hint="Type The Messages..."
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="3"
-
                 android:paddingStart="13dp"
                 android:paddingEnd="5dp" />
 
@@ -127,10 +117,8 @@
             android:id="@+id/sendbtnn"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
-
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"
-
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_25sdp">
 
