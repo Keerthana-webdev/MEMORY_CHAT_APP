@@ -109,21 +109,11 @@ public class chatwindo extends AppCompatActivity {
 
         reciverNName.setText(reciverName != null ? reciverName : "");
 
-        // ----------------------------------------------------
-        // CURRENT USER
-        // ----------------------------------------------------
+        SenderUID = firebaseAuth.getUid();
 
-        SenderUID =
-                firebaseAuth.getUid();
-
-        if (SenderUID != null &&
-                reciverUid != null) {
-
-            senderRoom =
-                    SenderUID + reciverUid;
-
-            reciverRoom =
-                    reciverUid + SenderUID;
+        if (SenderUID != null && reciverUid != null) {
+            senderRoom = SenderUID + reciverUid;
+            reciverRoom = reciverUid + SenderUID;
         }
 
         // ----------------------------------------------------
