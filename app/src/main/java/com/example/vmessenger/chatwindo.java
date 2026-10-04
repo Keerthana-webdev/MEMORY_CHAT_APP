@@ -411,13 +411,10 @@ public class chatwindo extends AppCompatActivity {
                         // ----------------------------------------
                         senderMessageRef
                                 .setValue(messagess)
-                                .addOnSuccessListener(
-                                        unused -> {
-
+                                .addOnSuccessListener(unused -> {
                                             // --------------------------------
                                             // SAVE SAME MESSAGE TO RECEIVER
                                             // --------------------------------
-
                                             database
                                                     .getReference()
                                                     .child("chats")
@@ -431,7 +428,6 @@ public class chatwindo extends AppCompatActivity {
                                             // --------------------------------
                                             // INDEX MESSAGE
                                             // --------------------------------
-
                                             indexMessageToBackend(
                                                     messageId,
                                                     senderRoom,
@@ -443,7 +439,6 @@ public class chatwindo extends AppCompatActivity {
                                 )
                                 .addOnFailureListener(
                                         error -> {
-
                                             Toast.makeText(
                                                     chatwindo.this,
                                                     "Message failed to send",
@@ -465,7 +460,6 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // INDEX MESSAGE INTO GEMINI + PINECONE
     // ============================================================
-
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
@@ -474,195 +468,88 @@ public class chatwindo extends AppCompatActivity {
             long timestamp
     ) {
 
-        new Thread(
-                () -> {
-
-                    HttpURLConnection connection =
-                            null;
-
+        new Thread(() -> {HttpURLConnection connection = null;
                     try {
+                        Log.d(TAG, "Sending message to semantic backend...");
 
-                        Log.d(
-                                TAG,
-                                "Sending message to semantic backend..."
-                        );
+                        URL url = new URL(BACKEND_URL);
 
-                        URL url =
-                                new URL(BACKEND_URL);
+                        connection = (HttpURLConnection) url.openConnection();
 
-                        connection =
-                                (HttpURLConnection)
-                                        url.openConnection();
+                        connection.setRequestMethod("POST");
 
-                        connection.setRequestMethod(
-                                "POST"
-                        );
+                        connection.setRequestProperty("Content-Type", "application/json");
 
-                        connection.setRequestProperty(
-                                "Content-Type",
-                                "application/json"
-                        );
+                        connection.setRequestProperty("Accept", "application/json");
 
-                        connection.setRequestProperty(
-                                "Accept",
-                                "application/json"
-                        );
+                        connection.setConnectTimeout(10000);
 
-                        connection.setConnectTimeout(
-                                10000
-                        );
+                        connection.setReadTimeout(15000);
 
-                        connection.setReadTimeout(
-                                15000
-                        );
-
-                        connection.setDoOutput(
-                                true
-                        );
+                        connection.setDoOutput(true);
 
                         // --------------------------------
                         // CREATE JSON
                         // --------------------------------
+                        JSONObject json = new JSONObject();
 
-                        JSONObject json =
-                                new JSONObject();
+                        json.put("messageId", messageId);
 
-                        json.put(
-                                "messageId",
-                                messageId
-                        );
+                        json.put("conversationId", conversationId);
 
-                        json.put(
-                                "conversationId",
-                                conversationId
-                        );
+                        json.put("senderId", senderId);
 
-                        json.put(
-                                "senderId",
-                                senderId
-                        );
+                        json.put("text", text);
 
-                        json.put(
-                                "text",
-                                text
-                        );
+                        json.put("timestamp", timestamp);
 
-                        json.put(
-                                "timestamp",
-                                timestamp
-                        );
+                        String jsonString = json.toString();
 
-                        String jsonString =
-                                json.toString();
-
-                        Log.d(
-                                TAG,
-                                "Request: "
-                                        + jsonString
-                        );
+                        Log.d(TAG, "Request: " + jsonString);
 
                         // --------------------------------
                         // SEND REQUEST
                         // --------------------------------
-
-                        OutputStream outputStream =
-                                connection
-                                        .getOutputStream();
-
-                        outputStream.write(
-                                jsonString.getBytes(
-                                        "UTF-8"
-                                )
-                        );
-
+                        OutputStream outputStream = connection.getOutputStream();
+                        outputStream.write(jsonString.getBytes("UTF-8"));
                         outputStream.flush();
                         outputStream.close();
 
                         // --------------------------------
                         // READ RESPONSE
                         // --------------------------------
-
-                        int responseCode =
-                                connection
-                                        .getResponseCode();
+                        int responseCode = connection.getResponseCode();
 
                         InputStream inputStream;
-
                         if (
                                 responseCode >= 200
                                         &&
                                         responseCode < 300
                         ) {
-
-                            inputStream =
-                                    connection
-                                            .getInputStream();
-
+                            inputStream = connection.getInputStream();
                         } else {
-
-                            inputStream =
-                                    connection
-                                            .getErrorStream();
+                            inputStream = connection.getErrorStream();
                         }
 
-                        StringBuilder response =
-                                new StringBuilder();
+                        StringBuilder response = new StringBuilder();
 
                         if (inputStream != null) {
-
-                            BufferedReader reader =
-                                    new BufferedReader(
-                                            new InputStreamReader(
-                                                    inputStream
-                                            )
-                                    );
-
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                             String line;
-
-                            while (
-                                    (line =
-                                            reader.readLine())
-                                            != null
-                            ) {
-
-                                response.append(
-                                        line
-                                );
+                            while ((line = reader.readLine()) != null) {
+                                response.append(line);
                             }
-
                             reader.close();
                         }
+                        Log.d(TAG, "Backend response code: " + responseCode);
 
-                        Log.d(
-                                TAG,
-                                "Backend response code: "
-                                        + responseCode
-                        );
+                        Log.d(TAG, "Backend response: " + response);
 
-                        Log.d(
-                                TAG,
-                                "Backend response: "
-                                        + response
-                        );
-
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
-
-                            runOnUiThread(
-                                    () -> Log.d(
-                                            TAG,
-                                            "SEMANTIC SEARCH INDEX SUCCESS"
-                                    )
-                            );
+                        if (responseCode >= 200 && responseCode < 300) {
+                            runOnUiThread(() -> Log.d(TAG, "SEMANTIC SEARCH INDEX SUCCESS"));
 
                         } else {
-
-                            runOnUiThread(
-                                    () -> {
-
+                            runOnUiThread(() -> {
                                         Toast.makeText(
                                                 chatwindo.this,
                                                 "Semantic indexing failed",
