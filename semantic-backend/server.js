@@ -205,7 +205,6 @@ app.post("/index-message", async (req, res) => {
         // --------------------------------------------
         // CREATE PINECONE RECORD
         // --------------------------------------------
-
         const record = {
             id: String(messageId),
             values: embedding,
@@ -227,7 +226,6 @@ app.post("/index-message", async (req, res) => {
         // --------------------------------------------
         // UPSERT INTO PINECONE
         // --------------------------------------------
-
         console.log("Sending record to Pinecone...");
 
         const upsertResponse = await index.upsert({
@@ -242,7 +240,6 @@ app.post("/index-message", async (req, res) => {
         // --------------------------------------------
         // SUCCESS
         // --------------------------------------------
-
         res.json({
             success: true,
             message: "Message indexed successfully",
@@ -252,11 +249,8 @@ app.post("/index-message", async (req, res) => {
         });
 
     } catch (error) {
-
-        console.error("========================================");
         console.error("INDEX MESSAGE ERROR");
         console.error(error);
-        console.error("========================================");
 
         res.status(500).json({
             success: false,
@@ -269,11 +263,9 @@ app.post("/index-message", async (req, res) => {
 // ----------------------------------------------------
 // SEMANTIC SEARCH
 // ----------------------------------------------------
-
 app.post("/search", async (req, res) => {
 
     try {
-
         const {
             query,
             topK,
@@ -283,7 +275,6 @@ app.post("/search", async (req, res) => {
         // --------------------------------------------
         // VALIDATE QUERY
         // --------------------------------------------
-
         if (!query || query.trim().length === 0) {
             return res.status(400).json({
                 success: false,
@@ -294,7 +285,6 @@ app.post("/search", async (req, res) => {
         // --------------------------------------------
         // CREATE QUERY EMBEDDING
         // --------------------------------------------
-
         console.log("Generating search embedding...");
 
         const response = await ai.models.embedContent({
@@ -327,7 +317,6 @@ app.post("/search", async (req, res) => {
         // --------------------------------------------
         // PINECONE SEARCH
         // --------------------------------------------
-
         const searchOptions = {
             vector: queryEmbedding,
             topK: Number(topK) || 10,
@@ -350,26 +339,15 @@ app.post("/search", async (req, res) => {
         // --------------------------------------------
         // FORMAT RESULTS
         // --------------------------------------------
-
         const results =
             (searchResults.matches || []).map(match => {
-
                 return {
                     messageId: match.id,
-
                     score: match.score,
-
-                    text:
-                        match.metadata?.text || "",
-
-                    conversationId:
-                        match.metadata?.conversationId || "",
-
-                    senderId:
-                        match.metadata?.senderId || "",
-
-                    timestamp:
-                        match.metadata?.timestamp || null
+                    text: match.metadata?.text || "",
+                    conversationId: match.metadata?.conversationId || "",
+                    senderId: match.metadata?.senderId || "",
+                    timestamp: match.metadata?.timestamp || null
                 };
 
             });
@@ -386,11 +364,8 @@ app.post("/search", async (req, res) => {
         });
 
     } catch (error) {
-
-        console.error("========================================");
         console.error("SEMANTIC SEARCH ERROR");
         console.error(error);
-        console.error("========================================");
 
         res.status(500).json({
             success: false,
@@ -403,7 +378,6 @@ app.post("/search", async (req, res) => {
 // ----------------------------------------------------
 // START SERVER
 // ----------------------------------------------------
-
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
     console.log("Gemini Embeddings: Connected");
