@@ -15,7 +15,6 @@ const PORT = process.env.PORT || 3000;
 // ----------------------------------------------------
 // ENVIRONMENT CHECK
 // ----------------------------------------------------
-
 if (!process.env.GEMINI_API_KEY) {
     console.error("ERROR: GEMINI_API_KEY is missing in .env");
     process.exit(1);
