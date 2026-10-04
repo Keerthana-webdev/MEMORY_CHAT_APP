@@ -238,10 +238,6 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
-                        // ------------------------------------------------
-                        // SAVE TO SENDER CHAT
-                        // ------------------------------------------------
-
                         senderMessageRef
                                 .setValue(messagess)
                                 .addOnSuccessListener(
