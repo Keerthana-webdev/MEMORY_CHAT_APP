@@ -34,7 +34,6 @@ if (!process.env.PINECONE_INDEX_NAME) {
 // ----------------------------------------------------
 // GEMINI
 // ----------------------------------------------------
-
 const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY
 });
@@ -42,7 +41,6 @@ const ai = new GoogleGenAI({
 // ----------------------------------------------------
 // PINECONE
 // ----------------------------------------------------
-
 const pc = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY
 });
@@ -54,7 +52,6 @@ const index = pc.index({
 // ----------------------------------------------------
 // HOME
 // ----------------------------------------------------
-
 app.get("/", (req, res) => {
     res.json({
         success: true,
@@ -65,12 +62,10 @@ app.get("/", (req, res) => {
 // ----------------------------------------------------
 // TEST GEMINI EMBEDDING
 // ----------------------------------------------------
-
 app.post("/test-embedding", async (req, res) => {
 
     try {
-
-        const text = req.body.text;
+       const text = req.body.text;
 
         if (!text || text.trim().length === 0) {
             return res.status(400).json({
@@ -113,9 +108,7 @@ app.post("/test-embedding", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Gemini embedding error:", error);
-
         res.status(500).json({
             success: false,
             message: "Failed to generate embedding",
@@ -127,15 +120,11 @@ app.post("/test-embedding", async (req, res) => {
 // ----------------------------------------------------
 // INDEX MESSAGE
 // ----------------------------------------------------
-
 app.post("/index-message", async (req, res) => {
 
     try {
-
-        console.log("========================================");
         console.log("INDEX MESSAGE REQUEST");
         console.log(req.body);
-        console.log("========================================");
 
         const {
             messageId,
@@ -148,7 +137,6 @@ app.post("/index-message", async (req, res) => {
         // --------------------------------------------
         // VALIDATION
         // --------------------------------------------
-
         if (!messageId) {
             return res.status(400).json({
                 success: false,
@@ -180,7 +168,6 @@ app.post("/index-message", async (req, res) => {
         // --------------------------------------------
         // GENERATE GEMINI EMBEDDING
         // --------------------------------------------
-
         console.log("Generating Gemini embedding...");
 
         const response = await ai.models.embedContent({
