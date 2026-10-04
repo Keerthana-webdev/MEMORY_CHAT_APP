@@ -828,7 +828,6 @@ public class chatwindo extends AppCompatActivity {
     // ============================================================
     // OPEN SEARCH DIALOG
     // ============================================================
-
     public void openSemanticSearch() {
 
         final EditText searchInput =
@@ -844,14 +843,7 @@ public class chatwindo extends AppCompatActivity {
                 false
         );
 
-        int padding =
-                (int)
-                        (
-                                20 *
-                                        getResources()
-                                                .getDisplayMetrics()
-                                                .density
-                        );
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
 
         searchInput.setPadding(
                 padding,
@@ -912,7 +904,6 @@ public class chatwindo extends AppCompatActivity {
                     );
                 }
         );
-
         dialog.show();
     }
 }
