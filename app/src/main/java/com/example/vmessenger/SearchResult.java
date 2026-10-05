@@ -1,5 +1,7 @@
 package com.example.vmessenger;
+
 public class SearchResult {
+
     private String messageId;
     private String text;
     private String senderId;
@@ -15,7 +17,6 @@ public class SearchResult {
             double score,
             long timestamp
     ) {
-
         this.messageId = messageId;
         this.text = text;
         this.senderId = senderId;

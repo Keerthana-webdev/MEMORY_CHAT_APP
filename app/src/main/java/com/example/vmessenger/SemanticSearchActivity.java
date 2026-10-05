@@ -12,17 +12,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,26 +31,33 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SemanticSearchActivity extends AppCompatActivity {
+
     private static final String TAG = "SEMANTIC_SEARCH";
+
     /*
-     * Android Emulator -> Windows localhost
-     * Make sure this is running:
+     * Android Emulator -> Windows PC
+     *
      * adb reverse tcp:3000 tcp:3000
      */
-    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
+    private static final String SEARCH_URL =
+            "http://127.0.0.1:3000/search";
+
     private EditText searchInput;
     private ImageView searchButton;
     private ImageView backButton;
     private ProgressBar progressBar;
     private TextView emptyText;
     private RecyclerView searchRecyclerView;
+
     private ArrayList<SearchResult> resultsList;
     private SemanticSearchAdapter adapter;
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    private final Handler mainHandler =
+            new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setContentView(
@@ -67,10 +68,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-
         // ---------------------------------------------------------
         // FIND VIEWS
         // ---------------------------------------------------------
+
         searchInput =
                 findViewById(R.id.searchInput);
 
@@ -89,73 +90,66 @@ public class SemanticSearchActivity extends AppCompatActivity {
         searchRecyclerView =
                 findViewById(R.id.searchRecyclerView);
 
-
         // ---------------------------------------------------------
         // RESULT LIST
         // ---------------------------------------------------------
-        resultsList = new ArrayList<>();
+
+        resultsList =
+                new ArrayList<>();
 
         // ---------------------------------------------------------
         // RECYCLER VIEW
         // ---------------------------------------------------------
+
         searchRecyclerView.setLayoutManager(
                 new LinearLayoutManager(
                         SemanticSearchActivity.this
                 )
         );
 
-
         // ---------------------------------------------------------
         // ADAPTER
         // ---------------------------------------------------------
+
         adapter =
                 new SemanticSearchAdapter(
                         SemanticSearchActivity.this,
                         resultsList,
                         new SemanticSearchAdapter.OnResultClickListener() {
+
                             @Override
                             public void onResultClick(
                                     SearchResult result
                             ) {
 
-                                /*
-                                 * IMPORTANT:
-                                 * Pass the COMPLETE SearchResult.
-                                 * This fixes the previous
-                                 * "cannot find symbol variable result"
-                                 * error.
-                                 */
-                                openChatFromSearchResult(result);
+                                openChatFromSearchResult(
+                                        result
+                                );
                             }
                         }
                 );
 
-        searchRecyclerView.setAdapter(
-                adapter
-        );
-
+        searchRecyclerView.setAdapter(adapter);
 
         // ---------------------------------------------------------
         // INITIAL UI
         // ---------------------------------------------------------
-        progressBar.setVisibility(
-                View.GONE
+
+        progressBar.setVisibility(View.GONE);
+
+        emptyText.setText(
+                "Search your memories"
         );
 
-        emptyText.setText("Search your memories");
-
-        emptyText.setVisibility(
-                View.VISIBLE
-        );
-
+        emptyText.setVisibility(View.VISIBLE);
 
         // ---------------------------------------------------------
         // BACK BUTTON
         // ---------------------------------------------------------
+
         backButton.setOnClickListener(
                 v -> finish()
         );
-
 
         // ---------------------------------------------------------
         // SEARCH BUTTON
@@ -181,13 +175,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         return;
                     }
 
-                    performSemanticSearch(
-                            query
-                    );
+                    performSemanticSearch(query);
                 }
         );
     }
-
 
     // =============================================================
     // SEMANTIC SEARCH
@@ -209,12 +200,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
 
-
         Log.d(
                 TAG,
                 "Searching for: " + query
         );
-
 
         new Thread(
                 () -> {
@@ -259,9 +248,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                 true
                         );
 
-
                         // -------------------------------------------------
-                        // REQUEST JSON
+                        // REQUEST
                         // -------------------------------------------------
 
                         JSONObject request =
@@ -277,13 +265,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                 10
                         );
 
-
                         Log.d(
                                 TAG,
                                 "Search request: "
                                         + request
                         );
-
 
                         OutputStream outputStream =
                                 connection.getOutputStream();
@@ -297,9 +283,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         );
 
                         outputStream.flush();
-
                         outputStream.close();
-
 
                         // -------------------------------------------------
                         // RESPONSE
@@ -308,19 +292,18 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         int responseCode =
                                 connection.getResponseCode();
 
-
                         Log.d(
                                 TAG,
                                 "Search response code: "
                                         + responseCode
                         );
 
-
                         InputStream inputStream;
 
                         if (
                                 responseCode >= 200
-                                        && responseCode < 300
+                                        &&
+                                        responseCode < 300
                         ) {
 
                             inputStream =
@@ -332,14 +315,12 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                     connection.getErrorStream();
                         }
 
-
                         if (inputStream == null) {
 
                             throw new Exception(
                                     "Empty response from backend"
                             );
                         }
-
 
                         BufferedReader reader =
                                 new BufferedReader(
@@ -348,30 +329,24 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                         )
                                 );
 
-
                         StringBuilder response =
                                 new StringBuilder();
 
                         String line;
 
-
                         while (
-                                (line = reader.readLine())
+                                (line =
+                                        reader.readLine())
                                         != null
                         ) {
 
-                            response.append(
-                                    line
-                            );
+                            response.append(line);
                         }
-
 
                         reader.close();
 
-
                         String responseText =
                                 response.toString();
-
 
                         Log.d(
                                 TAG,
@@ -379,14 +354,14 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                         + responseText
                         );
 
-
                         // -------------------------------------------------
                         // HTTP CHECK
                         // -------------------------------------------------
 
                         if (
                                 responseCode < 200
-                                        || responseCode >= 300
+                                        ||
+                                        responseCode >= 300
                         ) {
 
                             throw new Exception(
@@ -397,7 +372,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             );
                         }
 
-
                         // -------------------------------------------------
                         // JSON
                         // -------------------------------------------------
@@ -407,13 +381,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                         responseText
                                 );
 
-
                         boolean success =
                                 json.optBoolean(
                                         "success",
                                         false
                                 );
-
 
                         if (!success) {
 
@@ -425,7 +397,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             );
                         }
 
-
                         // -------------------------------------------------
                         // RESULTS
                         // -------------------------------------------------
@@ -435,11 +406,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                         "results"
                                 );
 
-
                         ArrayList<SearchResult>
                                 tempResults =
                                 new ArrayList<>();
-
 
                         if (results != null) {
 
@@ -452,13 +421,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                 JSONObject item =
                                         results.getJSONObject(i);
 
-
                                 String messageId =
                                         item.optString(
                                                 "messageId",
                                                 ""
                                         );
-
 
                                 String text =
                                         item.optString(
@@ -466,13 +433,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                                 ""
                                         );
 
-
                                 String senderId =
                                         item.optString(
                                                 "senderId",
                                                 ""
                                         );
-
 
                                 String conversationId =
                                         item.optString(
@@ -480,20 +445,17 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                                 ""
                                         );
 
-
                                 double score =
                                         item.optDouble(
                                                 "score",
                                                 0
                                         );
 
-
                                 long timestamp =
                                         item.optLong(
                                                 "timestamp",
                                                 0
                                         );
-
 
                                 tempResults.add(
                                         new SearchResult(
@@ -508,7 +470,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             }
                         }
 
-
                         // -------------------------------------------------
                         // UPDATE UI
                         // -------------------------------------------------
@@ -520,17 +481,13 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                             View.GONE
                                     );
 
-
                                     resultsList.clear();
-
 
                                     resultsList.addAll(
                                             tempResults
                                     );
 
-
                                     adapter.notifyDataSetChanged();
-
 
                                     if (
                                             tempResults.isEmpty()
@@ -549,17 +506,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                         emptyText.setVisibility(
                                                 View.GONE
                                         );
-
-                                        Toast.makeText(
-                                                SemanticSearchActivity.this,
-                                                tempResults.size()
-                                                        + " memories found",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
                                     }
                                 }
                         );
-
 
                     } catch (Exception e) {
 
@@ -569,7 +518,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                 e
                         );
 
-
                         mainHandler.post(
                                 () -> {
 
@@ -577,16 +525,13 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                             View.GONE
                                     );
 
-
                                     emptyText.setText(
                                             "Search failed"
                                     );
 
-
                                     emptyText.setVisibility(
                                             View.VISIBLE
                                     );
-
 
                                     Toast.makeText(
                                             SemanticSearchActivity.this,
@@ -597,11 +542,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                 }
                         );
 
-
                     } finally {
 
                         if (connection != null) {
-
                             connection.disconnect();
                         }
                     }
@@ -610,9 +553,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
         ).start();
     }
 
-
     // =============================================================
-    // OPEN CHAT FROM SEARCH RESULT
+    // OPEN EXACT SEARCH RESULT
     // =============================================================
 
     private void openChatFromSearchResult(
@@ -630,24 +572,40 @@ public class SemanticSearchActivity extends AppCompatActivity {
             return;
         }
 
-
-        String conversationId =
-                result.getConversationId();
-
-
-        String senderId =
-                result.getSenderId();
-
-
-        String messageId =
-                result.getMessageId();
-
-
         String currentUserId =
                 FirebaseAuth
                         .getInstance()
                         .getUid();
 
+        if (
+                currentUserId == null
+                        ||
+                        currentUserId.isEmpty()
+        ) {
+
+            Toast.makeText(
+                    this,
+                    "User is not logged in",
+                    Toast.LENGTH_LONG
+            ).show();
+
+            return;
+        }
+
+        String senderId =
+                result.getSenderId();
+
+        String conversationId =
+                result.getConversationId();
+
+        String messageId =
+                result.getMessageId();
+
+        String messageText =
+                result.getText();
+
+        long timestamp =
+                result.getTimestamp();
 
         Log.d(
                 TAG,
@@ -661,20 +619,17 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         Log.d(
                 TAG,
-                "Message ID = "
-                        + messageId
+                "Message ID = " + messageId
         );
 
         Log.d(
                 TAG,
-                "Message = "
-                        + result.getText()
+                "Message Text = " + messageText
         );
 
         Log.d(
                 TAG,
-                "Sender ID = "
-                        + senderId
+                "Sender ID = " + senderId
         );
 
         Log.d(
@@ -689,136 +644,65 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         + currentUserId
         );
 
-
-        // ---------------------------------------------------------
-        // CHECK LOGIN
-        // ---------------------------------------------------------
-
-        if (
-                currentUserId == null
-                        || currentUserId.isEmpty()
-        ) {
-
-            Toast.makeText(
-                    this,
-                    "User is not logged in",
-                    Toast.LENGTH_LONG
-            ).show();
-
-            return;
-        }
-
-
-        // ---------------------------------------------------------
-        // CHECK DATA
-        // ---------------------------------------------------------
-
-        if (
-                conversationId == null
-                        || conversationId.isEmpty()
-        ) {
-
-            Toast.makeText(
-                    this,
-                    "Conversation ID missing",
-                    Toast.LENGTH_LONG
-            ).show();
-
-            return;
-        }
-
-
-        if (
-                senderId == null
-                        || senderId.isEmpty()
-        ) {
-
-            Toast.makeText(
-                    this,
-                    "Sender ID missing",
-                    Toast.LENGTH_LONG
-            ).show();
-
-            return;
-        }
-
-
-        if (
-                messageId == null
-                        || messageId.isEmpty()
-        ) {
-
-            Toast.makeText(
-                    this,
-                    "Message ID missing",
-                    Toast.LENGTH_LONG
-            ).show();
-
-            return;
-        }
-
-
         // ---------------------------------------------------------
         // FIND RECEIVER
         // ---------------------------------------------------------
 
         String receiverUid = null;
 
-
         /*
-         * CASE 1
+         * CASE 1:
          *
-         * Message was sent by the OTHER USER.
+         * The searched message was sent by
+         * the other user.
          *
-         * Therefore senderId = receiver.
+         * Therefore senderId is the receiver.
          */
 
         if (
-                !senderId.equals(
-                        currentUserId
-                )
+                senderId != null
+                        &&
+                        !senderId.isEmpty()
+                        &&
+                        !senderId.equals(
+                                currentUserId
+                        )
         ) {
 
             receiverUid =
                     senderId;
-
-            Log.d(
-                    TAG,
-                    "Receiver found from senderId = "
-                            + receiverUid
-            );
         }
 
-
         /*
-         * CASE 2
+         * CASE 2:
          *
-         * Message was sent by CURRENT USER.
+         * The searched message was sent by
+         * the current user.
          *
-         * Conversation ID is:
+         * conversationId was stored as:
          *
          * currentUserId + receiverUid
          */
 
         else if (
-                conversationId.startsWith(
-                        currentUserId
-                )
+                senderId != null
+                        &&
+                        senderId.equals(
+                                currentUserId
+                        )
+                        &&
+                        conversationId != null
+                        &&
+                        conversationId.startsWith(
+                                currentUserId
+                        )
         ) {
 
             receiverUid =
                     conversationId.substring(
                             currentUserId.length()
                     );
-
-
-            Log.d(
-                    TAG,
-                    "Receiver extracted from conversationId = "
-                            + receiverUid
-            );
         }
-
 
         // ---------------------------------------------------------
         // SAFETY CHECK
@@ -826,35 +710,18 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         if (
                 receiverUid == null
-                        || receiverUid.isEmpty()
-                        || receiverUid.equals(
-                        currentUserId
-                )
+                        ||
+                        receiverUid.isEmpty()
+                        ||
+                        receiverUid.equals(
+                                currentUserId
+                        )
         ) {
 
             Log.e(
                     TAG,
-                    "FAILED TO IDENTIFY RECEIVER"
+                    "Could not determine receiver"
             );
-
-            Log.e(
-                    TAG,
-                    "currentUserId = "
-                            + currentUserId
-            );
-
-            Log.e(
-                    TAG,
-                    "senderId = "
-                            + senderId
-            );
-
-            Log.e(
-                    TAG,
-                    "conversationId = "
-                            + conversationId
-            );
-
 
             Toast.makeText(
                     this,
@@ -865,232 +732,62 @@ public class SemanticSearchActivity extends AppCompatActivity {
             return;
         }
 
-
         Log.d(
                 TAG,
                 "FINAL RECEIVER UID = "
                         + receiverUid
         );
 
+        // ---------------------------------------------------------
+        // OPEN CHAT DIRECTLY
+        //
+        // IMPORTANT:
+        // Do NOT query user/{uid} here.
+        // chatwindo will handle the profile.
+        // ---------------------------------------------------------
 
-        /*
-         * IMPORTANT FIX:
-         *
-         * Pass BOTH receiverUid AND result.
-         *
-         * Previously the method only received receiverUid,
-         * but inside onDataChange() it tried to use "result".
-         *
-         * That caused:
-         *
-         * cannot find symbol variable result
-         */
+        Intent intent =
+                new Intent(
+                        SemanticSearchActivity.this,
+                        chatwindo.class
+                );
 
-        loadReceiverAndOpenChat(
-                receiverUid,
-                result
+        intent.putExtra(
+                "uid",
+                receiverUid
         );
-    }
 
-
-    // =============================================================
-    // LOAD RECEIVER PROFILE AND OPEN CHAT
-    // =============================================================
-
-    private void loadReceiverAndOpenChat(
-            String receiverUid,
-            SearchResult result
-    ) {
-
-        DatabaseReference userReference =
-                FirebaseDatabase
-                        .getInstance()
-                        .getReference()
-                        .child("user")
-                        .child(receiverUid);
-
-
-        userReference.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
-
-                        if (!snapshot.exists()) {
-
-                            Toast.makeText(
-                                    SemanticSearchActivity.this,
-                                    "Receiver user not found",
-                                    Toast.LENGTH_LONG
-                            ).show();
-
-                            Log.e(
-                                    TAG,
-                                    "User not found: "
-                                            + receiverUid
-                            );
-
-                            return;
-                        }
-
-
-                        // -------------------------------------------------
-                        // NAME
-                        // -------------------------------------------------
-
-                        String name = "";
-
-
-                        if (
-                                snapshot
-                                        .child("name")
-                                        .exists()
-                        ) {
-
-                            Object value =
-                                    snapshot
-                                            .child("name")
-                                            .getValue();
-
-                            if (value != null) {
-
-                                name =
-                                        value.toString();
-                            }
-                        }
-
-
-                        // Fallback
-                        if (
-                                name.isEmpty()
-                                        && snapshot
-                                        .child("username")
-                                        .exists()
-                        ) {
-
-                            Object value =
-                                    snapshot
-                                            .child("username")
-                                            .getValue();
-
-                            if (value != null) {
-
-                                name =
-                                        value.toString();
-                            }
-                        }
-
-
-                        // -------------------------------------------------
-                        // PROFILE IMAGE
-                        // -------------------------------------------------
-
-                        String profileImage = "";
-
-
-                        if (
-                                snapshot
-                                        .child("profilepic")
-                                        .exists()
-                        ) {
-
-                            Object value =
-                                    snapshot
-                                            .child("profilepic")
-                                            .getValue();
-
-                            if (value != null) {
-
-                                profileImage =
-                                        value.toString();
-                            }
-                        }
-
-
-                        Log.d(
-                                TAG,
-                                "Opening chat"
-                                        + " UID="
-                                        + receiverUid
-                                        + " NAME="
-                                        + name
-                        );
-
-
-                        // -------------------------------------------------
-                        // OPEN CHAT
-                        // -------------------------------------------------
-
-                        Intent intent =
-                                new Intent(
-                                        SemanticSearchActivity.this,
-                                        chatwindo.class
-                                );
-
-
-                        /*
-                         * These are the keys already used
-                         * by chatwindo.java.
-                         */
-
-                        intent.putExtra(
-                                "uid",
-                                receiverUid
-                        );
-
-
-                        intent.putExtra(
-                                "nameeee",
-                                name
-                        );
-
-
-                        intent.putExtra(
-                                "reciverImg",
-                                profileImage
-                        );
-
-
-                        /*
-                         * This is the IMPORTANT part.
-                         *
-                         * chatwindo can use this ID to locate
-                         * the exact searched message.
-                         */
-
-                        intent.putExtra(
-                                "targetMessageId",
-                                result.getMessageId()
-                        );
-
-
-                        startActivity(
-                                intent
-                        );
-                    }
-
-
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Firebase user lookup failed",
-                                error.toException()
-                        );
-
-
-                        Toast.makeText(
-                                SemanticSearchActivity.this,
-                                "Could not load chat user",
-                                Toast.LENGTH_LONG
-                        ).show();
-                    }
-                }
+        intent.putExtra(
+                "nameeee",
+                ""
         );
+
+        intent.putExtra(
+                "reciverImg",
+                ""
+        );
+
+        // Exact message information
+        intent.putExtra(
+                "targetMessageId",
+                messageId
+        );
+
+        intent.putExtra(
+                "targetMessageText",
+                messageText
+        );
+
+        intent.putExtra(
+                "targetMessageSenderId",
+                senderId
+        );
+
+        intent.putExtra(
+                "targetMessageTimestamp",
+                timestamp
+        );
+
+        startActivity(intent);
     }
 }

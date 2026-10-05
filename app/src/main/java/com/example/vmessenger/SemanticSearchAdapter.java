@@ -12,17 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
+public class SemanticSearchAdapter
+        extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
 
     private final Context context;
     private final ArrayList<SearchResult> results;
     private final OnResultClickListener listener;
 
-
     public interface OnResultClickListener {
-        void onResultClick(
-                SearchResult result
-        );
+        void onResultClick(SearchResult result);
     }
 
     public SemanticSearchAdapter(
@@ -41,14 +39,12 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
             @NonNull ViewGroup parent,
             int viewType
     ) {
-        View view =
-                LayoutInflater
-                        .from(context)
-                        .inflate(
-                                R.layout.search_result_item,
-                                parent,
-                                false
-                        );
+
+        View view = LayoutInflater.from(context).inflate(
+                R.layout.search_result_item,
+                parent,
+                false
+        );
 
         return new ViewHolder(view);
     }
@@ -59,32 +55,22 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
             int position
     ) {
 
-        SearchResult result =
-                results.get(position);
+        SearchResult result = results.get(position);
 
-
-        holder.messageText.setText(
-                result.getText()
-        );
-
+        holder.messageText.setText(result.getText());
 
         holder.scoreText.setText(
                 String.format(
                         Locale.getDefault(),
-                        "Semantic match: %.2f",
+                        "Semantic match: %.2f\nTap to open message",
                         result.getScore()
                 )
         );
 
-
         holder.itemView.setOnClickListener(
                 v -> {
-
                     if (listener != null) {
-
-                        listener.onResultClick(
-                                result
-                        );
+                        listener.onResultClick(result);
                     }
                 }
         );
@@ -95,16 +81,22 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
         return results.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder
+            extends RecyclerView.ViewHolder {
+
         TextView messageText;
         TextView scoreText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            messageText = itemView.findViewById(R.id.resultMessage);
+            messageText = itemView.findViewById(
+                    R.id.resultMessage
+            );
 
-            scoreText = itemView.findViewById(R.id.resultScore);
+            scoreText = itemView.findViewById(
+                    R.id.resultScore
+            );
         }
     }
 }

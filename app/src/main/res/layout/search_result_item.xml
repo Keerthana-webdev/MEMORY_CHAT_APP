@@ -3,12 +3,9 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    android:clickable="true"
-    android:focusable="true"
     app:cardCornerRadius="14dp"
     app:cardElevation="3dp"
     app:cardBackgroundColor="@color/white">
@@ -36,14 +33,6 @@
             android:textColor="#777777"
             android:textSize="12sp"
             android:layout_marginTop="6dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tap to open message"
-            android:textColor="#999999"
-            android:textSize="11sp"
-            android:layout_marginTop="5dp" />
 
     </LinearLayout>
 
