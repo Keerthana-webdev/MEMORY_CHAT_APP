@@ -1,20 +1,18 @@
 package com.example.vmessenger;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlertDialog;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -35,52 +32,50 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatwindo extends AppCompatActivity {
 
-    private static final String TAG = "SEMANTIC_SEARCH";
+    private static final String TAG = "CHAT_WINDOW";
 
     // Android Emulator -> Windows PC
     private static final String BACKEND_URL =
             "http://10.0.2.2:3000/index-message";
 
-    private static final String SEARCH_URL =
-            "http://10.0.2.2:3000/search";
-
-    // ------------------------------------------------------------
-    // RECEIVER DETAILS
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
+    // USER DETAILS
+    // ---------------------------------------------------------
 
     String reciverimg;
     String reciverUid;
     String reciverName;
+
     String SenderUID;
 
     CircleImageView profile;
     TextView reciverNName;
 
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
     // FIREBASE
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
 
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
 
+    // ---------------------------------------------------------
+    // PROFILE IMAGES
+    // ---------------------------------------------------------
+
     public static String senderImg = "";
     public static String reciverIImg = "";
 
-    // ------------------------------------------------------------
-    // CHAT UI
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
+    // MESSAGE UI
+    // ---------------------------------------------------------
 
     CardView sendbtn;
     EditText textmsg;
-
-    String senderRoom;
-    String reciverRoom;
 
     RecyclerView messageAdpter;
 
@@ -88,24 +83,36 @@ public class chatwindo extends AppCompatActivity {
 
     messagesAdpter mmessagesAdpter;
 
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
+    // CHAT ROOMS
+    // ---------------------------------------------------------
+
+    String senderRoom;
+    String reciverRoom;
+
+    // ---------------------------------------------------------
     // SEMANTIC SEARCH TARGET
-    // ------------------------------------------------------------
+    // ---------------------------------------------------------
 
     private String targetMessageId = null;
 
-    private String targetConversationId = null;
-
     private String targetMessageText = null;
+
+    private String targetMessageSenderId = null;
+
+    private long targetMessageTimestamp = 0;
 
     private int targetMessagePosition = -1;
 
-    // ============================================================
+    private boolean openedFromSearch = false;
+
+    // =========================================================
     // ON CREATE
-    // ============================================================
+    // =========================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_chatwindo);
@@ -114,124 +121,21 @@ public class chatwindo extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        // --------------------------------------------------------
+        // -----------------------------------------------------
         // FIREBASE INITIALIZATION
-        // --------------------------------------------------------
+        // -----------------------------------------------------
 
         database = FirebaseDatabase.getInstance();
+
         firebaseAuth = FirebaseAuth.getInstance();
 
-        // --------------------------------------------------------
-        // GET RECEIVER DETAILS
-        // --------------------------------------------------------
-
-        reciverName =
-                getIntent().getStringExtra("nameeee");
-
-        reciverimg =
-                getIntent().getStringExtra("reciverImg");
-
-        /*
-         * Normal chat opening uses:
-         *
-         * uid
-         *
-         * Semantic search can additionally send:
-         *
-         * targetReceiverUid
-         */
-        reciverUid =
-                getIntent().getStringExtra("targetReceiverUid");
-
-        if (reciverUid == null || reciverUid.trim().isEmpty()) {
-
-            reciverUid =
-                    getIntent().getStringExtra("uid");
-        }
-
-        // --------------------------------------------------------
-        // GET SEARCH TARGET
-        // --------------------------------------------------------
-
-        targetMessageId =
-                getIntent().getStringExtra("targetMessageId");
-
-        targetConversationId =
-                getIntent().getStringExtra("targetConversationId");
-
-        targetMessageText =
-                getIntent().getStringExtra("targetMessageText");
-
-        Log.d(
-                TAG,
-                "Opened chat"
-        );
-
-        Log.d(
-                TAG,
-                "Receiver UID = " + reciverUid
-        );
-
-        Log.d(
-                TAG,
-                "Target message ID = " + targetMessageId
-        );
-
-        Log.d(
-                TAG,
-                "Target conversation ID = " +
-                        targetConversationId
-        );
-
-        Log.d(
-                TAG,
-                "Target message text = " +
-                        targetMessageText
-        );
-
-        // --------------------------------------------------------
-        // IMAGE
-        // --------------------------------------------------------
-
-        reciverIImg =
-                reciverimg != null
-                        ? reciverimg
-                        : "";
-
-        // --------------------------------------------------------
-        // MESSAGE LIST
-        // --------------------------------------------------------
-
-        messagesArrayList =
-                new ArrayList<>();
-
-        // --------------------------------------------------------
-        // FIND VIEWS
-        // --------------------------------------------------------
-
-        sendbtn =
-                findViewById(R.id.sendbtnn);
-
-        textmsg =
-                findViewById(R.id.textmsg);
-
-        reciverNName =
-                findViewById(R.id.recivername);
-
-        profile =
-                findViewById(R.id.profileimgg);
-
-        messageAdpter =
-                findViewById(R.id.msgadpter);
-
-        // --------------------------------------------------------
+        // -----------------------------------------------------
         // CURRENT USER
-        // --------------------------------------------------------
+        // -----------------------------------------------------
 
-        SenderUID =
-                firebaseAuth.getUid();
+        SenderUID = firebaseAuth.getUid();
 
-        if (SenderUID == null) {
+        if (SenderUID == null || SenderUID.isEmpty()) {
 
             Toast.makeText(
                     chatwindo.this,
@@ -239,61 +143,138 @@ public class chatwindo extends AppCompatActivity {
                     Toast.LENGTH_SHORT
             ).show();
 
-            return;
-        }
-
-        // --------------------------------------------------------
-        // RECEIVER UID VALIDATION
-        // --------------------------------------------------------
-
-        if (reciverUid == null ||
-                reciverUid.trim().isEmpty()) {
-
-            Toast.makeText(
-                    chatwindo.this,
-                    "Could not identify chat user",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-            Log.e(
-                    TAG,
-                    "Receiver UID is missing"
-            );
+            finish();
 
             return;
         }
 
-        // --------------------------------------------------------
-        // ROOM IDs
-        // --------------------------------------------------------
+        // -----------------------------------------------------
+        // READ INTENT VALUES
+        // -----------------------------------------------------
 
-        senderRoom =
-                SenderUID + reciverUid;
+        reciverUid =
+                getIntent().getStringExtra("uid");
 
-        reciverRoom =
-                reciverUid + SenderUID;
+        reciverName =
+                getIntent().getStringExtra("nameeee");
+
+        reciverimg =
+                getIntent().getStringExtra("reciverImg");
+
+        targetMessageId =
+                getIntent().getStringExtra(
+                        "targetMessageId"
+                );
+
+        targetMessageText =
+                getIntent().getStringExtra(
+                        "targetMessageText"
+                );
+
+        targetMessageSenderId =
+                getIntent().getStringExtra(
+                        "targetMessageSenderId"
+                );
+
+        targetMessageTimestamp =
+                getIntent().getLongExtra(
+                        "targetMessageTimestamp",
+                        0
+                );
+
+        openedFromSearch =
+                targetMessageId != null
+                        && !targetMessageId.isEmpty();
+
+        reciverIImg =
+                reciverimg != null
+                        ? reciverimg
+                        : "";
+
+        messagesArrayList =
+                new ArrayList<>();
+
+        // -----------------------------------------------------
+        // LOG SEARCH INFORMATION
+        // -----------------------------------------------------
 
         Log.d(
                 TAG,
-                "Sender room = " + senderRoom
+                "================================"
         );
 
         Log.d(
                 TAG,
-                "Receiver room = " + reciverRoom
+                "CHAT WINDOW OPENED"
         );
 
-        // --------------------------------------------------------
+        Log.d(
+                TAG,
+                "Current User = " + SenderUID
+        );
+
+        Log.d(
+                TAG,
+                "Intent Receiver = " + reciverUid
+        );
+
+        Log.d(
+                TAG,
+                "Target Message ID = " + targetMessageId
+        );
+
+        Log.d(
+                TAG,
+                "Target Message Text = " + targetMessageText
+        );
+
+        Log.d(
+                TAG,
+                "Target Sender = " + targetMessageSenderId
+        );
+
+        // -----------------------------------------------------
+        // FIND VIEWS
+        // -----------------------------------------------------
+
+        sendbtn =
+                findViewById(
+                        R.id.sendbtnn
+                );
+
+        textmsg =
+                findViewById(
+                        R.id.textmsg
+                );
+
+        reciverNName =
+                findViewById(
+                        R.id.recivername
+                );
+
+        profile =
+                findViewById(
+                        R.id.profileimgg
+                );
+
+        messageAdpter =
+                findViewById(
+                        R.id.msgadpter
+                );
+
+        // -----------------------------------------------------
         // RECYCLER VIEW
-        // --------------------------------------------------------
+        // -----------------------------------------------------
 
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(
+                        chatwindo.this
+                );
 
-        linearLayoutManager.setStackFromEnd(true);
+        layoutManager.setStackFromEnd(true);
 
         messageAdpter.setLayoutManager(
-                linearLayoutManager
+                layoutManager
         );
 
         mmessagesAdpter =
@@ -306,50 +287,174 @@ public class chatwindo extends AppCompatActivity {
                 mmessagesAdpter
         );
 
-        // --------------------------------------------------------
-        // RECEIVER PROFILE
-        // --------------------------------------------------------
+        // -----------------------------------------------------
+        // CURRENT USER VALIDATION
+        // -----------------------------------------------------
 
-        if (reciverimg != null &&
-                !reciverimg.trim().isEmpty()) {
+        if (reciverUid == null
+                || reciverUid.trim().isEmpty()
+                || reciverUid.equals(SenderUID)) {
 
-            Picasso.get()
-                    .load(reciverimg)
-                    .into(profile);
+            /*
+             * This can happen when an old search result
+             * contains the current user's senderId.
+             *
+             * Do NOT open current-user -> current-user chat.
+             *
+             * Try to recover the correct receiver from
+             * conversation information if available.
+             */
 
-        } else {
+            String conversationId =
+                    getIntent().getStringExtra(
+                            "conversationId"
+                    );
 
-            profile.setImageResource(
-                    R.drawable.photocamera
-            );
+            String recoveredUid =
+                    findOtherUserFromConversation(
+                            conversationId,
+                            SenderUID
+                    );
+
+            if (recoveredUid != null
+                    && !recoveredUid.isEmpty()
+                    && !recoveredUid.equals(SenderUID)) {
+
+                reciverUid = recoveredUid;
+
+                Log.d(
+                        TAG,
+                        "Recovered receiver UID = "
+                                + reciverUid
+                );
+
+            } else {
+
+                Toast.makeText(
+                        chatwindo.this,
+                        "Could not identify chat user",
+                        Toast.LENGTH_LONG
+                ).show();
+
+                finish();
+
+                return;
+            }
         }
 
-        reciverNName.setText(
-                reciverName != null
-                        ? reciverName
-                        : ""
+        // -----------------------------------------------------
+        // CREATE CHAT ROOM IDS
+        // -----------------------------------------------------
+
+        senderRoom =
+                SenderUID + reciverUid;
+
+        reciverRoom =
+                reciverUid + SenderUID;
+
+        Log.d(
+                TAG,
+                "Sender Room = " + senderRoom
         );
 
-        // --------------------------------------------------------
-        // FIREBASE REFERENCES
-        // --------------------------------------------------------
+        Log.d(
+                TAG,
+                "Receiver Room = " + reciverRoom
+        );
 
-        DatabaseReference reference =
+        // -----------------------------------------------------
+        // LOAD RECEIVER PROFILE
+        // -----------------------------------------------------
+
+        loadReceiverProfile();
+
+        // -----------------------------------------------------
+        // LOAD CURRENT USER PROFILE
+        // -----------------------------------------------------
+
+        loadSenderProfile();
+
+        // -----------------------------------------------------
+        // LOAD CHAT
+        // -----------------------------------------------------
+
+        loadChatMessages();
+
+        // -----------------------------------------------------
+        // SEND MESSAGE
+        // -----------------------------------------------------
+
+        setupSendButton();
+    }
+
+    // =========================================================
+    // FIND OTHER USER FROM CONVERSATION ID
+    // =========================================================
+
+    private String findOtherUserFromConversation(
+            String conversationId,
+            String currentUserId
+    ) {
+
+        if (conversationId == null
+                || conversationId.isEmpty()
+                || currentUserId == null
+                || currentUserId.isEmpty()) {
+
+            return null;
+        }
+
+        /*
+         * Your app creates conversation IDs as:
+         *
+         * currentUser + receiver
+         *
+         * or
+         *
+         * receiver + currentUser
+         */
+
+        if (conversationId.startsWith(currentUserId)) {
+
+            String otherUid =
+                    conversationId.substring(
+                            currentUserId.length()
+                    );
+
+            if (!otherUid.isEmpty()) {
+                return otherUid;
+            }
+        }
+
+        if (conversationId.endsWith(currentUserId)) {
+
+            String otherUid =
+                    conversationId.substring(
+                            0,
+                            conversationId.length()
+                                    - currentUserId.length()
+                    );
+
+            if (!otherUid.isEmpty()) {
+                return otherUid;
+            }
+        }
+
+        return null;
+    }
+
+    // =========================================================
+    // LOAD RECEIVER PROFILE
+    // =========================================================
+
+    private void loadReceiverProfile() {
+
+        DatabaseReference userReference =
                 database.getReference()
                         .child("user")
-                        .child(SenderUID);
+                        .child(reciverUid);
 
-        DatabaseReference chatreference =
-                database.getReference()
-                        .child("chats")
-                        .child(senderRoom)
-                        .child("messages");
-
-        // --------------------------------------------------------
-        // LOAD CHAT MESSAGES
-        // --------------------------------------------------------
-
-        chatreference.addValueEventListener(
+        userReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
 
                     @Override
@@ -357,132 +462,111 @@ public class chatwindo extends AppCompatActivity {
                             @NonNull DataSnapshot snapshot
                     ) {
 
-                        messagesArrayList.clear();
+                        if (!snapshot.exists()) {
 
-                        targetMessagePosition = -1;
-
-                        int currentPosition = 0;
-
-                        for (
-                                DataSnapshot dataSnapshot :
-                                snapshot.getChildren()
-                        ) {
-
-                            msgModelclass message =
-                                    dataSnapshot.getValue(
-                                            msgModelclass.class
-                                    );
-
-                            if (message == null) {
-                                continue;
-                            }
-
-                            messagesArrayList.add(
-                                    message
+                            Log.e(
+                                    TAG,
+                                    "Receiver profile not found: "
+                                            + reciverUid
                             );
 
-                            String firebaseMessageId =
-                                    dataSnapshot.getKey();
+                            reciverNName.setText(
+                                    reciverName != null
+                                            ? reciverName
+                                            : ""
+                            );
 
-                            // ------------------------------------------------
-                            // FIND EXACT SEARCHED MESSAGE BY FIREBASE KEY
-                            // ------------------------------------------------
+                            if (reciverimg == null
+                                    || reciverimg.isEmpty()) {
 
-                            if (
-                                    targetMessageId != null
-                                            &&
-                                            !targetMessageId.trim().isEmpty()
-                                            &&
-                                            firebaseMessageId != null
-                                            &&
-                                            targetMessageId.equals(
-                                                    firebaseMessageId
-                                            )
-                            ) {
-
-                                targetMessagePosition =
-                                        currentPosition;
-
-                                Log.d(
-                                        TAG,
-                                        "FOUND TARGET MESSAGE AT POSITION: "
-                                                + targetMessagePosition
+                                profile.setImageResource(
+                                        R.drawable.photocamera
                                 );
                             }
 
-                            currentPosition++;
+                            return;
                         }
 
-                        mmessagesAdpter.notifyDataSetChanged();
+                        // -------------------------------------------------
+                        // NAME
+                        // -------------------------------------------------
 
-                        // ------------------------------------------------
-                        // SCROLL TO SEARCHED MESSAGE
-                        // ------------------------------------------------
+                        String name = "";
 
-                        if (targetMessagePosition >= 0) {
+                        Object nameValue =
+                                snapshot.child("name")
+                                        .getValue();
 
-                            final int finalPosition =
-                                    targetMessagePosition;
+                        if (nameValue != null) {
 
-                            messageAdpter.post(
-                                    new Runnable() {
+                            name =
+                                    nameValue.toString();
+                        }
 
-                                        @Override
-                                        public void run() {
+                        if (name.isEmpty()) {
 
-                                            RecyclerView.LayoutManager
-                                                    layoutManager =
-                                                    messageAdpter
-                                                            .getLayoutManager();
+                            Object usernameValue =
+                                    snapshot.child("username")
+                                            .getValue();
 
-                                            if (
-                                                    layoutManager
-                                                            instanceof
-                                                            LinearLayoutManager
-                                            ) {
+                            if (usernameValue != null) {
 
-                                                LinearLayoutManager
-                                                        linearLayoutManager =
-                                                        (LinearLayoutManager)
-                                                                layoutManager;
+                                name =
+                                        usernameValue.toString();
+                            }
+                        }
 
-                                                linearLayoutManager
-                                                        .scrollToPositionWithOffset(
-                                                                finalPosition,
-                                                                200
-                                                        );
+                        if (name.isEmpty()
+                                && reciverName != null) {
 
-                                                Log.d(
-                                                        TAG,
-                                                        "Scrolled to exact searched message"
-                                                );
-                                            }
-                                        }
-                                    }
-                            );
+                            name = reciverName;
+                        }
+
+                        reciverName = name;
+
+                        reciverNName.setText(
+                                name
+                        );
+
+                        // -------------------------------------------------
+                        // PROFILE IMAGE
+                        // -------------------------------------------------
+
+                        String image = "";
+
+                        Object imageValue =
+                                snapshot.child("profilepic")
+                                        .getValue();
+
+                        if (imageValue != null) {
+
+                            image =
+                                    imageValue.toString();
+                        }
+
+                        if (!image.isEmpty()) {
+
+                            reciverimg = image;
+
+                            reciverIImg = image;
+
+                            Picasso.get()
+                                    .load(image)
+                                    .into(profile);
 
                         } else {
 
-                            // ------------------------------------------------
-                            // NORMAL CHAT OPENING
-                            // ------------------------------------------------
+                            if (reciverimg != null
+                                    && !reciverimg.isEmpty()) {
 
-                            if (!messagesArrayList.isEmpty()) {
+                                Picasso.get()
+                                        .load(reciverimg)
+                                        .into(profile);
 
-                                messageAdpter.post(
-                                        new Runnable() {
+                            } else {
 
-                                            @Override
-                                            public void run() {
-
-                                                messageAdpter
-                                                        .scrollToPosition(
-                                                                messagesArrayList
-                                                                        .size()
-                                                                        - 1
-                                                        );
-                                            }
-                                        }
+                                profile.setImageResource(
+                                        R.drawable.photocamera
                                 );
                             }
                         }
@@ -495,18 +579,26 @@ public class chatwindo extends AppCompatActivity {
 
                         Log.e(
                                 TAG,
-                                "Chat messages error",
+                                "Receiver profile error",
                                 error.toException()
                         );
                     }
                 }
         );
+    }
 
-        // ------------------------------------------------------------
-        // LOAD SENDER IMAGE
-        // ------------------------------------------------------------
+    // =========================================================
+    // LOAD SENDER PROFILE
+    // =========================================================
 
-        reference.addValueEventListener(
+    private void loadSenderProfile() {
+
+        DatabaseReference reference =
+                database.getReference()
+                        .child("user")
+                        .child(SenderUID);
+
+        reference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
 
                     @Override
@@ -514,13 +606,10 @@ public class chatwindo extends AppCompatActivity {
                             @NonNull DataSnapshot snapshot
                     ) {
 
-                        if (
-                                snapshot.exists()
-                                        &&
-                                        snapshot.child(
-                                                "profilepic"
-                                        ).getValue() != null
-                        ) {
+                        if (snapshot.exists()
+                                && snapshot.child(
+                                "profilepic"
+                        ).getValue() != null) {
 
                             senderImg =
                                     snapshot.child(
@@ -534,7 +623,11 @@ public class chatwindo extends AppCompatActivity {
                             senderImg = "";
                         }
 
-                        mmessagesAdpter.notifyDataSetChanged();
+                        if (mmessagesAdpter != null) {
+
+                            mmessagesAdpter
+                                    .notifyDataSetChanged();
+                        }
                     }
 
                     @Override
@@ -544,16 +637,303 @@ public class chatwindo extends AppCompatActivity {
 
                         Log.e(
                                 TAG,
-                                "Profile image error",
+                                "Sender profile error",
                                 error.toException()
                         );
                     }
                 }
         );
+    }
 
-        // ------------------------------------------------------------
-        // SEND MESSAGE
-        // ------------------------------------------------------------
+    // =========================================================
+    // LOAD CHAT MESSAGES
+    // =========================================================
+
+    private void loadChatMessages() {
+
+        DatabaseReference primaryReference =
+                database.getReference()
+                        .child("chats")
+                        .child(senderRoom)
+                        .child("messages");
+
+        primaryReference.addValueEventListener(
+                new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(
+                            @NonNull DataSnapshot snapshot
+                    ) {
+
+                        if (snapshot.exists()
+                                && snapshot.getChildrenCount() > 0) {
+
+                            displayMessages(
+                                    snapshot
+                            );
+
+                        } else {
+
+                            /*
+                             * Primary room is empty.
+                             * Try reverse room.
+                             */
+                            loadReverseRoom();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        Log.e(
+                                TAG,
+                                "Primary chat load failed",
+                                error.toException()
+                        );
+
+                        loadReverseRoom();
+                    }
+                }
+        );
+    }
+
+    // =========================================================
+    // LOAD REVERSE CHAT ROOM
+    // =========================================================
+
+    private void loadReverseRoom() {
+
+        DatabaseReference reverseReference =
+                database.getReference()
+                        .child("chats")
+                        .child(reciverRoom)
+                        .child("messages");
+
+        reverseReference.addValueEventListener(
+                new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(
+                            @NonNull DataSnapshot snapshot
+                    ) {
+
+                        if (snapshot.exists()
+                                && snapshot.getChildrenCount() > 0) {
+
+                            displayMessages(
+                                    snapshot
+                            );
+
+                        } else {
+
+                            messagesArrayList.clear();
+
+                            mmessagesAdpter
+                                    .notifyDataSetChanged();
+
+                            Log.d(
+                                    TAG,
+                                    "No messages found in either chat room"
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        Log.e(
+                                TAG,
+                                "Reverse chat load failed",
+                                error.toException()
+                        );
+                    }
+                }
+        );
+    }
+
+    // =========================================================
+    // DISPLAY MESSAGES + FIND EXACT SEARCH RESULT
+    // =========================================================
+
+    private void displayMessages(
+            DataSnapshot snapshot
+    ) {
+
+        messagesArrayList.clear();
+
+        targetMessagePosition = -1;
+
+        int position = 0;
+
+        for (DataSnapshot dataSnapshot :
+                snapshot.getChildren()) {
+
+            msgModelclass message =
+                    dataSnapshot.getValue(
+                            msgModelclass.class
+                    );
+
+            if (message == null) {
+                continue;
+            }
+
+            messagesArrayList.add(
+                    message
+            );
+
+            /*
+             * VERY IMPORTANT:
+             *
+             * Firebase message ID is the
+             * DataSnapshot key.
+             *
+             * Semantic search stores this same
+             * key as messageId.
+             */
+
+            String firebaseMessageId =
+                    dataSnapshot.getKey();
+
+            if (targetMessageId != null
+                    && firebaseMessageId != null
+                    && targetMessageId.equals(
+                    firebaseMessageId
+            )) {
+
+                targetMessagePosition =
+                        position;
+
+                Log.d(
+                        TAG,
+                        "================================"
+                );
+
+                Log.d(
+                        TAG,
+                        "TARGET MESSAGE FOUND"
+                );
+
+                Log.d(
+                        TAG,
+                        "Firebase ID = "
+                                + firebaseMessageId
+                );
+
+                Log.d(
+                        TAG,
+                        "Position = "
+                                + targetMessagePosition
+                );
+
+                Log.d(
+                        TAG,
+                        "Text = "
+                                + targetMessageText
+                );
+
+                Log.d(
+                        TAG,
+                        "================================"
+                );
+            }
+
+            position++;
+        }
+
+        mmessagesAdpter.notifyDataSetChanged();
+
+        // -----------------------------------------------------
+        // SCROLL TO EXACT SEARCH RESULT
+        // -----------------------------------------------------
+
+        if (targetMessagePosition >= 0) {
+
+            final int finalPosition =
+                    targetMessagePosition;
+
+            messageAdpter.post(
+                    new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            RecyclerView.LayoutManager
+                                    manager =
+                                    messageAdpter
+                                            .getLayoutManager();
+
+                            if (manager
+                                    instanceof LinearLayoutManager) {
+
+                                LinearLayoutManager
+                                        linearManager =
+                                        (LinearLayoutManager)
+                                                manager;
+
+                                linearManager
+                                        .scrollToPositionWithOffset(
+                                                finalPosition,
+                                                250
+                                        );
+
+                                Log.d(
+                                        TAG,
+                                        "SCROLLED TO EXACT SEARCHED MESSAGE"
+                                );
+                            }
+                        }
+                    }
+            );
+
+        } else {
+
+            /*
+             * Search result did not match a Firebase key.
+             *
+             * This normally means the indexed message
+             * does not exist in this room.
+             *
+             * For normal chat opening, show latest.
+             */
+
+            if (!openedFromSearch
+                    && !messagesArrayList.isEmpty()) {
+
+                messageAdpter.post(
+                        new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                messageAdpter
+                                        .scrollToPosition(
+                                                messagesArrayList
+                                                        .size() - 1
+                                        );
+                            }
+                        }
+                );
+            }
+
+            if (openedFromSearch) {
+
+                Log.w(
+                        TAG,
+                        "Target message ID was not found in this chat"
+                );
+            }
+        }
+    }
+
+    // =========================================================
+    // SEND MESSAGE
+    // =========================================================
+
+    private void setupSendButton() {
 
         sendbtn.setOnClickListener(
                 new View.OnClickListener() {
@@ -577,6 +957,18 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
+                        if (senderRoom == null
+                                || reciverRoom == null) {
+
+                            Toast.makeText(
+                                    chatwindo.this,
+                                    "Chat connection error",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            return;
+                        }
+
                         textmsg.setText("");
 
                         Date date =
@@ -589,27 +981,14 @@ public class chatwindo extends AppCompatActivity {
                                         date.getTime()
                                 );
 
-                        if (
-                                senderRoom == null
-                                        ||
-                                        reciverRoom == null
-                        ) {
+                        // -------------------------------------------------
+                        // CREATE ONE FIREBASE MESSAGE ID
+                        // -------------------------------------------------
 
-                            Toast.makeText(
-                                    chatwindo.this,
-                                    "Chat connection error",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-
-                            return;
-                        }
-
-                        // ------------------------------------------------
-                        // CREATE ONE MESSAGE ID
-                        // ------------------------------------------------
-
-                        DatabaseReference senderMessageRef =
-                                database.getReference()
+                        DatabaseReference
+                                senderMessageRef =
+                                database
+                                        .getReference()
                                         .child("chats")
                                         .child(senderRoom)
                                         .child("messages")
@@ -629,18 +1008,18 @@ public class chatwindo extends AppCompatActivity {
                             return;
                         }
 
-                        // ------------------------------------------------
-                        // SAVE TO SENDER CHAT
-                        // ------------------------------------------------
+                        // -------------------------------------------------
+                        // SAVE TO SENDER ROOM
+                        // -------------------------------------------------
 
                         senderMessageRef
                                 .setValue(messagess)
                                 .addOnSuccessListener(
                                         unused -> {
 
-                                            // --------------------------------
+                                            // ---------------------------------
                                             // SAVE SAME MESSAGE TO RECEIVER
-                                            // --------------------------------
+                                            // ---------------------------------
 
                                             database
                                                     .getReference()
@@ -652,9 +1031,9 @@ public class chatwindo extends AppCompatActivity {
                                                             messagess
                                                     );
 
-                                            // --------------------------------
+                                            // ---------------------------------
                                             // INDEX MESSAGE
-                                            // --------------------------------
+                                            // ---------------------------------
 
                                             indexMessageToBackend(
                                                     messageId,
@@ -686,9 +1065,9 @@ public class chatwindo extends AppCompatActivity {
         );
     }
 
-    // ============================================================
+    // =========================================================
     // INDEX MESSAGE INTO GEMINI + PINECONE
-    // ============================================================
+    // =========================================================
 
     private void indexMessageToBackend(
             String messageId,
@@ -712,7 +1091,9 @@ public class chatwindo extends AppCompatActivity {
                         );
 
                         URL url =
-                                new URL(BACKEND_URL);
+                                new URL(
+                                        BACKEND_URL
+                                );
 
                         connection =
                                 (HttpURLConnection)
@@ -744,9 +1125,9 @@ public class chatwindo extends AppCompatActivity {
                                 true
                         );
 
-                        // ------------------------------------------------
-                        // JSON REQUEST
-                        // ------------------------------------------------
+                        // -------------------------------------------------
+                        // JSON
+                        // -------------------------------------------------
 
                         JSONObject json =
                                 new JSONObject();
@@ -781,45 +1162,50 @@ public class chatwindo extends AppCompatActivity {
 
                         Log.d(
                                 TAG,
-                                "Request: " + jsonString
+                                "Request = "
+                                        + jsonString
                         );
 
-                        // ------------------------------------------------
+                        // -------------------------------------------------
                         // SEND
-                        // ------------------------------------------------
+                        // -------------------------------------------------
 
                         OutputStream outputStream =
-                                connection.getOutputStream();
+                                connection
+                                        .getOutputStream();
 
                         outputStream.write(
-                                jsonString.getBytes("UTF-8")
+                                jsonString.getBytes(
+                                        "UTF-8"
+                                )
                         );
 
                         outputStream.flush();
+
                         outputStream.close();
 
-                        // ------------------------------------------------
+                        // -------------------------------------------------
                         // RESPONSE
-                        // ------------------------------------------------
+                        // -------------------------------------------------
 
                         int responseCode =
-                                connection.getResponseCode();
+                                connection
+                                        .getResponseCode();
 
                         InputStream inputStream;
 
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
+                        if (responseCode >= 200
+                                && responseCode < 300) {
 
                             inputStream =
-                                    connection.getInputStream();
+                                    connection
+                                            .getInputStream();
 
                         } else {
 
                             inputStream =
-                                    connection.getErrorStream();
+                                    connection
+                                            .getErrorStream();
                         }
 
                         StringBuilder response =
@@ -842,7 +1228,9 @@ public class chatwindo extends AppCompatActivity {
                                             != null
                             ) {
 
-                                response.append(line);
+                                response.append(
+                                        line
+                                );
                             }
 
                             reader.close();
@@ -850,46 +1238,32 @@ public class chatwindo extends AppCompatActivity {
 
                         Log.d(
                                 TAG,
-                                "Backend response code: "
+                                "Backend response code = "
                                         + responseCode
                         );
 
                         Log.d(
                                 TAG,
-                                "Backend response: "
+                                "Backend response = "
                                         + response
                         );
 
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
+                        if (responseCode >= 200
+                                && responseCode < 300) {
 
-                            runOnUiThread(
-                                    () ->
-                                            Log.d(
-                                                    TAG,
-                                                    "SEMANTIC SEARCH INDEX SUCCESS"
-                                            )
+                            Log.d(
+                                    TAG,
+                                    "SEMANTIC INDEX SUCCESS"
                             );
 
                         } else {
 
                             runOnUiThread(
-                                    () -> {
-
-                                        Toast.makeText(
-                                                chatwindo.this,
-                                                "Semantic indexing failed",
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-
-                                        Log.e(
-                                                TAG,
-                                                "Semantic indexing failed"
-                                        );
-                                    }
+                                    () -> Toast.makeText(
+                                            chatwindo.this,
+                                            "Semantic indexing failed",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
                             );
                         }
 
@@ -904,6 +1278,7 @@ public class chatwindo extends AppCompatActivity {
                     } finally {
 
                         if (connection != null) {
+
                             connection.disconnect();
                         }
                     }
@@ -911,485 +1286,35 @@ public class chatwindo extends AppCompatActivity {
         ).start();
     }
 
-    // ============================================================
-    // SEMANTIC SEARCH
-    // ============================================================
+    // =========================================================
+    // SEARCH BUTTON SUPPORT
+    // =========================================================
 
-    private void performSemanticSearch(
-            String query
+    public void openSemanticSearch(
+            View view
     ) {
 
-        if (
-                query == null
-                        ||
-                        query.trim().isEmpty()
-        ) {
+        Intent intent =
+                new Intent(
+                        chatwindo.this,
+                        SemanticSearchActivity.class
+                );
 
-            Toast.makeText(
-                    chatwindo.this,
-                    "Enter something to search",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-            return;
-        }
-
-        new Thread(
-                () -> {
-
-                    HttpURLConnection connection =
-                            null;
-
-                    try {
-
-                        Log.d(
-                                TAG,
-                                "Starting semantic search..."
-                        );
-
-                        URL url =
-                                new URL(SEARCH_URL);
-
-                        connection =
-                                (HttpURLConnection)
-                                        url.openConnection();
-
-                        connection.setRequestMethod(
-                                "POST"
-                        );
-
-                        connection.setRequestProperty(
-                                "Content-Type",
-                                "application/json"
-                        );
-
-                        connection.setRequestProperty(
-                                "Accept",
-                                "application/json"
-                        );
-
-                        connection.setConnectTimeout(
-                                10000
-                        );
-
-                        connection.setReadTimeout(
-                                15000
-                        );
-
-                        connection.setDoOutput(
-                                true
-                        );
-
-                        JSONObject json =
-                                new JSONObject();
-
-                        json.put(
-                                "query",
-                                query
-                        );
-
-                        json.put(
-                                "topK",
-                                10
-                        );
-
-                        if (senderRoom != null) {
-
-                            json.put(
-                                    "conversationId",
-                                    senderRoom
-                            );
-                        }
-
-                        String jsonString =
-                                json.toString();
-
-                        Log.d(
-                                TAG,
-                                "Search request: "
-                                        + jsonString
-                        );
-
-                        OutputStream outputStream =
-                                connection.getOutputStream();
-
-                        outputStream.write(
-                                jsonString.getBytes("UTF-8")
-                        );
-
-                        outputStream.flush();
-                        outputStream.close();
-
-                        int responseCode =
-                                connection.getResponseCode();
-
-                        InputStream inputStream;
-
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
-
-                            inputStream =
-                                    connection.getInputStream();
-
-                        } else {
-
-                            inputStream =
-                                    connection.getErrorStream();
-                        }
-
-                        StringBuilder response =
-                                new StringBuilder();
-
-                        if (inputStream != null) {
-
-                            BufferedReader reader =
-                                    new BufferedReader(
-                                            new InputStreamReader(
-                                                    inputStream
-                                            )
-                                    );
-
-                            String line;
-
-                            while (
-                                    (line =
-                                            reader.readLine())
-                                            != null
-                            ) {
-
-                                response.append(line);
-                            }
-
-                            reader.close();
-                        }
-
-                        Log.d(
-                                TAG,
-                                "Search response code: "
-                                        + responseCode
-                        );
-
-                        Log.d(
-                                TAG,
-                                "Search response: "
-                                        + response
-                        );
-
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
-
-                            JSONObject result =
-                                    new JSONObject(
-                                            response.toString()
-                                    );
-
-                            JSONArray results =
-                                    result.optJSONArray(
-                                            "results"
-                                    );
-
-                            runOnUiThread(
-                                    () -> {
-
-                                        try {
-
-                                            showSearchResults(
-                                                    query,
-                                                    results
-                                            );
-
-                                        } catch (Exception e) {
-
-                                            Log.e(
-                                                    TAG,
-                                                    "Error showing search results",
-                                                    e
-                                            );
-
-                                            Toast.makeText(
-                                                    chatwindo.this,
-                                                    "Could not display results",
-                                                    Toast.LENGTH_SHORT
-                                            ).show();
-                                        }
-                                    }
-                            );
-
-                        } else {
-
-                            runOnUiThread(
-                                    () ->
-                                            Toast.makeText(
-                                                    chatwindo.this,
-                                                    "Semantic search failed",
-                                                    Toast.LENGTH_SHORT
-                                            ).show()
-                            );
-                        }
-
-                    } catch (Exception e) {
-
-                        Log.e(
-                                TAG,
-                                "SEMANTIC SEARCH ERROR",
-                                e
-                        );
-
-                        runOnUiThread(
-                                () ->
-                                        Toast.makeText(
-                                                chatwindo.this,
-                                                "Unable to connect to semantic backend",
-                                                Toast.LENGTH_SHORT
-                                        ).show()
-                        );
-
-                    } finally {
-
-                        if (connection != null) {
-                            connection.disconnect();
-                        }
-                    }
-                }
-        ).start();
+        startActivity(intent);
     }
 
-    // ============================================================
-    // SHOW SEARCH RESULTS
-    // ============================================================
-
-    private void showSearchResults(
-            String query,
-            JSONArray results
-    ) {
-
-        if (
-                results == null
-                        ||
-                        results.length() == 0
-        ) {
-
-            new AlertDialog.Builder(
-                    chatwindo.this
-            )
-                    .setTitle(
-                            "Semantic Search"
-                    )
-                    .setMessage(
-                            "No related messages found."
-                    )
-                    .setPositiveButton(
-                            "OK",
-                            null
-                    )
-                    .show();
-
-            return;
-        }
-
-        LinearLayout container =
-                new LinearLayout(
-                        chatwindo.this
-                );
-
-        container.setOrientation(
-                LinearLayout.VERTICAL
-        );
-
-        int padding =
-                (int)
-                        (
-                                16 *
-                                        getResources()
-                                                .getDisplayMetrics()
-                                                .density
-                        );
-
-        container.setPadding(
-                padding,
-                padding,
-                padding,
-                padding
-        );
-
-        try {
-
-            for (
-                    int i = 0;
-                    i < results.length();
-                    i++
-            ) {
-
-                JSONObject item =
-                        results.getJSONObject(i);
-
-                String text =
-                        item.optString(
-                                "text",
-                                ""
-                        );
-
-                double score =
-                        item.optDouble(
-                                "score",
-                                0
-                        );
-
-                TextView resultText =
-                        new TextView(
-                                chatwindo.this
-                        );
-
-                resultText.setText(
-                        text
-                                +
-                                "\n\nSimilarity: "
-                                +
-                                String.format(
-                                        Locale.getDefault(),
-                                        "%.2f",
-                                        score
-                                )
-                );
-
-                resultText.setTextSize(
-                        16
-                );
-
-                resultText.setPadding(
-                        12,
-                        18,
-                        12,
-                        18
-                );
-
-                container.addView(
-                        resultText
-                );
-            }
-
-        } catch (Exception e) {
-
-            Log.e(
-                    TAG,
-                    "Result parsing error",
-                    e
-            );
-        }
-
-        AlertDialog dialog =
-                new AlertDialog.Builder(
-                        chatwindo.this
-                )
-                        .setTitle(
-                                "Search: " + query
-                        )
-                        .setView(
-                                container
-                        )
-                        .setPositiveButton(
-                                "CLOSE",
-                                null
-                        )
-                        .create();
-
-        dialog.show();
-    }
-
-    // ============================================================
-    // OPEN SEARCH DIALOG
-    // ============================================================
+    // =========================================================
+    // OPTIONAL NO-ARG XML onClick SUPPORT
+    // =========================================================
 
     public void openSemanticSearch() {
 
-        final EditText searchInput =
-                new EditText(
-                        chatwindo.this
+        Intent intent =
+                new Intent(
+                        chatwindo.this,
+                        SemanticSearchActivity.class
                 );
 
-        searchInput.setHint(
-                "Search your conversation..."
-        );
-
-        searchInput.setSingleLine(
-                false
-        );
-
-        int padding =
-                (int)
-                        (
-                                20 *
-                                        getResources()
-                                                .getDisplayMetrics()
-                                                .density
-                        );
-
-        searchInput.setPadding(
-                padding,
-                padding,
-                padding,
-                padding
-        );
-
-        AlertDialog dialog =
-                new AlertDialog.Builder(
-                        chatwindo.this
-                )
-                        .setTitle(
-                                "Semantic Search"
-                        )
-                        .setView(
-                                searchInput
-                        )
-                        .setNegativeButton(
-                                "CANCEL",
-                                null
-                        )
-                        .setPositiveButton(
-                                "SEARCH",
-                                null
-                        )
-                        .create();
-
-        dialog.setOnShowListener(
-                dialogInterface -> {
-
-                    dialog.getButton(
-                            AlertDialog.BUTTON_POSITIVE
-                    ).setOnClickListener(
-                            v -> {
-
-                                String query =
-                                        searchInput
-                                                .getText()
-                                                .toString()
-                                                .trim();
-
-                                if (query.isEmpty()) {
-
-                                    searchInput.setError(
-                                            "Enter a search query"
-                                    );
-
-                                    return;
-                                }
-
-                                dialog.dismiss();
-
-                                performSemanticSearch(
-                                        query
-                                );
-                            }
-                    );
-                }
-        );
-
-        dialog.show();
+        startActivity(intent);
     }
 }

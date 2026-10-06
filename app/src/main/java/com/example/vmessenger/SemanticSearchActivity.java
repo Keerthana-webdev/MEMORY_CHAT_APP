@@ -30,76 +30,116 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class SemanticSearchActivity extends AppCompatActivity {
+public class SemanticSearchActivity
+        extends AppCompatActivity {
 
-    private static final String TAG = "SEMANTIC_SEARCH";
+    private static final String TAG =
+            "SEMANTIC_SEARCH";
 
-    /*
-     * Android Emulator -> Windows PC
-     *
-     * adb reverse tcp:3000 tcp:3000
-     */
+    // ---------------------------------------------------------
+    // Android Emulator -> Windows PC
+    //
+    // Keep this because your search is currently working.
+    // ---------------------------------------------------------
+
     private static final String SEARCH_URL =
             "http://127.0.0.1:3000/search";
 
+    // ---------------------------------------------------------
+    // VIEWS
+    // ---------------------------------------------------------
+
     private EditText searchInput;
+
     private ImageView searchButton;
+
     private ImageView backButton;
+
     private ProgressBar progressBar;
+
     private TextView emptyText;
+
     private RecyclerView searchRecyclerView;
 
+    // ---------------------------------------------------------
+    // RESULTS
+    // ---------------------------------------------------------
+
     private ArrayList<SearchResult> resultsList;
+
     private SemanticSearchAdapter adapter;
 
     private final Handler mainHandler =
-            new Handler(Looper.getMainLooper());
+            new Handler(
+                    Looper.getMainLooper()
+            );
+
+    // =========================================================
+    // ON CREATE
+    // =========================================================
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(
+            Bundle savedInstanceState
+    ) {
 
-        super.onCreate(savedInstanceState);
+        super.onCreate(
+                savedInstanceState
+        );
 
         setContentView(
                 R.layout.activity_semantic_search
         );
 
         if (getSupportActionBar() != null) {
+
             getSupportActionBar().hide();
         }
 
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
         // FIND VIEWS
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
 
         searchInput =
-                findViewById(R.id.searchInput);
+                findViewById(
+                        R.id.searchInput
+                );
 
         searchButton =
-                findViewById(R.id.searchButton);
+                findViewById(
+                        R.id.searchButton
+                );
 
         backButton =
-                findViewById(R.id.backButton);
+                findViewById(
+                        R.id.backButton
+                );
 
         progressBar =
-                findViewById(R.id.searchProgress);
+                findViewById(
+                        R.id.searchProgress
+                );
 
         emptyText =
-                findViewById(R.id.emptyText);
+                findViewById(
+                        R.id.emptyText
+                );
 
         searchRecyclerView =
-                findViewById(R.id.searchRecyclerView);
+                findViewById(
+                        R.id.searchRecyclerView
+                );
 
-        // ---------------------------------------------------------
-        // RESULT LIST
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // RESULTS LIST
+        // -----------------------------------------------------
 
         resultsList =
                 new ArrayList<>();
 
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
         // RECYCLER VIEW
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
 
         searchRecyclerView.setLayoutManager(
                 new LinearLayoutManager(
@@ -107,15 +147,16 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 )
         );
 
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
         // ADAPTER
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
 
         adapter =
                 new SemanticSearchAdapter(
                         SemanticSearchActivity.this,
                         resultsList,
-                        new SemanticSearchAdapter.OnResultClickListener() {
+                        new SemanticSearchAdapter
+                                .OnResultClickListener() {
 
                             @Override
                             public void onResultClick(
@@ -129,31 +170,37 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         }
                 );
 
-        searchRecyclerView.setAdapter(adapter);
+        searchRecyclerView.setAdapter(
+                adapter
+        );
 
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
         // INITIAL UI
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
 
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(
+                View.GONE
+        );
 
         emptyText.setText(
                 "Search your memories"
         );
 
-        emptyText.setVisibility(View.VISIBLE);
+        emptyText.setVisibility(
+                View.VISIBLE
+        );
 
-        // ---------------------------------------------------------
-        // BACK BUTTON
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // BACK
+        // -----------------------------------------------------
 
         backButton.setOnClickListener(
                 v -> finish()
         );
 
-        // ---------------------------------------------------------
-        // SEARCH BUTTON
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // SEARCH
+        // -----------------------------------------------------
 
         searchButton.setOnClickListener(
                 v -> {
@@ -175,14 +222,16 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         return;
                     }
 
-                    performSemanticSearch(query);
+                    performSemanticSearch(
+                            query
+                    );
                 }
         );
     }
 
-    // =============================================================
-    // SEMANTIC SEARCH
-    // =============================================================
+    // =========================================================
+    // PERFORM SEMANTIC SEARCH
+    // =========================================================
 
     private void performSemanticSearch(
             String query
@@ -267,22 +316,23 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
                         Log.d(
                                 TAG,
-                                "Search request: "
+                                "Search request = "
                                         + request
                         );
 
                         OutputStream outputStream =
-                                connection.getOutputStream();
+                                connection
+                                        .getOutputStream();
 
                         outputStream.write(
-                                request
-                                        .toString()
+                                request.toString()
                                         .getBytes(
                                                 StandardCharsets.UTF_8
                                         )
                         );
 
                         outputStream.flush();
+
                         outputStream.close();
 
                         // -------------------------------------------------
@@ -290,101 +340,85 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         // -------------------------------------------------
 
                         int responseCode =
-                                connection.getResponseCode();
-
-                        Log.d(
-                                TAG,
-                                "Search response code: "
-                                        + responseCode
-                        );
+                                connection
+                                        .getResponseCode();
 
                         InputStream inputStream;
 
-                        if (
-                                responseCode >= 200
-                                        &&
-                                        responseCode < 300
-                        ) {
+                        if (responseCode >= 200
+                                && responseCode < 300) {
 
                             inputStream =
-                                    connection.getInputStream();
+                                    connection
+                                            .getInputStream();
 
                         } else {
 
                             inputStream =
-                                    connection.getErrorStream();
+                                    connection
+                                            .getErrorStream();
                         }
-
-                        if (inputStream == null) {
-
-                            throw new Exception(
-                                    "Empty response from backend"
-                            );
-                        }
-
-                        BufferedReader reader =
-                                new BufferedReader(
-                                        new InputStreamReader(
-                                                inputStream
-                                        )
-                                );
 
                         StringBuilder response =
                                 new StringBuilder();
 
-                        String line;
+                        if (inputStream != null) {
 
-                        while (
-                                (line =
-                                        reader.readLine())
-                                        != null
-                        ) {
+                            BufferedReader reader =
+                                    new BufferedReader(
+                                            new InputStreamReader(
+                                                    inputStream
+                                            )
+                                    );
 
-                            response.append(line);
+                            String line;
+
+                            while (
+                                    (line =
+                                            reader.readLine())
+                                            != null
+                            ) {
+
+                                response.append(
+                                        line
+                                );
+                            }
+
+                            reader.close();
                         }
-
-                        reader.close();
-
-                        String responseText =
-                                response.toString();
 
                         Log.d(
                                 TAG,
-                                "Search response: "
-                                        + responseText
+                                "Search response code = "
+                                        + responseCode
                         );
 
-                        // -------------------------------------------------
-                        // HTTP CHECK
-                        // -------------------------------------------------
+                        Log.d(
+                                TAG,
+                                "Search response = "
+                                        + response
+                        );
 
-                        if (
-                                responseCode < 200
-                                        ||
-                                        responseCode >= 300
-                        ) {
+                        if (responseCode < 200
+                                || responseCode >= 300) {
 
                             throw new Exception(
                                     "Backend returned HTTP "
                                             + responseCode
                                             + ": "
-                                            + responseText
+                                            + response
                             );
                         }
 
-                        // -------------------------------------------------
-                        // JSON
-                        // -------------------------------------------------
-
                         JSONObject json =
                                 new JSONObject(
-                                        responseText
+                                        response.toString()
                                 );
 
                         boolean success =
                                 json.optBoolean(
                                         "success",
-                                        false
+                                        true
                                 );
 
                         if (!success) {
@@ -396,10 +430,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                     )
                             );
                         }
-
-                        // -------------------------------------------------
-                        // RESULTS
-                        // -------------------------------------------------
 
                         JSONArray results =
                                 json.optJSONArray(
@@ -419,7 +449,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             ) {
 
                                 JSONObject item =
-                                        results.getJSONObject(i);
+                                        results.getJSONObject(
+                                                i
+                                        );
 
                                 String messageId =
                                         item.optString(
@@ -470,16 +502,13 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             }
                         }
 
-                        // -------------------------------------------------
-                        // UPDATE UI
-                        // -------------------------------------------------
-
                         mainHandler.post(
                                 () -> {
 
-                                    progressBar.setVisibility(
-                                            View.GONE
-                                    );
+                                    progressBar
+                                            .setVisibility(
+                                                    View.GONE
+                                            );
 
                                     resultsList.clear();
 
@@ -487,7 +516,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                             tempResults
                                     );
 
-                                    adapter.notifyDataSetChanged();
+                                    adapter
+                                            .notifyDataSetChanged();
 
                                     if (
                                             tempResults.isEmpty()
@@ -497,15 +527,24 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                                 "No matching memories found"
                                         );
 
-                                        emptyText.setVisibility(
-                                                View.VISIBLE
-                                        );
+                                        emptyText
+                                                .setVisibility(
+                                                        View.VISIBLE
+                                                );
 
                                     } else {
 
-                                        emptyText.setVisibility(
-                                                View.GONE
-                                        );
+                                        emptyText
+                                                .setVisibility(
+                                                        View.GONE
+                                                );
+
+                                        Toast.makeText(
+                                                SemanticSearchActivity.this,
+                                                tempResults.size()
+                                                        + " memories found",
+                                                Toast.LENGTH_SHORT
+                                        ).show();
                                     }
                                 }
                         );
@@ -521,17 +560,19 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         mainHandler.post(
                                 () -> {
 
-                                    progressBar.setVisibility(
-                                            View.GONE
-                                    );
+                                    progressBar
+                                            .setVisibility(
+                                                    View.GONE
+                                            );
 
                                     emptyText.setText(
                                             "Search failed"
                                     );
 
-                                    emptyText.setVisibility(
-                                            View.VISIBLE
-                                    );
+                                    emptyText
+                                            .setVisibility(
+                                                    View.VISIBLE
+                                            );
 
                                     Toast.makeText(
                                             SemanticSearchActivity.this,
@@ -545,17 +586,17 @@ public class SemanticSearchActivity extends AppCompatActivity {
                     } finally {
 
                         if (connection != null) {
+
                             connection.disconnect();
                         }
                     }
-
                 }
         ).start();
     }
 
-    // =============================================================
-    // OPEN EXACT SEARCH RESULT
-    // =============================================================
+    // =========================================================
+    // OPEN CHAT FROM SEARCH RESULT
+    // =========================================================
 
     private void openChatFromSearchResult(
             SearchResult result
@@ -564,7 +605,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
         if (result == null) {
 
             Toast.makeText(
-                    this,
+                    SemanticSearchActivity.this,
                     "Search result is empty",
                     Toast.LENGTH_LONG
             ).show();
@@ -577,14 +618,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         .getInstance()
                         .getUid();
 
-        if (
-                currentUserId == null
-                        ||
-                        currentUserId.isEmpty()
-        ) {
+        if (currentUserId == null
+                || currentUserId.isEmpty()) {
 
             Toast.makeText(
-                    this,
+                    SemanticSearchActivity.this,
                     "User is not logged in",
                     Toast.LENGTH_LONG
             ).show();
@@ -644,87 +682,150 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         + currentUserId
         );
 
-        // ---------------------------------------------------------
-        // FIND RECEIVER
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // DETERMINE CORRECT OTHER USER
+        // -----------------------------------------------------
 
         String receiverUid = null;
 
         /*
-         * CASE 1:
+         * CASE 1
          *
-         * The searched message was sent by
-         * the other user.
+         * Message was sent by the other person.
          *
-         * Therefore senderId is the receiver.
+         * Therefore senderId itself is the receiver.
          */
 
-        if (
-                senderId != null
-                        &&
-                        !senderId.isEmpty()
-                        &&
-                        !senderId.equals(
-                                currentUserId
-                        )
-        ) {
+        if (senderId != null
+                && !senderId.isEmpty()
+                && !senderId.equals(
+                currentUserId
+        )) {
 
             receiverUid =
                     senderId;
         }
 
         /*
-         * CASE 2:
+         * CASE 2
          *
-         * The searched message was sent by
-         * the current user.
+         * Message was sent by CURRENT USER.
          *
-         * conversationId was stored as:
+         * conversationId was created as:
          *
          * currentUserId + receiverUid
          */
 
-        else if (
-                senderId != null
-                        &&
-                        senderId.equals(
-                                currentUserId
-                        )
+        if (
+                (receiverUid == null
+                        || receiverUid.isEmpty())
                         &&
                         conversationId != null
                         &&
-                        conversationId.startsWith(
-                                currentUserId
-                        )
+                        !conversationId.isEmpty()
         ) {
 
-            receiverUid =
-                    conversationId.substring(
-                            currentUserId.length()
-                    );
+            if (conversationId.startsWith(
+                    currentUserId
+            )) {
+
+                String possibleReceiver =
+                        conversationId.substring(
+                                currentUserId.length()
+                        );
+
+                if (
+                        !possibleReceiver.isEmpty()
+                                &&
+                                !possibleReceiver.equals(
+                                        currentUserId
+                                )
+                ) {
+
+                    receiverUid =
+                            possibleReceiver;
+                }
+            }
+
+            /*
+             * Extra safety:
+             *
+             * If the conversation ID happens to be
+             * receiver + currentUser.
+             */
+
+            if (
+                    (receiverUid == null
+                            || receiverUid.isEmpty())
+                            &&
+                            conversationId.endsWith(
+                                    currentUserId
+                            )
+            ) {
+
+                String possibleReceiver =
+                        conversationId.substring(
+                                0,
+                                conversationId.length()
+                                        - currentUserId.length()
+                        );
+
+                if (
+                        !possibleReceiver.isEmpty()
+                                &&
+                                !possibleReceiver.equals(
+                                        currentUserId
+                                )
+                ) {
+
+                    receiverUid =
+                            possibleReceiver;
+                }
+            }
         }
 
-        // ---------------------------------------------------------
-        // SAFETY CHECK
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // FINAL SAFETY CHECK
+        // -----------------------------------------------------
 
         if (
                 receiverUid == null
-                        ||
-                        receiverUid.isEmpty()
-                        ||
-                        receiverUid.equals(
-                                currentUserId
-                        )
+                        || receiverUid.isEmpty()
+                        || receiverUid.equals(
+                        currentUserId
+                )
         ) {
 
             Log.e(
                     TAG,
-                    "Could not determine receiver"
+                    "================================"
+            );
+
+            Log.e(
+                    TAG,
+                    "COULD NOT IDENTIFY RECEIVER"
+            );
+
+            Log.e(
+                    TAG,
+                    "Current UID = "
+                            + currentUserId
+            );
+
+            Log.e(
+                    TAG,
+                    "Sender UID = "
+                            + senderId
+            );
+
+            Log.e(
+                    TAG,
+                    "Conversation ID = "
+                            + conversationId
             );
 
             Toast.makeText(
-                    this,
+                    SemanticSearchActivity.this,
                     "Could not identify chat user",
                     Toast.LENGTH_LONG
             ).show();
@@ -738,13 +839,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         + receiverUid
         );
 
-        // ---------------------------------------------------------
-        // OPEN CHAT DIRECTLY
-        //
-        // IMPORTANT:
-        // Do NOT query user/{uid} here.
-        // chatwindo will handle the profile.
-        // ---------------------------------------------------------
+        // -----------------------------------------------------
+        // OPEN CHAT
+        // -----------------------------------------------------
 
         Intent intent =
                 new Intent(
@@ -767,11 +864,18 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 ""
         );
 
-        // Exact message information
+        /*
+         * Exact Firebase message ID.
+         */
+
         intent.putExtra(
                 "targetMessageId",
                 messageId
         );
+
+        /*
+         * Useful for logs/debugging.
+         */
 
         intent.putExtra(
                 "targetMessageText",
@@ -786,6 +890,20 @@ public class SemanticSearchActivity extends AppCompatActivity {
         intent.putExtra(
                 "targetMessageTimestamp",
                 timestamp
+        );
+
+        /*
+         * IMPORTANT:
+         *
+         * Pass conversationId too.
+         *
+         * chatwindo can use it as a recovery
+         * mechanism if necessary.
+         */
+
+        intent.putExtra(
+                "conversationId",
+                conversationId
         );
 
         startActivity(intent);
