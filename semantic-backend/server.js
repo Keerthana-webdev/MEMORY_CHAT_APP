@@ -375,6 +375,34 @@ app.post("/search", async (req, res) => {
 });
 
 // ----------------------------------------------------
+// DELETE OLD TEST DATA
+// ----------------------------------------------------
+
+app.delete("/delete-test-data", async (req, res) => {
+
+    try {
+
+        await index.deleteOne("test001");
+
+        console.log("Deleted test001 from Pinecone");
+
+        res.json({
+            success: true,
+            message: "Old test message deleted"
+        });
+
+    } catch (error) {
+
+        console.error("Delete test data error:", error);
+
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// ----------------------------------------------------
 // START SERVER
 // ----------------------------------------------------
 app.listen(PORT, "0.0.0.0", () => {
