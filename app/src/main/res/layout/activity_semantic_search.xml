@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -33,7 +32,6 @@
             android:textSize="20sp"
             android:fontFamily="@font/poppins_bold"
             android:layout_marginStart="10dp" />
-
     </LinearLayout>
 
     <!-- Search bar -->
@@ -54,6 +52,8 @@
             android:hint="Search your memories..."
             android:paddingStart="15dp"
             android:paddingEnd="10dp"
+            android:singleLine="true"
+            android:inputType="text"
             android:textSize="15sp" />
 
         <ImageView
@@ -63,7 +63,6 @@
             android:padding="10dp"
             android:src="@drawable/search"
             android:contentDescription="Search" />
-
     </LinearLayout>
 
     <!-- Sync existing Firebase messages -->
@@ -86,6 +85,38 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <!-- AI answer card -->
+    <LinearLayout
+        android:id="@+id/aiAnswerCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="@drawable/search_background"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✨ MemoryChat AI Answer"
+            android:textColor="#6D45B5"
+            android:textSize="16sp"
+            android:fontFamily="@font/poppins_bold" />
+
+        <TextView
+            android:id="@+id/aiAnswerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#263238"
+            android:textSize="14sp"
+            android:lineSpacingExtra="3dp"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/emptyText"
         android:layout_width="match_parent"
@@ -96,7 +127,7 @@
         android:gravity="center"
         android:layout_marginTop="20dp" />
 
-    <!-- Search results -->
+    <!-- Existing clickable search results -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"
         android:layout_width="match_parent"

@@ -40,7 +40,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
     private static final String TAG = "SEMANTIC_SEARCH";
 
-    // ADB reverse must be enabled:
+    // Keep ADB reverse enabled:
     // adb reverse tcp:3000 tcp:3000
     private static final String SEARCH_URL =
             "http://127.0.0.1:3000/search";
@@ -55,6 +55,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
     private TextView emptyText;
     private RecyclerView searchRecyclerView;
     private Button syncExistingMessagesButton;
+
+    // AI answer views from activity_semantic_search.xml
+    private View aiAnswerCard;
+    private TextView aiAnswerText;
 
     private ArrayList<SearchResult> resultsList;
     private SemanticSearchAdapter adapter;
@@ -77,29 +81,30 @@ public class SemanticSearchActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.searchProgress);
         emptyText = findViewById(R.id.emptyText);
         searchRecyclerView = findViewById(R.id.searchRecyclerView);
+
         syncExistingMessagesButton =
                 findViewById(R.id.syncExistingMessagesButton);
+
+        aiAnswerCard = findViewById(R.id.aiAnswerCard);
+        aiAnswerText = findViewById(R.id.aiAnswerText);
+
+        aiAnswerCard.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
         resultsList = new ArrayList<>();
 
         searchRecyclerView.setLayoutManager(
-                new LinearLayoutManager(SemanticSearchActivity.this)
+                new LinearLayoutManager(this)
         );
 
         adapter = new SemanticSearchAdapter(
-                SemanticSearchActivity.this,
+                this,
                 resultsList,
-                new SemanticSearchAdapter.OnResultClickListener() {
-                    @Override
-                    public void onResultClick(SearchResult result) {
-                        openChatFromSearchResult(result);
-                    }
-                }
+                result -> openChatFromSearchResult(result)
         );
 
         searchRecyclerView.setAdapter(adapter);
 
-        progressBar.setVisibility(View.GONE);
         emptyText.setText("Search your memories");
         emptyText.setVisibility(View.VISIBLE);
 
@@ -120,20 +125,47 @@ public class SemanticSearchActivity extends AppCompatActivity {
             performSemanticSearch(query);
         });
 
+        searchInput.setOnEditorActionListener(
+                (textView, actionId, event) -> {
+                    String query =
+                            searchInput.getText().toString().trim();
+
+                    if (!query.isEmpty()) {
+                        performSemanticSearch(query);
+                        return true;
+                    }
+
+                    Toast.makeText(
+                            SemanticSearchActivity.this,
+                            "Enter something to search",
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                    return false;
+                }
+        );
+
         syncExistingMessagesButton.setOnClickListener(
                 v -> syncExistingMessages()
         );
     }
 
     // =========================================================
-    // SEMANTIC SEARCH
+    // SEMANTIC SEARCH + AI ANSWER
     // =========================================================
+
     private void performSemanticSearch(String query) {
+
         progressBar.setVisibility(View.VISIBLE);
         emptyText.setVisibility(View.GONE);
 
+        aiAnswerCard.setVisibility(View.GONE);
+        aiAnswerText.setText("");
+
         resultsList.clear();
         adapter.notifyDataSetChanged();
+
+        searchButton.setEnabled(false);
 
         Log.d(TAG, "Searching for: " + query);
 
@@ -142,18 +174,23 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(SEARCH_URL);
-                connection = (HttpURLConnection) url.openConnection();
+                connection =
+                        (HttpURLConnection) url.openConnection();
+
                 connection.setRequestMethod("POST");
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(20000);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(90000);
+
                 connection.setRequestProperty(
                         "Content-Type",
                         "application/json; charset=UTF-8"
                 );
+
                 connection.setRequestProperty(
                         "Accept",
                         "application/json"
                 );
+
                 connection.setDoOutput(true);
 
                 JSONObject request = new JSONObject();
@@ -162,28 +199,37 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
                 Log.d(TAG, "Search request = " + request);
 
-                try (OutputStream outputStream =
+                try (OutputStream output =
                              connection.getOutputStream()) {
-                    outputStream.write(
-                            request.toString().getBytes(StandardCharsets.UTF_8)
+
+                    output.write(
+                            request.toString().getBytes(
+                                    StandardCharsets.UTF_8
+                            )
                     );
+                    output.flush();
                 }
 
                 int responseCode = connection.getResponseCode();
-                InputStream inputStream =
+
+                InputStream stream =
                         (responseCode >= 200 && responseCode < 300)
                                 ? connection.getInputStream()
                                 : connection.getErrorStream();
 
                 StringBuilder response = new StringBuilder();
 
-                if (inputStream != null) {
-                    try (BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(
-                                    inputStream,
-                                    StandardCharsets.UTF_8
-                            ))) {
+                if (stream != null) {
+                    try (BufferedReader reader =
+                                 new BufferedReader(
+                                         new InputStreamReader(
+                                                 stream,
+                                                 StandardCharsets.UTF_8
+                                         )
+                                 )) {
+
                         String line;
+
                         while ((line = reader.readLine()) != null) {
                             response.append(line);
                         }
@@ -200,68 +246,149 @@ public class SemanticSearchActivity extends AppCompatActivity {
                     );
                 }
 
-                JSONObject json = new JSONObject(response.toString());
+                JSONObject json =
+                        new JSONObject(response.toString());
 
-                if (!json.optBoolean("success", true)) {
+                if (!json.optBoolean("success", false)) {
                     throw new IOException(
-                            json.optString("message", "Search failed")
+                            json.optString(
+                                    "message",
+                                    "Search failed"
+                            )
                     );
                 }
 
-                JSONArray results = json.optJSONArray("results");
-                ArrayList<SearchResult> tempResults = new ArrayList<>();
+                // Read the AI answer from server.js.
+                String aiAnswer =
+                        json.optString("answer", "").trim();
 
-                if (results != null) {
-                    for (int i = 0; i < results.length(); i++) {
-                        JSONObject item = results.getJSONObject(i);
+                boolean answerAvailable =
+                        json.optBoolean("answerAvailable", false)
+                                && !aiAnswer.isEmpty();
+
+                // Also support an answer without the Boolean field.
+                if (!aiAnswer.isEmpty()) {
+                    answerAvailable = true;
+                }
+
+                Log.d(TAG, "AI answer available = " + answerAvailable);
+                Log.d(TAG, "AI answer = " + aiAnswer);
+
+                JSONArray jsonResults =
+                        json.optJSONArray("results");
+
+                ArrayList<SearchResult> tempResults =
+                        new ArrayList<>();
+
+                if (jsonResults != null) {
+                    for (int i = 0; i < jsonResults.length(); i++) {
+
+                        JSONObject item =
+                                jsonResults.getJSONObject(i);
 
                         String messageId =
                                 item.optString("messageId", "");
+
                         String text =
                                 item.optString("text", "");
+
                         String senderId =
                                 item.optString("senderId", "");
+
                         String conversationId =
                                 item.optString("conversationId", "");
-                        double score = item.optDouble("score", 0);
-                        long timestamp = item.optLong("timestamp", 0);
 
-                        tempResults.add(new SearchResult(
-                                messageId,
-                                text,
-                                senderId,
-                                conversationId,
-                                score,
-                                timestamp
-                        ));
+                        double score =
+                                item.optDouble("score", 0);
+
+                        long timestamp =
+                                item.optLong("timestamp", 0);
+
+                        if (messageId.isEmpty()
+                                || text.trim().isEmpty()
+                                || conversationId.isEmpty()) {
+
+                            Log.w(
+                                    TAG,
+                                    "Skipping incomplete result at " + i
+                            );
+                            continue;
+                        }
+
+                        tempResults.add(
+                                new SearchResult(
+                                        messageId,
+                                        text,
+                                        senderId,
+                                        conversationId,
+                                        score,
+                                        timestamp
+                                )
+                        );
                     }
                 }
 
+                Log.d(
+                        TAG,
+                        "Parsed result count = " + tempResults.size()
+                );
+
+                final String finalAnswer = aiAnswer;
+                final boolean finalAnswerAvailable = answerAvailable;
+                final ArrayList<SearchResult> finalResults = tempResults;
+
                 mainHandler.post(() -> {
+
                     progressBar.setVisibility(View.GONE);
+                    searchButton.setEnabled(true);
+
+                    // Display the AI answer.
+                    if (finalAnswerAvailable) {
+                        aiAnswerText.setText(finalAnswer);
+                        aiAnswerCard.setVisibility(View.VISIBLE);
+                    } else {
+                        aiAnswerText.setText("");
+                        aiAnswerCard.setVisibility(View.GONE);
+                    }
+
+                    // Display the matching chat messages.
                     resultsList.clear();
-                    resultsList.addAll(tempResults);
+                    resultsList.addAll(finalResults);
                     adapter.notifyDataSetChanged();
 
-                    if (tempResults.isEmpty()) {
-                        emptyText.setText("No matching memories found");
+                    if (finalResults.isEmpty()) {
+                        emptyText.setText(
+                                "No matching messages found. Try another search."
+                        );
                         emptyText.setVisibility(View.VISIBLE);
                     } else {
                         emptyText.setVisibility(View.GONE);
+
                         Toast.makeText(
                                 SemanticSearchActivity.this,
-                                tempResults.size() + " memories found",
+                                finalResults.size() + " memories found",
                                 Toast.LENGTH_SHORT
                         ).show();
                     }
+
+                    Log.d(TAG, "Search UI updated successfully");
                 });
 
             } catch (Exception e) {
+
                 Log.e(TAG, "SEMANTIC SEARCH ERROR", e);
 
                 mainHandler.post(() -> {
+
                     progressBar.setVisibility(View.GONE);
-                    emptyText.setText("Search failed");
+                    searchButton.setEnabled(true);
+
+                    aiAnswerCard.setVisibility(View.GONE);
+                    aiAnswerText.setText("");
+
+                    emptyText.setText(
+                            "Search failed. Please try again."
+                    );
                     emptyText.setVisibility(View.VISIBLE);
 
                     Toast.makeText(
@@ -280,9 +407,11 @@ public class SemanticSearchActivity extends AppCompatActivity {
     }
 
     // =========================================================
-    // SYNC EXISTING FIREBASE MESSAGES
+    // FIREBASE MESSAGE SYNC MODEL
     // =========================================================
+
     private static class ExistingMessage {
+
         String messageId;
         String conversationId;
         String senderId;
@@ -304,12 +433,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     * In this app, a room ID is made by concatenating the two UIDs.
-     * A message is stored in both directional rooms. We convert both
-     * room IDs to the sender-first room ID and de-duplicate by
-     * conversation ID + Firebase message ID.
-     */
+    // =========================================================
+    // CANONICAL CONVERSATION ID
+    // =========================================================
+
     private String getCanonicalConversationId(
             String roomId,
             String senderId
@@ -325,6 +452,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         if (roomId.endsWith(senderId)
                 && roomId.length() > senderId.length()) {
+
             String otherUserId = roomId.substring(
                     0,
                     roomId.length() - senderId.length()
@@ -336,7 +464,12 @@ public class SemanticSearchActivity extends AppCompatActivity {
         return null;
     }
 
+    // =========================================================
+    // SYNC EXISTING FIREBASE MESSAGES
+    // =========================================================
+
     private void syncExistingMessages() {
+
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Toast.makeText(
                     this,
@@ -348,6 +481,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         syncExistingMessagesButton.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
+
         emptyText.setText("Reading existing messages...");
         emptyText.setVisibility(View.VISIBLE);
 
@@ -356,21 +490,27 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 .child("chats")
                 .get()
                 .addOnSuccessListener(snapshot -> new Thread(() -> {
+
                     ArrayList<ExistingMessage> messages =
                             new ArrayList<>();
+
                     Set<String> seenMessages = new HashSet<>();
 
                     for (DataSnapshot room : snapshot.getChildren()) {
+
                         String roomId = room.getKey();
-                        DataSnapshot roomMessages = room.child("messages");
+                        DataSnapshot roomMessages =
+                                room.child("messages");
 
                         for (DataSnapshot item :
                                 roomMessages.getChildren()) {
 
                             String messageId = item.getKey();
+
                             String text =
                                     item.child("message")
                                             .getValue(String.class);
+
                             String senderId =
                                     item.child("senderid")
                                             .getValue(String.class);
@@ -392,7 +532,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             if (conversationId == null) {
                                 Log.w(
                                         TAG,
-                                        "Skipping unrecognized room: " + roomId
+                                        "Skipping unrecognized room: "
+                                                + roomId
                                 );
                                 continue;
                             }
@@ -412,13 +553,15 @@ public class SemanticSearchActivity extends AppCompatActivity {
                                             ? ((Number) timeValue).longValue()
                                             : 0L;
 
-                            messages.add(new ExistingMessage(
-                                    messageId,
-                                    conversationId,
-                                    senderId,
-                                    text,
-                                    timestamp
-                            ));
+                            messages.add(
+                                    new ExistingMessage(
+                                            messageId,
+                                            conversationId,
+                                            senderId,
+                                            text,
+                                            timestamp
+                                    )
+                            );
                         }
                     }
 
@@ -426,9 +569,13 @@ public class SemanticSearchActivity extends AppCompatActivity {
                     int failed = 0;
                     int total = messages.size();
 
-                    Log.d(TAG, "Existing messages to sync: " + total);
+                    Log.d(
+                            TAG,
+                            "Existing messages to sync: " + total
+                    );
 
                     for (int i = 0; i < total; i++) {
+
                         ExistingMessage message = messages.get(i);
 
                         try {
@@ -436,6 +583,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             successful++;
                         } catch (Exception e) {
                             failed++;
+
                             Log.e(
                                     TAG,
                                     "Failed to index message "
@@ -445,8 +593,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         }
 
                         final int completed = i + 1;
+
                         if (completed % 5 == 0 || completed == total) {
                             final int count = completed;
+
                             mainHandler.post(() ->
                                     emptyText.setText(
                                             "Syncing " + count
@@ -461,6 +611,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
                     final int finalFailed = failed;
 
                     mainHandler.post(() -> {
+
                         progressBar.setVisibility(View.GONE);
                         syncExistingMessagesButton.setEnabled(true);
 
@@ -483,8 +634,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
                 }).start())
                 .addOnFailureListener(error -> {
+
                     progressBar.setVisibility(View.GONE);
                     syncExistingMessagesButton.setEnabled(true);
+
                     emptyText.setText(
                             "Could not read Firebase messages"
                     );
@@ -500,28 +653,40 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 });
     }
 
+    // =========================================================
+    // INDEX ONE EXISTING MESSAGE
+    // =========================================================
+
     private void indexExistingMessage(
             ExistingMessage message
     ) throws Exception {
+
         HttpURLConnection connection = null;
 
         try {
             URL url = new URL(INDEX_URL);
-            connection = (HttpURLConnection) url.openConnection();
+
+            connection =
+                    (HttpURLConnection) url.openConnection();
+
             connection.setRequestMethod("POST");
             connection.setConnectTimeout(10000);
             connection.setReadTimeout(30000);
+
             connection.setRequestProperty(
                     "Content-Type",
                     "application/json; charset=UTF-8"
             );
+
             connection.setRequestProperty(
                     "Accept",
                     "application/json"
             );
+
             connection.setDoOutput(true);
 
             JSONObject request = new JSONObject();
+
             request.put("messageId", message.messageId);
             request.put("conversationId", message.conversationId);
             request.put("senderId", message.senderId);
@@ -530,11 +695,15 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
             try (OutputStream output = connection.getOutputStream()) {
                 output.write(
-                        request.toString().getBytes(StandardCharsets.UTF_8)
+                        request.toString().getBytes(
+                                StandardCharsets.UTF_8
+                        )
                 );
+                output.flush();
             }
 
             int responseCode = connection.getResponseCode();
+
             InputStream stream =
                     (responseCode >= 200 && responseCode < 300)
                             ? connection.getInputStream()
@@ -543,12 +712,16 @@ public class SemanticSearchActivity extends AppCompatActivity {
             StringBuilder response = new StringBuilder();
 
             if (stream != null) {
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(
-                                stream,
-                                StandardCharsets.UTF_8
-                        ))) {
+                try (BufferedReader reader =
+                             new BufferedReader(
+                                     new InputStreamReader(
+                                             stream,
+                                             StandardCharsets.UTF_8
+                                     )
+                             )) {
+
                     String line;
+
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
                     }
@@ -561,7 +734,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 );
             }
 
-            JSONObject result = new JSONObject(response.toString());
+            JSONObject result =
+                    new JSONObject(response.toString());
 
             if (!result.optBoolean("success", false)) {
                 throw new IOException(
@@ -582,10 +756,12 @@ public class SemanticSearchActivity extends AppCompatActivity {
     // =========================================================
     // OPEN CHAT FROM SEARCH RESULT
     // =========================================================
+
     private void openChatFromSearchResult(SearchResult result) {
+
         if (result == null) {
             Toast.makeText(
-                    SemanticSearchActivity.this,
+                    this,
                     "Search result is empty",
                     Toast.LENGTH_LONG
             ).show();
@@ -596,7 +772,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         if (currentUserId == null || currentUserId.isEmpty()) {
             Toast.makeText(
-                    SemanticSearchActivity.this,
+                    this,
                     "User is not logged in",
                     Toast.LENGTH_LONG
             ).show();
@@ -609,7 +785,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
         String messageText = result.getText();
         long timestamp = result.getTimestamp();
 
-        Log.d(TAG, "================================");
         Log.d(TAG, "SEARCH RESULT CLICKED");
         Log.d(TAG, "Message ID = " + messageId);
         Log.d(TAG, "Message Text = " + messageText);
@@ -619,20 +794,22 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         String receiverUid = null;
 
-        // If the message was sent by the other person, use their UID.
+        // If the other person sent the message, use their UID.
         if (senderId != null
                 && !senderId.isEmpty()
                 && !senderId.equals(currentUserId)) {
+
             receiverUid = senderId;
         }
 
-        // If the current user sent the message, determine the other UID
-        // from the concatenated conversation ID.
+        // If the current user sent the message, identify the other
+        // user from the concatenated conversation ID.
         if ((receiverUid == null || receiverUid.isEmpty())
                 && conversationId != null
                 && !conversationId.isEmpty()) {
 
             if (conversationId.startsWith(currentUserId)) {
+
                 String possibleReceiver =
                         conversationId.substring(currentUserId.length());
 
@@ -644,6 +821,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
             if ((receiverUid == null || receiverUid.isEmpty())
                     && conversationId.endsWith(currentUserId)) {
+
                 String possibleReceiver = conversationId.substring(
                         0,
                         conversationId.length() - currentUserId.length()
@@ -659,16 +837,18 @@ public class SemanticSearchActivity extends AppCompatActivity {
         if (receiverUid == null
                 || receiverUid.isEmpty()
                 || receiverUid.equals(currentUserId)) {
+
             Log.e(TAG, "Could not identify receiver");
             Log.e(TAG, "Current UID = " + currentUserId);
             Log.e(TAG, "Sender UID = " + senderId);
             Log.e(TAG, "Conversation ID = " + conversationId);
 
             Toast.makeText(
-                    SemanticSearchActivity.this,
+                    this,
                     "Could not identify chat user",
                     Toast.LENGTH_LONG
             ).show();
+
             return;
         }
 
@@ -682,6 +862,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
         intent.putExtra("uid", receiverUid);
         intent.putExtra("nameeee", "");
         intent.putExtra("reciverImg", "");
+
         intent.putExtra("targetMessageId", messageId);
         intent.putExtra("targetMessageText", messageText);
         intent.putExtra("targetMessageSenderId", senderId);
