@@ -301,101 +301,53 @@ public class SemanticSearchActivity extends AppCompatActivity {
     // =========================================================
     // OPEN CHAT FROM SEARCH RESULT
     // =========================================================
-    private void openChatFromSearchResult(
-            SearchResult result
-    ) {
-
+    private void openChatFromSearchResult(SearchResult result) {
         if (result == null) {
-
             Toast.makeText(
                     SemanticSearchActivity.this,
                     "Search result is empty",
                     Toast.LENGTH_LONG
             ).show();
-
             return;
         }
 
-        String currentUserId =
-                FirebaseAuth
-                        .getInstance()
-                        .getUid();
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        if (currentUserId == null
-                || currentUserId.isEmpty()) {
+        if (currentUserId == null || currentUserId.isEmpty()) {
 
             Toast.makeText(
                     SemanticSearchActivity.this,
                     "User is not logged in",
                     Toast.LENGTH_LONG
             ).show();
-
             return;
         }
 
-        String senderId =
-                result.getSenderId();
+        String senderId = result.getSenderId();
 
-        String conversationId =
-                result.getConversationId();
+        String conversationId = result.getConversationId();
 
-        String messageId =
-                result.getMessageId();
+        String messageId = result.getMessageId();
 
-        String messageText =
-                result.getText();
+        String messageText = result.getText();
 
-        long timestamp =
-                result.getTimestamp();
+        long timestamp = result.getTimestamp();
 
-        Log.d(
-                TAG,
-                "================================"
-        );
-
-        Log.d(
-                TAG,
-                "SEARCH RESULT CLICKED"
-        );
-
-        Log.d(
-                TAG,
-                "Message ID = " + messageId
-        );
-
-        Log.d(
-                TAG,
-                "Message Text = " + messageText
-        );
-
-        Log.d(
-                TAG,
-                "Sender ID = " + senderId
-        );
-
-        Log.d(
-                TAG,
-                "Conversation ID = "
-                        + conversationId
-        );
-
-        Log.d(
-                TAG,
-                "Current User ID = "
-                        + currentUserId
-        );
+        Log.d(TAG, "================================");
+        Log.d(TAG, "SEARCH RESULT CLICKED");
+        Log.d(TAG, "Message ID = " + messageId);
+        Log.d(TAG, "Message Text = " + messageText);
+        Log.d(TAG, "Sender ID = " + senderId);
+        Log.d(TAG, "Conversation ID = " + conversationId);
+        Log.d(TAG, "Current User ID = " + currentUserId);
 
         // -----------------------------------------------------
         // DETERMINE CORRECT OTHER USER
         // -----------------------------------------------------
-
         String receiverUid = null;
 
         /*
-         * CASE 1
-         *
          * Message was sent by the other person.
-         *
          * Therefore senderId itself is the receiver.
          */
 
@@ -404,85 +356,36 @@ public class SemanticSearchActivity extends AppCompatActivity {
                 && !senderId.equals(
                 currentUserId
         )) {
-
-            receiverUid =
-                    senderId;
+            receiverUid = senderId;
         }
 
         /*
-         * CASE 2
-         *
          * Message was sent by CURRENT USER.
-         *
          * conversationId was created as:
-         *
          * currentUserId + receiverUid
          */
 
-        if (
-                (receiverUid == null
-                        || receiverUid.isEmpty())
-                        &&
-                        conversationId != null
-                        &&
-                        !conversationId.isEmpty()
-        ) {
+        if ((receiverUid == null || receiverUid.isEmpty()) && conversationId != null && !conversationId.isEmpty()) {
+            if (conversationId.startsWith(currentUserId)) {
 
-            if (conversationId.startsWith(
-                    currentUserId
-            )) {
+                String possibleReceiver = conversationId.substring(currentUserId.length());
 
-                String possibleReceiver =
-                        conversationId.substring(
-                                currentUserId.length()
-                        );
-
-                if (
-                        !possibleReceiver.isEmpty()
-                                &&
-                                !possibleReceiver.equals(
-                                        currentUserId
-                                )
-                ) {
-
-                    receiverUid =
-                            possibleReceiver;
+                if (!possibleReceiver.isEmpty() && !possibleReceiver.equals(currentUserId)) {
+                    receiverUid = possibleReceiver;
                 }
             }
 
             /*
              * Extra safety:
-             *
              * If the conversation ID happens to be
              * receiver + currentUser.
              */
 
-            if (
-                    (receiverUid == null
-                            || receiverUid.isEmpty())
-                            &&
-                            conversationId.endsWith(
-                                    currentUserId
-                            )
-            ) {
+            if ((receiverUid == null || receiverUid.isEmpty()) && conversationId.endsWith(currentUserId)) {
+                String possibleReceiver = conversationId.substring(0, conversationId.length() - currentUserId.length());
 
-                String possibleReceiver =
-                        conversationId.substring(
-                                0,
-                                conversationId.length()
-                                        - currentUserId.length()
-                        );
-
-                if (
-                        !possibleReceiver.isEmpty()
-                                &&
-                                !possibleReceiver.equals(
-                                        currentUserId
-                                )
-                ) {
-
-                    receiverUid =
-                            possibleReceiver;
+                if (!possibleReceiver.isEmpty() && !possibleReceiver.equals(currentUserId)) {
+                    receiverUid = possibleReceiver;
                 }
             }
         }
@@ -490,110 +393,39 @@ public class SemanticSearchActivity extends AppCompatActivity {
         // -----------------------------------------------------
         // FINAL SAFETY CHECK
         // -----------------------------------------------------
+        if (receiverUid == null || receiverUid.isEmpty() || receiverUid.equals(currentUserId)) {
 
-        if (
-                receiverUid == null
-                        || receiverUid.isEmpty()
-                        || receiverUid.equals(
-                        currentUserId
-                )
-        ) {
-
-            Log.e(
-                    TAG,
-                    "================================"
-            );
-
-            Log.e(
-                    TAG,
-                    "COULD NOT IDENTIFY RECEIVER"
-            );
-
-            Log.e(
-                    TAG,
-                    "Current UID = "
-                            + currentUserId
-            );
-
-            Log.e(
-                    TAG,
-                    "Sender UID = "
-                            + senderId
-            );
-
-            Log.e(
-                    TAG,
-                    "Conversation ID = "
-                            + conversationId
-            );
+            Log.e(TAG, "================================");
+            Log.e(TAG, "COULD NOT IDENTIFY RECEIVER");
+            Log.e(TAG, "Current UID = " + currentUserId);
+            Log.e(TAG, "Sender UID = " + senderId);
+            Log.e(TAG, "Conversation ID = " + conversationId);
 
             Toast.makeText(
                     SemanticSearchActivity.this,
                     "Could not identify chat user",
                     Toast.LENGTH_LONG
             ).show();
-
             return;
         }
 
-        Log.d(
-                TAG,
-                "FINAL RECEIVER UID = "
-                        + receiverUid
-        );
+        Log.d(TAG, "FINAL RECEIVER UID = " + receiverUid);
 
         // -----------------------------------------------------
         // OPEN CHAT
         // -----------------------------------------------------
+        Intent intent = new Intent(SemanticSearchActivity.this, chatwindo.class);
+        intent.putExtra("uid", receiverUid);
+        intent.putExtra("nameeee", "");
+        intent.putExtra("reciverImg", "");
 
-        Intent intent =
-                new Intent(
-                        SemanticSearchActivity.this,
-                        chatwindo.class
-                );
+        // Exact Firebase message ID.
+        intent.putExtra("targetMessageId", messageId);
 
-        intent.putExtra(
-                "uid",
-                receiverUid
-        );
-
-        intent.putExtra(
-                "nameeee",
-                ""
-        );
-
-        intent.putExtra(
-                "reciverImg",
-                ""
-        );
-
-        /*
-         * Exact Firebase message ID.
-         */
-
-        intent.putExtra(
-                "targetMessageId",
-                messageId
-        );
-
-        /*
-         * Useful for logs/debugging.
-         */
-
-        intent.putExtra(
-                "targetMessageText",
-                messageText
-        );
-
-        intent.putExtra(
-                "targetMessageSenderId",
-                senderId
-        );
-
-        intent.putExtra(
-                "targetMessageTimestamp",
-                timestamp
-        );
+        // Useful for logs/debugging.
+        intent.putExtra("targetMessageText", messageText);
+        intent.putExtra("targetMessageSenderId", senderId);
+        intent.putExtra("targetMessageTimestamp", timestamp);
 
         /*
          * IMPORTANT:
