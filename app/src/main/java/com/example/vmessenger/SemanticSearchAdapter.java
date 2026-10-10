@@ -12,13 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SemanticSearchAdapter
-        extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
-
+public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAdapter.ViewHolder> {
     private final Context context;
     private final ArrayList<SearchResult> results;
     private final OnResultClickListener listener;
-
     public interface OnResultClickListener {
         void onResultClick(SearchResult result);
     }
@@ -81,9 +78,7 @@ public class SemanticSearchAdapter
         return results.size();
     }
 
-    public static class ViewHolder
-            extends RecyclerView.ViewHolder {
-
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
         TextView scoreText;
 
