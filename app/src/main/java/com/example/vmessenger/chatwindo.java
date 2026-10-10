@@ -279,122 +279,67 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     private void loadReceiverProfile() {
 
-        DatabaseReference userReference =
-                database.getReference()
-                        .child("user")
-                        .child(reciverUid);
+        DatabaseReference userReference = database.getReference().child("user").child(reciverUid);
 
-        userReference.addListenerForSingleValueEvent(
-                new ValueEventListener() {
+        userReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {Log.e(TAG, "Receiver profile not found: " + reciverUid);
+                            reciverNName.setText(reciverName != null ? reciverName : "");
 
-                        if (!snapshot.exists()) {
-
-                            Log.e(
-                                    TAG,
-                                    "Receiver profile not found: "
-                                            + reciverUid
-                            );
-
-                            reciverNName.setText(
-                                    reciverName != null
-                                            ? reciverName
-                                            : ""
-                            );
-
-                            if (reciverimg == null
-                                    || reciverimg.isEmpty()) {
-
-                                profile.setImageResource(
-                                        R.drawable.photocamera
-                                );
+                            if (reciverimg == null || reciverimg.isEmpty()) {
+                                profile.setImageResource(R.drawable.photocamera);
                             }
-
                             return;
                         }
 
                         // -------------------------------------------------
                         // NAME
                         // -------------------------------------------------
-
                         String name = "";
-
-                        Object nameValue =
-                                snapshot.child("name")
-                                        .getValue();
+                        Object nameValue = snapshot.child("name").getValue();
 
                         if (nameValue != null) {
-
-                            name =
-                                    nameValue.toString();
+                            name = nameValue.toString();
                         }
 
                         if (name.isEmpty()) {
-
-                            Object usernameValue =
-                                    snapshot.child("username")
-                                            .getValue();
+                            Object usernameValue = snapshot.child("username").getValue();
 
                             if (usernameValue != null) {
-
-                                name =
-                                        usernameValue.toString();
+                                name = usernameValue.toString();
                             }
                         }
 
-                        if (name.isEmpty()
-                                && reciverName != null) {
-
+                        if (name.isEmpty() && reciverName != null) {
                             name = reciverName;
                         }
 
                         reciverName = name;
-
-                        reciverNName.setText(
-                                name
-                        );
+                        reciverNName.setText(name);
 
                         // -------------------------------------------------
                         // PROFILE IMAGE
                         // -------------------------------------------------
-
                         String image = "";
 
-                        Object imageValue =
-                                snapshot.child("profilepic")
-                                        .getValue();
+                        Object imageValue = snapshot.child("profilepic").getValue();
 
                         if (imageValue != null) {
-
-                            image =
-                                    imageValue.toString();
+                            image = imageValue.toString();
                         }
 
                         if (!image.isEmpty()) {
-
                             reciverimg = image;
-
                             reciverIImg = image;
-
-                            Picasso.get()
-                                    .load(image)
-                                    .into(profile);
+                            Picasso.get().load(image).into(profile);
 
                         } else {
+                            if (reciverimg != null && !reciverimg.isEmpty()) {
 
-                            if (reciverimg != null
-                                    && !reciverimg.isEmpty()) {
-
-                                Picasso.get()
-                                        .load(reciverimg)
-                                        .into(profile);
+                                Picasso.get().load(reciverimg).into(profile);
 
                             } else {
-
                                 profile.setImageResource(
                                         R.drawable.photocamera
                                 );
@@ -403,15 +348,8 @@ public class chatwindo extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Receiver profile error",
-                                error.toException()
-                        );
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Receiver profile error", error.toException());
                     }
                 }
         );
@@ -420,56 +358,28 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // LOAD SENDER PROFILE
     // =========================================================
-
     private void loadSenderProfile() {
 
-        DatabaseReference reference =
-                database.getReference()
-                        .child("user")
-                        .child(SenderUID);
+        DatabaseReference reference = database.getReference().child("user").child(SenderUID);
 
-        reference.addListenerForSingleValueEvent(
-                new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists()
-                                && snapshot.child(
-                                "profilepic"
-                        ).getValue() != null) {
-
-                            senderImg =
-                                    snapshot.child(
-                                                    "profilepic"
-                                            )
-                                            .getValue()
-                                            .toString();
+                        if (snapshot.exists() && snapshot.child("profilepic").getValue() != null) {
+                            senderImg = snapshot.child("profilepic").getValue().toString();
 
                         } else {
-
                             senderImg = "";
                         }
 
                         if (mmessagesAdpter != null) {
-
-                            mmessagesAdpter
-                                    .notifyDataSetChanged();
+                            mmessagesAdpter.notifyDataSetChanged();
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Sender profile error",
-                                error.toException()
-                        );
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Sender profile error", error.toException());
                     }
                 }
         );
@@ -478,7 +388,6 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // LOAD CHAT MESSAGES
     // =========================================================
-
     private void loadChatMessages() {
 
         DatabaseReference primaryReference =
