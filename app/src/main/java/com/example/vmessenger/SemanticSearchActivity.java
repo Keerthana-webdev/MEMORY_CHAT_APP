@@ -210,110 +210,43 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             reader.close();
                         }
 
-                        Log.d(
-                                TAG,
-                                "Search response code = "
-                                        + responseCode
-                        );
+                        Log.d(TAG, "Search response code = " + responseCode);
 
-                        Log.d(
-                                TAG,
-                                "Search response = "
-                                        + response
-                        );
+                        Log.d(TAG, "Search response = " + response);
 
-                        if (responseCode < 200
-                                || responseCode >= 300) {
-
-                            throw new Exception(
-                                    "Backend returned HTTP "
-                                            + responseCode
-                                            + ": "
-                                            + response
-                            );
+                        if (responseCode < 200 || responseCode >= 300) {
+                            throw new Exception("Backend returned HTTP " + responseCode + ": " + response);
                         }
 
-                        JSONObject json =
-                                new JSONObject(
-                                        response.toString()
-                                );
+                        JSONObject json = new JSONObject(response.toString());
 
-                        boolean success =
-                                json.optBoolean(
-                                        "success",
-                                        true
-                                );
+                        boolean success = json.optBoolean("success", true);
 
                         if (!success) {
-
-                            throw new Exception(
-                                    json.optString(
-                                            "message",
-                                            "Search failed"
-                                    )
-                            );
+                            throw new Exception(json.optString("message", "Search failed"));
                         }
 
-                        JSONArray results =
-                                json.optJSONArray(
-                                        "results"
-                                );
+                        JSONArray results = json.optJSONArray("results");
 
-                        ArrayList<SearchResult>
-                                tempResults =
-                                new ArrayList<>();
+                        ArrayList<SearchResult> tempResults = new ArrayList<>();
 
                         if (results != null) {
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject item = results.getJSONObject(i);
 
-                            for (
-                                    int i = 0;
-                                    i < results.length();
-                                    i++
-                            ) {
+                                String messageId = item.optString("messageId", "");
 
-                                JSONObject item =
-                                        results.getJSONObject(
-                                                i
-                                        );
+                                String text = item.optString("text", "");
 
-                                String messageId =
-                                        item.optString(
-                                                "messageId",
-                                                ""
-                                        );
+                                String senderId = item.optString("senderId", "");
 
-                                String text =
-                                        item.optString(
-                                                "text",
-                                                ""
-                                        );
+                                String conversationId = item.optString("conversationId", "");
 
-                                String senderId =
-                                        item.optString(
-                                                "senderId",
-                                                ""
-                                        );
+                                double score = item.optDouble("score", 0);
 
-                                String conversationId =
-                                        item.optString(
-                                                "conversationId",
-                                                ""
-                                        );
+                                long timestamp = item.optLong("timestamp", 0);
 
-                                double score =
-                                        item.optDouble(
-                                                "score",
-                                                0
-                                        );
-
-                                long timestamp =
-                                        item.optLong(
-                                                "timestamp",
-                                                0
-                                        );
-
-                                tempResults.add(
-                                        new SearchResult(
+                                tempResults.add(new SearchResult(
                                                 messageId,
                                                 text,
                                                 senderId,
@@ -325,91 +258,39 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             }
                         }
 
-                        mainHandler.post(
-                                () -> {
-
-                                    progressBar
-                                            .setVisibility(
-                                                    View.GONE
-                                            );
-
+                        mainHandler.post(() -> {
+                                    progressBar.setVisibility(View.GONE);
                                     resultsList.clear();
+                                    resultsList.addAll(tempResults);
 
-                                    resultsList.addAll(
-                                            tempResults
-                                    );
+                                    adapter.notifyDataSetChanged();
 
-                                    adapter
-                                            .notifyDataSetChanged();
-
-                                    if (
-                                            tempResults.isEmpty()
-                                    ) {
-
-                                        emptyText.setText(
-                                                "No matching memories found"
-                                        );
-
-                                        emptyText
-                                                .setVisibility(
-                                                        View.VISIBLE
-                                                );
+                                    if (tempResults.isEmpty()) {
+                                        emptyText.setText("No matching memories found");
+                                        emptyText.setVisibility(View.VISIBLE);
 
                                     } else {
-
-                                        emptyText
-                                                .setVisibility(
-                                                        View.GONE
-                                                );
-
-                                        Toast.makeText(
-                                                SemanticSearchActivity.this,
-                                                tempResults.size()
-                                                        + " memories found",
-                                                Toast.LENGTH_SHORT
+                                        emptyText.setVisibility(View.GONE);
+                                        Toast.makeText(SemanticSearchActivity.this, tempResults.size() + " memories found", Toast.LENGTH_SHORT
                                         ).show();
                                     }
                                 }
                         );
 
                     } catch (Exception e) {
+                        Log.e(TAG, "SEMANTIC SEARCH ERROR", e);
 
-                        Log.e(
-                                TAG,
-                                "SEMANTIC SEARCH ERROR",
-                                e
-                        );
-
-                        mainHandler.post(
-                                () -> {
-
-                                    progressBar
-                                            .setVisibility(
-                                                    View.GONE
-                                            );
-
-                                    emptyText.setText(
-                                            "Search failed"
-                                    );
-
-                                    emptyText
-                                            .setVisibility(
-                                                    View.VISIBLE
-                                            );
-
-                                    Toast.makeText(
-                                            SemanticSearchActivity.this,
-                                            "Search failed: "
-                                                    + e.getMessage(),
-                                            Toast.LENGTH_LONG
+                        mainHandler.post(() -> {
+                                    progressBar.setVisibility(View.GONE);
+                                    emptyText.setText("Search failed");
+                                    emptyText.setVisibility(View.VISIBLE);
+                                    Toast.makeText(SemanticSearchActivity.this, "Search failed: " + e.getMessage(), Toast.LENGTH_LONG
                                     ).show();
                                 }
                         );
 
                     } finally {
-
                         if (connection != null) {
-
                             connection.disconnect();
                         }
                     }
@@ -420,7 +301,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
     // =========================================================
     // OPEN CHAT FROM SEARCH RESULT
     // =========================================================
-
     private void openChatFromSearchResult(
             SearchResult result
     ) {
