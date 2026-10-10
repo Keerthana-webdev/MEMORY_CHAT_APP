@@ -305,8 +305,7 @@ app.post("/search", async (req, res) => {
             );
         }
 
-        const queryEmbedding =
-            response.embeddings[0].values;
+        const queryEmbedding =  response.embeddings[0].values;
 
         console.log(
             "Query embedding dimensions:",
@@ -332,8 +331,7 @@ app.post("/search", async (req, res) => {
 
         console.log("Searching Pinecone...");
 
-        const searchResults =
-            await index.query(searchOptions);
+        const searchResults = await index.query(searchOptions);
 
         // --------------------------------------------
         // FORMAT RESULTS
