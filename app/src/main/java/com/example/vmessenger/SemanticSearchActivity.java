@@ -30,165 +30,86 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class SemanticSearchActivity
-        extends AppCompatActivity {
-
-    private static final String TAG =
-            "SEMANTIC_SEARCH";
+public class SemanticSearchActivity extends AppCompatActivity {
+    private static final String TAG = "SEMANTIC_SEARCH";
 
     // ---------------------------------------------------------
     // Android Emulator -> Windows PC
-    //
     // Keep this because your search is currently working.
     // ---------------------------------------------------------
-
-    private static final String SEARCH_URL =
-            "http://127.0.0.1:3000/search";
+    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
 
     // ---------------------------------------------------------
     // VIEWS
     // ---------------------------------------------------------
-
     private EditText searchInput;
-
     private ImageView searchButton;
-
     private ImageView backButton;
-
     private ProgressBar progressBar;
-
     private TextView emptyText;
-
     private RecyclerView searchRecyclerView;
 
     // ---------------------------------------------------------
     // RESULTS
     // ---------------------------------------------------------
-
     private ArrayList<SearchResult> resultsList;
-
     private SemanticSearchAdapter adapter;
-
-    private final Handler mainHandler =
-            new Handler(
-                    Looper.getMainLooper()
-            );
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     // =========================================================
     // ON CREATE
     // =========================================================
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    @Override
-    protected void onCreate(
-            Bundle savedInstanceState
-    ) {
-
-        super.onCreate(
-                savedInstanceState
-        );
-
-        setContentView(
-                R.layout.activity_semantic_search
-        );
+        setContentView(R.layout.activity_semantic_search);
 
         if (getSupportActionBar() != null) {
-
             getSupportActionBar().hide();
         }
 
         // -----------------------------------------------------
         // FIND VIEWS
         // -----------------------------------------------------
+        searchInput = findViewById(R.id.searchInput);
 
-        searchInput =
-                findViewById(
-                        R.id.searchInput
-                );
+        searchButton = findViewById(R.id.searchButton);
 
-        searchButton =
-                findViewById(
-                        R.id.searchButton
-                );
+        backButton = findViewById(R.id.backButton);
 
-        backButton =
-                findViewById(
-                        R.id.backButton
-                );
+        progressBar = findViewById(R.id.searchProgress);
 
-        progressBar =
-                findViewById(
-                        R.id.searchProgress
-                );
+        emptyText = findViewById(R.id.emptyText);
 
-        emptyText =
-                findViewById(
-                        R.id.emptyText
-                );
+        searchRecyclerView = findViewById(R.id.searchRecyclerView);
 
-        searchRecyclerView =
-                findViewById(
-                        R.id.searchRecyclerView
-                );
-
-        // -----------------------------------------------------
         // RESULTS LIST
-        // -----------------------------------------------------
+        resultsList = new ArrayList<>();
 
-        resultsList =
-                new ArrayList<>();
-
-        // -----------------------------------------------------
         // RECYCLER VIEW
-        // -----------------------------------------------------
-
-        searchRecyclerView.setLayoutManager(
-                new LinearLayoutManager(
-                        SemanticSearchActivity.this
-                )
-        );
+        searchRecyclerView.setLayoutManager(new LinearLayoutManager(SemanticSearchActivity.this));
 
         // -----------------------------------------------------
         // ADAPTER
         // -----------------------------------------------------
-
-        adapter =
-                new SemanticSearchAdapter(
-                        SemanticSearchActivity.this,
-                        resultsList,
-                        new SemanticSearchAdapter
-                                .OnResultClickListener() {
-
-                            @Override
-                            public void onResultClick(
-                                    SearchResult result
-                            ) {
-
-                                openChatFromSearchResult(
-                                        result
-                                );
+        adapter = new SemanticSearchAdapter(SemanticSearchActivity.this,
+                        resultsList, new SemanticSearchAdapter.OnResultClickListener() {
+                            @Override public void onResultClick(SearchResult result) {
+                                openChatFromSearchResult(result);
                             }
                         }
                 );
 
-        searchRecyclerView.setAdapter(
-                adapter
-        );
+        searchRecyclerView.setAdapter(adapter);
 
         // -----------------------------------------------------
         // INITIAL UI
         // -----------------------------------------------------
+        progressBar.setVisibility(View.GONE);
 
-        progressBar.setVisibility(
-                View.GONE
-        );
+        emptyText.setText("Search your memories");
 
-        emptyText.setText(
-                "Search your memories"
-        );
-
-        emptyText.setVisibility(
-                View.VISIBLE
-        );
+        emptyText.setVisibility(View.VISIBLE);
 
         // -----------------------------------------------------
         // BACK
