@@ -429,18 +429,12 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         /*
          * IMPORTANT:
-         *
          * Pass conversationId too.
-         *
          * chatwindo can use it as a recovery
          * mechanism if necessary.
          */
 
-        intent.putExtra(
-                "conversationId",
-                conversationId
-        );
-
+        intent.putExtra("conversationId", conversationId);
         startActivity(intent);
     }
 }
