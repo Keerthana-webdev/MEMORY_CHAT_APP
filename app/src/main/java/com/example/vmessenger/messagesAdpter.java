@@ -183,11 +183,10 @@ public class messagesAdpter
         if (highlighted) {
             messageText.setBackgroundTintList(
                     ColorStateList.valueOf(
-                            Color.parseColor("#FFF176")
+                            Color.parseColor("#DCCBFF")
                     )
             );
         } else {
-            // Reset recycled message rows
             messageText.setBackgroundTintList(null);
         }
     }
