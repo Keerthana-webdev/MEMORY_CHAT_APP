@@ -129,8 +129,7 @@ app.post("/index-message", async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "messageId, conversationId, senderId and text are required"
+                message: "messageId, conversationId, senderId and text are required"
             });
         }
 
@@ -389,8 +388,7 @@ app.post("/search", async (req, res) => {
             }
         });
 
-        const queryEmbedding =
-            embeddingResponse?.embeddings?.[0]?.values;
+        const queryEmbedding = embeddingResponse?.embeddings?.[0]?.values;
 
         if (!Array.isArray(queryEmbedding) || queryEmbedding.length === 0) {
             throw new Error("Invalid search embedding from Gemini");
