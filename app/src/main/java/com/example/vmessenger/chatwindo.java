@@ -104,7 +104,6 @@ public class chatwindo extends AppCompatActivity {
         // FIREBASE INITIALIZATION
         // -----------------------------------------------------
         database = FirebaseDatabase.getInstance();
-
         firebaseAuth = FirebaseAuth.getInstance();
 
         // -----------------------------------------------------
@@ -129,6 +128,7 @@ public class chatwindo extends AppCompatActivity {
         reciverUid = getIntent().getStringExtra("uid");
         reciverName = getIntent().getStringExtra("nameeee");
         reciverimg = getIntent().getStringExtra("reciverImg");
+
         targetMessageId = getIntent().getStringExtra("targetMessageId");
         targetMessageText = getIntent().getStringExtra("targetMessageText");
         targetMessageSenderId = getIntent().getStringExtra("targetMessageSenderId");
@@ -154,30 +154,15 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // FIND VIEWS
         // -----------------------------------------------------
-        sendbtn =
-                findViewById(
-                        R.id.sendbtnn
-                );
+        sendbtn = findViewById(R.id.sendbtnn);
 
-        textmsg =
-                findViewById(
-                        R.id.textmsg
-                );
+        textmsg = findViewById(R.id.textmsg);
 
-        reciverNName =
-                findViewById(
-                        R.id.recivername
-                );
+        reciverNName = findViewById(R.id.recivername);
 
-        profile =
-                findViewById(
-                        R.id.profileimgg
-                );
+        profile = findViewById(R.id.profileimgg);
 
-        messageAdpter =
-                findViewById(
-                        R.id.msgadpter
-                );
+        messageAdpter = findViewById(R.id.msgadpter);
 
         // -----------------------------------------------------
         // RECYCLER VIEW
