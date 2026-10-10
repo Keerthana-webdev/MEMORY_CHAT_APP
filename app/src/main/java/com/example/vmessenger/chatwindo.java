@@ -36,84 +36,64 @@ import java.util.Date;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatwindo extends AppCompatActivity {
-
     private static final String TAG = "CHAT_WINDOW";
 
     // Android Emulator -> Windows PC
-    private static final String BACKEND_URL =
-            "http://127.0.0.1:3000/index-message";
+    private static final String BACKEND_URL = "http://127.0.0.1:3000/index-message";
+
     // ---------------------------------------------------------
     // USER DETAILS
     // ---------------------------------------------------------
-
     String reciverimg;
     String reciverUid;
     String reciverName;
-
     String SenderUID;
-
     CircleImageView profile;
     TextView reciverNName;
 
     // ---------------------------------------------------------
     // FIREBASE
     // ---------------------------------------------------------
-
     FirebaseDatabase database;
     FirebaseAuth firebaseAuth;
 
     // ---------------------------------------------------------
     // PROFILE IMAGES
     // ---------------------------------------------------------
-
     public static String senderImg = "";
     public static String reciverIImg = "";
 
     // ---------------------------------------------------------
     // MESSAGE UI
     // ---------------------------------------------------------
-
     CardView sendbtn;
     EditText textmsg;
-
     RecyclerView messageAdpter;
-
     ArrayList<msgModelclass> messagesArrayList;
-
     messagesAdpter mmessagesAdpter;
 
     // ---------------------------------------------------------
     // CHAT ROOMS
     // ---------------------------------------------------------
-
     String senderRoom;
     String reciverRoom;
 
     // ---------------------------------------------------------
     // SEMANTIC SEARCH TARGET
     // ---------------------------------------------------------
-
     private String targetMessageId = null;
-
     private String targetMessageText = null;
-
     private String targetMessageSenderId = null;
-
     private long targetMessageTimestamp = 0;
-
     private int targetMessagePosition = -1;
-
     private boolean openedFromSearch = false;
 
     // =========================================================
     // ON CREATE
     // =========================================================
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_chatwindo);
 
         if (getSupportActionBar() != null) {
@@ -123,7 +103,6 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // FIREBASE INITIALIZATION
         // -----------------------------------------------------
-
         database = FirebaseDatabase.getInstance();
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -131,17 +110,14 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // CURRENT USER
         // -----------------------------------------------------
-
         SenderUID = firebaseAuth.getUid();
 
         if (SenderUID == null || SenderUID.isEmpty()) {
-
             Toast.makeText(
                     chatwindo.this,
                     "User not logged in",
                     Toast.LENGTH_SHORT
             ).show();
-
             finish();
 
             return;
@@ -150,92 +126,34 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // READ INTENT VALUES
         // -----------------------------------------------------
+        reciverUid = getIntent().getStringExtra("uid");
+        reciverName = getIntent().getStringExtra("nameeee");
+        reciverimg = getIntent().getStringExtra("reciverImg");
+        targetMessageId = getIntent().getStringExtra("targetMessageId");
+        targetMessageText = getIntent().getStringExtra("targetMessageText");
+        targetMessageSenderId = getIntent().getStringExtra("targetMessageSenderId");
+        targetMessageTimestamp = getIntent().getLongExtra("targetMessageTimestamp", 0);
 
-        reciverUid =
-                getIntent().getStringExtra("uid");
+        openedFromSearch = targetMessageId != null && !targetMessageId.isEmpty();
 
-        reciverName =
-                getIntent().getStringExtra("nameeee");
+        reciverIImg = reciverimg != null ? reciverimg : "";
 
-        reciverimg =
-                getIntent().getStringExtra("reciverImg");
-
-        targetMessageId =
-                getIntent().getStringExtra(
-                        "targetMessageId"
-                );
-
-        targetMessageText =
-                getIntent().getStringExtra(
-                        "targetMessageText"
-                );
-
-        targetMessageSenderId =
-                getIntent().getStringExtra(
-                        "targetMessageSenderId"
-                );
-
-        targetMessageTimestamp =
-                getIntent().getLongExtra(
-                        "targetMessageTimestamp",
-                        0
-                );
-
-        openedFromSearch =
-                targetMessageId != null
-                        && !targetMessageId.isEmpty();
-
-        reciverIImg =
-                reciverimg != null
-                        ? reciverimg
-                        : "";
-
-        messagesArrayList =
-                new ArrayList<>();
+        messagesArrayList = new ArrayList<>();
 
         // -----------------------------------------------------
         // LOG SEARCH INFORMATION
         // -----------------------------------------------------
-
-        Log.d(
-                TAG,
-                "================================"
-        );
-
-        Log.d(
-                TAG,
-                "CHAT WINDOW OPENED"
-        );
-
-        Log.d(
-                TAG,
-                "Current User = " + SenderUID
-        );
-
-        Log.d(
-                TAG,
-                "Intent Receiver = " + reciverUid
-        );
-
-        Log.d(
-                TAG,
-                "Target Message ID = " + targetMessageId
-        );
-
-        Log.d(
-                TAG,
-                "Target Message Text = " + targetMessageText
-        );
-
-        Log.d(
-                TAG,
-                "Target Sender = " + targetMessageSenderId
-        );
+        Log.d(TAG, "================================");
+        Log.d(TAG, "CHAT WINDOW OPENED");
+        Log.d(TAG, "Current User = " + SenderUID);
+        Log.d(TAG, "Intent Receiver = " + reciverUid);
+        Log.d(TAG, "Target Message ID = " + targetMessageId);
+        Log.d(TAG, "Target Message Text = " + targetMessageText);
+        Log.d(TAG, "Target Sender = " + targetMessageSenderId);
 
         // -----------------------------------------------------
         // FIND VIEWS
         // -----------------------------------------------------
-
         sendbtn =
                 findViewById(
                         R.id.sendbtnn
