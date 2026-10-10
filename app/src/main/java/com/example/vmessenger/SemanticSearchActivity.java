@@ -127,103 +127,50 @@ public class SemanticSearchActivity extends AppCompatActivity {
     // =========================================================
     // PERFORM SEMANTIC SEARCH
     // =========================================================
-    private void performSemanticSearch(
-            String query
-    ) {
+    private void performSemanticSearch(String query) {
 
-        progressBar.setVisibility(
-                View.VISIBLE
-        );
+        progressBar.setVisibility(View.VISIBLE);
 
-        emptyText.setVisibility(
-                View.GONE
-        );
+        emptyText.setVisibility(View.GONE);
 
         resultsList.clear();
 
         adapter.notifyDataSetChanged();
 
-        Log.d(
-                TAG,
-                "Searching for: " + query
-        );
+        Log.d(TAG, "Searching for: " + query);
 
-        new Thread(
-                () -> {
-
-                    HttpURLConnection connection =
-                            null;
-
+        new Thread(() -> {HttpURLConnection connection = null;
                     try {
+                        URL url = new URL(SEARCH_URL);
 
-                        URL url =
-                                new URL(
-                                        SEARCH_URL
-                                );
+                        connection = (HttpURLConnection) url.openConnection();
 
-                        connection =
-                                (HttpURLConnection)
-                                        url.openConnection();
+                        connection.setRequestMethod("POST");
 
-                        connection.setRequestMethod(
-                                "POST"
-                        );
+                        connection.setConnectTimeout(10000);
 
-                        connection.setConnectTimeout(
-                                10000
-                        );
+                        connection.setReadTimeout(20000);
 
-                        connection.setReadTimeout(
-                                20000
-                        );
+                        connection.setRequestProperty("Content-Type", "application/json");
 
-                        connection.setRequestProperty(
-                                "Content-Type",
-                                "application/json"
-                        );
+                        connection.setRequestProperty("Accept", "application/json");
 
-                        connection.setRequestProperty(
-                                "Accept",
-                                "application/json"
-                        );
-
-                        connection.setDoOutput(
-                                true
-                        );
+                        connection.setDoOutput(true);
 
                         // -------------------------------------------------
                         // REQUEST
                         // -------------------------------------------------
+                        JSONObject request = new JSONObject();
 
-                        JSONObject request =
-                                new JSONObject();
+                        request.put("query", query);
 
-                        request.put(
-                                "query",
-                                query
-                        );
+                        request.put("topK", 10);
 
-                        request.put(
-                                "topK",
-                                10
-                        );
+                        Log.d(TAG, "Search request = " + request);
 
-                        Log.d(
-                                TAG,
-                                "Search request = "
-                                        + request
-                        );
+                        OutputStream outputStream = connection.getOutputStream();
 
-                        OutputStream outputStream =
-                                connection
-                                        .getOutputStream();
-
-                        outputStream.write(
-                                request.toString()
-                                        .getBytes(
-                                                StandardCharsets.UTF_8
-                                        )
-                        );
+                        outputStream.write(request.toString().getBytes(StandardCharsets.UTF_8));
 
                         outputStream.flush();
 
@@ -232,29 +179,17 @@ public class SemanticSearchActivity extends AppCompatActivity {
                         // -------------------------------------------------
                         // RESPONSE
                         // -------------------------------------------------
-
-                        int responseCode =
-                                connection
-                                        .getResponseCode();
+                        int responseCode = connection.getResponseCode();
 
                         InputStream inputStream;
 
-                        if (responseCode >= 200
-                                && responseCode < 300) {
-
-                            inputStream =
-                                    connection
-                                            .getInputStream();
-
+                        if (responseCode >= 200 && responseCode < 300) {
+                            inputStream = connection.getInputStream();
                         } else {
-
-                            inputStream =
-                                    connection
-                                            .getErrorStream();
+                            inputStream = connection.getErrorStream();
                         }
 
-                        StringBuilder response =
-                                new StringBuilder();
+                        StringBuilder response = new StringBuilder();
 
                         if (inputStream != null) {
 
@@ -268,16 +203,10 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             String line;
 
                             while (
-                                    (line =
-                                            reader.readLine())
-                                            != null
+                                    (line = reader.readLine()) != null
                             ) {
-
-                                response.append(
-                                        line
-                                );
+                                response.append(line);
                             }
-
                             reader.close();
                         }
 
