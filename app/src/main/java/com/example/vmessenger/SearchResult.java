@@ -1,7 +1,6 @@
 package com.example.vmessenger;
 
 public class SearchResult {
-
     private String messageId;
     private String text;
     private String senderId;
