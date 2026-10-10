@@ -167,35 +167,18 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // RECYCLER VIEW
         // -----------------------------------------------------
+        LinearLayoutManager layoutManager = new LinearLayoutManager(chatwindo.this);
 
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(
-                        chatwindo.this
-                );
+        layoutManager.setStackFromEnd(true);messageAdpter.setLayoutManager(layoutManager);
 
-        layoutManager.setStackFromEnd(true);
+        mmessagesAdpter = new messagesAdpter(chatwindo.this, messagesArrayList);
 
-        messageAdpter.setLayoutManager(
-                layoutManager
-        );
-
-        mmessagesAdpter =
-                new messagesAdpter(
-                        chatwindo.this,
-                        messagesArrayList
-                );
-
-        messageAdpter.setAdapter(
-                mmessagesAdpter
-        );
+        messageAdpter.setAdapter(mmessagesAdpter);
 
         // -----------------------------------------------------
         // CURRENT USER VALIDATION
         // -----------------------------------------------------
-
-        if (reciverUid == null
-                || reciverUid.trim().isEmpty()
-                || reciverUid.equals(SenderUID)) {
+        if (reciverUid == null || reciverUid.trim().isEmpty() || reciverUid.equals(SenderUID)) {
 
             /*
              * This can happen when an old search result
@@ -207,39 +190,22 @@ public class chatwindo extends AppCompatActivity {
              * conversation information if available.
              */
 
-            String conversationId =
-                    getIntent().getStringExtra(
-                            "conversationId"
-                    );
+            String conversationId = getIntent().getStringExtra("conversationId");
 
-            String recoveredUid =
-                    findOtherUserFromConversation(
-                            conversationId,
-                            SenderUID
-                    );
+            String recoveredUid = findOtherUserFromConversation(conversationId, SenderUID);
 
-            if (recoveredUid != null
-                    && !recoveredUid.isEmpty()
-                    && !recoveredUid.equals(SenderUID)) {
+            if (recoveredUid != null && !recoveredUid.isEmpty() && !recoveredUid.equals(SenderUID)) {
 
                 reciverUid = recoveredUid;
-
-                Log.d(
-                        TAG,
-                        "Recovered receiver UID = "
-                                + reciverUid
-                );
+                Log.d(TAG, "Recovered receiver UID = " + reciverUid);
 
             } else {
-
                 Toast.makeText(
                         chatwindo.this,
                         "Could not identify chat user",
                         Toast.LENGTH_LONG
                 ).show();
-
                 finish();
-
                 return;
             }
         }
@@ -247,52 +213,27 @@ public class chatwindo extends AppCompatActivity {
         // -----------------------------------------------------
         // CREATE CHAT ROOM IDS
         // -----------------------------------------------------
+        senderRoom = SenderUID + reciverUid;
+        reciverRoom = reciverUid + SenderUID;
+        Log.d(TAG, "Sender Room = " + senderRoom);
+        Log.d(TAG, "Receiver Room = " + reciverRoom);
 
-        senderRoom =
-                SenderUID + reciverUid;
-
-        reciverRoom =
-                reciverUid + SenderUID;
-
-        Log.d(
-                TAG,
-                "Sender Room = " + senderRoom
-        );
-
-        Log.d(
-                TAG,
-                "Receiver Room = " + reciverRoom
-        );
-
-        // -----------------------------------------------------
         // LOAD RECEIVER PROFILE
-        // -----------------------------------------------------
-
         loadReceiverProfile();
 
-        // -----------------------------------------------------
         // LOAD CURRENT USER PROFILE
-        // -----------------------------------------------------
-
         loadSenderProfile();
 
-        // -----------------------------------------------------
         // LOAD CHAT
-        // -----------------------------------------------------
-
         loadChatMessages();
 
-        // -----------------------------------------------------
         // SEND MESSAGE
-        // -----------------------------------------------------
-
         setupSendButton();
     }
 
     // =========================================================
     // FIND OTHER USER FROM CONVERSATION ID
     // =========================================================
-
     private String findOtherUserFromConversation(
             String conversationId,
             String currentUserId
