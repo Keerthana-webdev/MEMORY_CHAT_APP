@@ -389,30 +389,15 @@ public class chatwindo extends AppCompatActivity {
     // LOAD CHAT MESSAGES
     // =========================================================
     private void loadChatMessages() {
+        DatabaseReference primaryReference = database.getReference().child("chats").child(senderRoom).child("messages");
 
-        DatabaseReference primaryReference =
-                database.getReference()
-                        .child("chats")
-                        .child(senderRoom)
-                        .child("messages");
+        primaryReference.addValueEventListener(new ValueEventListener() {
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        primaryReference.addValueEventListener(
-                new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
-
-                        if (snapshot.exists()
-                                && snapshot.getChildrenCount() > 0) {
-
-                            displayMessages(
-                                    snapshot
-                            );
+                        if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                            displayMessages(snapshot);
 
                         } else {
-
                             /*
                              * Primary room is empty.
                              * Try reverse room.
@@ -421,17 +406,8 @@ public class chatwindo extends AppCompatActivity {
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Primary chat load failed",
-                                error.toException()
-                        );
-
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Primary chat load failed", error.toException());
                         loadReverseRoom();
                     }
                 }
@@ -441,7 +417,6 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // LOAD REVERSE CHAT ROOM
     // =========================================================
-
     private void loadReverseRoom() {
 
         DatabaseReference reverseReference =
