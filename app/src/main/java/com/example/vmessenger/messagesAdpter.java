@@ -3,6 +3,8 @@ package com.example.vmessenger;
 import static com.example.vmessenger.chatwindo.reciverIImg;
 import static com.example.vmessenger.chatwindo.senderImg;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -180,12 +182,39 @@ public class messagesAdpter
             TextView messageText,
             boolean highlighted
     ) {
+        // Stop any previous animation on this recycled view
+        Object oldTag = messageText.getTag();
+
+        if (oldTag instanceof ValueAnimator) {
+            ((ValueAnimator) oldTag).cancel();
+            messageText.setTag(null);
+        }
+
         if (highlighted) {
-            messageText.setBackgroundTintList(
-                    ColorStateList.valueOf(
-                            Color.parseColor("#DCCBFF")
-                    )
+            int lavender = Color.parseColor("#DCCBFF");
+            int lightLavender = Color.parseColor("#F3ECFF");
+
+            ValueAnimator animator = ValueAnimator.ofObject(
+                    new ArgbEvaluator(),
+                    lavender,
+                    lightLavender
             );
+
+            animator.setDuration(700);
+            animator.setRepeatMode(ValueAnimator.REVERSE);
+            animator.setRepeatCount(ValueAnimator.INFINITE);
+
+            animator.addUpdateListener(animation -> {
+                int color = (int) animation.getAnimatedValue();
+
+                messageText.setBackgroundTintList(
+                        ColorStateList.valueOf(color)
+                );
+            });
+
+            messageText.setTag(animator);
+            animator.start();
+
         } else {
             messageText.setBackgroundTintList(null);
         }
