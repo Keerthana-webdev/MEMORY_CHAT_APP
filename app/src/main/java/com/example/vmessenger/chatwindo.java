@@ -419,50 +419,25 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     private void loadReverseRoom() {
 
-        DatabaseReference reverseReference =
-                database.getReference()
-                        .child("chats")
-                        .child(reciverRoom)
-                        .child("messages");
+        DatabaseReference reverseReference = database.getReference().child("chats").child(reciverRoom).child("messages");
 
-        reverseReference.addValueEventListener(
-                new ValueEventListener() {
+        reverseReference.addValueEventListener(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(
-                            @NonNull DataSnapshot snapshot
-                    ) {
+                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists()
-                                && snapshot.getChildrenCount() > 0) {
-
-                            displayMessages(
-                                    snapshot
-                            );
+                        if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                            displayMessages(snapshot);
 
                         } else {
-
                             messagesArrayList.clear();
-
                             mmessagesAdpter.notifyDataSetChanged();
 
-                            Log.d(
-                                    TAG,
-                                    "No messages found in either chat room"
-                            );
+                            Log.d(TAG, "No messages found in either chat room");
                         }
                     }
 
-                    @Override
-                    public void onCancelled(
-                            @NonNull DatabaseError error
-                    ) {
-
-                        Log.e(
-                                TAG,
-                                "Reverse chat load failed",
-                                error.toException()
-                        );
+                    @Override public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Reverse chat load failed", error.toException());
                     }
                 }
         );
@@ -475,7 +450,6 @@ public class chatwindo extends AppCompatActivity {
 
         messagesArrayList.clear();
         targetMessagePosition = -1;
-
         int position = 0;
 
         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
