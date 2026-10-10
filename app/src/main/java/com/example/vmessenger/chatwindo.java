@@ -41,8 +41,7 @@ public class chatwindo extends AppCompatActivity {
 
     // Android Emulator -> Windows PC
     private static final String BACKEND_URL =
-            "http://10.0.2.2:3000/index-message";
-
+            "http://127.0.0.1:3000/index-message";
     // ---------------------------------------------------------
     // USER DETAILS
     // ---------------------------------------------------------
@@ -730,8 +729,7 @@ public class chatwindo extends AppCompatActivity {
 
                             messagesArrayList.clear();
 
-                            mmessagesAdpter
-                                    .notifyDataSetChanged();
+                            mmessagesAdpter.notifyDataSetChanged();
 
                             Log.d(
                                     TAG,
@@ -1014,8 +1012,7 @@ public class chatwindo extends AppCompatActivity {
 
                         senderMessageRef
                                 .setValue(messagess)
-                                .addOnSuccessListener(
-                                        unused -> {
+                                .addOnSuccessListener(unused -> {
 
                                             // ---------------------------------
                                             // SAVE SAME MESSAGE TO RECEIVER
@@ -1034,6 +1031,8 @@ public class chatwindo extends AppCompatActivity {
                                             // ---------------------------------
                                             // INDEX MESSAGE
                                             // ---------------------------------
+
+                                            Log.d("SEMANTIC_SEARCH", "INDEXING NEW MESSAGE: " + messageId);
 
                                             indexMessageToBackend(
                                                     messageId,
@@ -1076,214 +1075,81 @@ public class chatwindo extends AppCompatActivity {
             String text,
             long timestamp
     ) {
+        new Thread(() -> {
+            HttpURLConnection connection = null;
 
-        new Thread(
-                () -> {
+            // Use SEMANTIC_SEARCH so these logs appear with that Logcat filter.
+            Log.d("SEMANTIC_SEARCH", "INDEX THREAD STARTED");
 
-                    HttpURLConnection connection =
-                            null;
+            try {
+                Log.d("SEMANTIC_SEARCH", "Sending message to semantic backend...");
+                Log.d("SEMANTIC_SEARCH", "BACKEND URL = " + BACKEND_URL);
+                Log.d("SEMANTIC_SEARCH", "Message ID = " + messageId);
+                Log.d("SEMANTIC_SEARCH", "Conversation ID = " + conversationId);
+                Log.d("SEMANTIC_SEARCH", "Sender ID = " + senderId);
+                Log.d("SEMANTIC_SEARCH", "Message text = " + text);
 
-                    try {
+                URL url = new URL(BACKEND_URL);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(20000);
+                connection.setDoOutput(true);
 
-                        Log.d(
-                                TAG,
-                                "Sending message to semantic backend..."
-                        );
+                JSONObject json = new JSONObject();
+                json.put("messageId", messageId);
+                json.put("conversationId", conversationId);
+                json.put("senderId", senderId);
+                json.put("text", text);
+                json.put("timestamp", timestamp);
 
-                        URL url =
-                                new URL(
-                                        BACKEND_URL
-                                );
+                String jsonString = json.toString();
+                Log.d("SEMANTIC_SEARCH", "Index request JSON = " + jsonString);
 
-                        connection =
-                                (HttpURLConnection)
-                                        url.openConnection();
+                try (OutputStream outputStream = connection.getOutputStream()) {
+                    outputStream.write(jsonString.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    outputStream.flush();
+                }
 
-                        connection.setRequestMethod(
-                                "POST"
-                        );
+                int responseCode = connection.getResponseCode();
+                InputStream inputStream = (responseCode >= 200 && responseCode < 300)
+                        ? connection.getInputStream()
+                        : connection.getErrorStream();
 
-                        connection.setRequestProperty(
-                                "Content-Type",
-                                "application/json"
-                        );
-
-                        connection.setRequestProperty(
-                                "Accept",
-                                "application/json"
-                        );
-
-                        connection.setConnectTimeout(
-                                10000
-                        );
-
-                        connection.setReadTimeout(
-                                15000
-                        );
-
-                        connection.setDoOutput(
-                                true
-                        );
-
-                        // -------------------------------------------------
-                        // JSON
-                        // -------------------------------------------------
-
-                        JSONObject json =
-                                new JSONObject();
-
-                        json.put(
-                                "messageId",
-                                messageId
-                        );
-
-                        json.put(
-                                "conversationId",
-                                conversationId
-                        );
-
-                        json.put(
-                                "senderId",
-                                senderId
-                        );
-
-                        json.put(
-                                "text",
-                                text
-                        );
-
-                        json.put(
-                                "timestamp",
-                                timestamp
-                        );
-
-                        String jsonString =
-                                json.toString();
-
-                        Log.d(
-                                TAG,
-                                "Request = "
-                                        + jsonString
-                        );
-
-                        // -------------------------------------------------
-                        // SEND
-                        // -------------------------------------------------
-
-                        OutputStream outputStream =
-                                connection
-                                        .getOutputStream();
-
-                        outputStream.write(
-                                jsonString.getBytes(
-                                        "UTF-8"
-                                )
-                        );
-
-                        outputStream.flush();
-
-                        outputStream.close();
-
-                        // -------------------------------------------------
-                        // RESPONSE
-                        // -------------------------------------------------
-
-                        int responseCode =
-                                connection
-                                        .getResponseCode();
-
-                        InputStream inputStream;
-
-                        if (responseCode >= 200
-                                && responseCode < 300) {
-
-                            inputStream =
-                                    connection
-                                            .getInputStream();
-
-                        } else {
-
-                            inputStream =
-                                    connection
-                                            .getErrorStream();
-                        }
-
-                        StringBuilder response =
-                                new StringBuilder();
-
-                        if (inputStream != null) {
-
-                            BufferedReader reader =
-                                    new BufferedReader(
-                                            new InputStreamReader(
-                                                    inputStream
-                                            )
-                                    );
-
-                            String line;
-
-                            while (
-                                    (line =
-                                            reader.readLine())
-                                            != null
-                            ) {
-
-                                response.append(
-                                        line
-                                );
-                            }
-
-                            reader.close();
-                        }
-
-                        Log.d(
-                                TAG,
-                                "Backend response code = "
-                                        + responseCode
-                        );
-
-                        Log.d(
-                                TAG,
-                                "Backend response = "
-                                        + response
-                        );
-
-                        if (responseCode >= 200
-                                && responseCode < 300) {
-
-                            Log.d(
-                                    TAG,
-                                    "SEMANTIC INDEX SUCCESS"
-                            );
-
-                        } else {
-
-                            runOnUiThread(
-                                    () -> Toast.makeText(
-                                            chatwindo.this,
-                                            "Semantic indexing failed",
-                                            Toast.LENGTH_SHORT
-                                    ).show()
-                            );
-                        }
-
-                    } catch (Exception e) {
-
-                        Log.e(
-                                TAG,
-                                "SEMANTIC BACKEND CONNECTION ERROR",
-                                e
-                        );
-
-                    } finally {
-
-                        if (connection != null) {
-
-                            connection.disconnect();
+                StringBuilder response = new StringBuilder();
+                if (inputStream != null) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            response.append(line);
                         }
                     }
                 }
-        ).start();
+
+                Log.d("SEMANTIC_SEARCH", "Index backend response code = " + responseCode);
+                Log.d("SEMANTIC_SEARCH", "Index backend response = " + response);
+
+                if (responseCode >= 200 && responseCode < 300) {
+                    Log.d("SEMANTIC_SEARCH", "SEMANTIC INDEX SUCCESS for message " + messageId);
+                } else {
+                    Log.e("SEMANTIC_SEARCH", "SEMANTIC INDEX FAILED for message " + messageId);
+                    runOnUiThread(() -> Toast.makeText(
+                            chatwindo.this,
+                            "Semantic indexing failed (HTTP " + responseCode + ")",
+                            Toast.LENGTH_LONG
+                    ).show());
+                }
+
+            } catch (Exception e) {
+                Log.e("SEMANTIC_SEARCH", "SEMANTIC BACKEND CONNECTION ERROR", e);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }).start();
     }
 
     // =========================================================

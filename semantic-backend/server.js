@@ -379,20 +379,20 @@ app.post("/search", async (req, res) => {
 // ----------------------------------------------------
 
 app.delete("/delete-test-data", async (req, res) => {
-
     try {
+        console.log("Deleting old test record: test001");
 
-        await index.deleteOne("test001");
+        await index.deleteOne({ id: "test001" });
 
-        console.log("Deleted test001 from Pinecone");
+        console.log("Delete request sent to Pinecone");
 
         res.json({
             success: true,
-            message: "Old test message deleted"
+            message: "Delete request sent for test001",
+            deletedMessageId: "test001"
         });
 
     } catch (error) {
-
         console.error("Delete test data error:", error);
 
         res.status(500).json({
@@ -401,6 +401,7 @@ app.delete("/delete-test-data", async (req, res) => {
         });
     }
 });
+
 
 // ----------------------------------------------------
 // START SERVER
