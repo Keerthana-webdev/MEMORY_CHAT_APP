@@ -756,169 +756,99 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // DISPLAY MESSAGES + FIND EXACT SEARCH RESULT
     // =========================================================
-
-    private void displayMessages(
-            DataSnapshot snapshot
-    ) {
+    private void displayMessages(DataSnapshot snapshot) {
 
         messagesArrayList.clear();
-
         targetMessagePosition = -1;
 
         int position = 0;
 
-        for (DataSnapshot dataSnapshot :
-                snapshot.getChildren()) {
+        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
             msgModelclass message =
-                    dataSnapshot.getValue(
-                            msgModelclass.class
-                    );
+                    dataSnapshot.getValue(msgModelclass.class);
 
             if (message == null) {
                 continue;
             }
 
-            messagesArrayList.add(
-                    message
-            );
+            // Add message to the chat list
+            messagesArrayList.add(message);
 
-            /*
-             * VERY IMPORTANT:
-             *
-             * Firebase message ID is the
-             * DataSnapshot key.
-             *
-             * Semantic search stores this same
-             * key as messageId.
-             */
+            // Firebase key is the message ID indexed by semantic search
+            String firebaseMessageId = dataSnapshot.getKey();
 
-            String firebaseMessageId =
-                    dataSnapshot.getKey();
-
+            // Find the exact message selected in Semantic Search
             if (targetMessageId != null
                     && firebaseMessageId != null
-                    && targetMessageId.equals(
-                    firebaseMessageId
-            )) {
+                    && targetMessageId.equals(firebaseMessageId)) {
 
-                targetMessagePosition =
-                        position;
+                targetMessagePosition = position;
 
-                Log.d(
-                        TAG,
-                        "================================"
-                );
-
-                Log.d(
-                        TAG,
-                        "TARGET MESSAGE FOUND"
-                );
-
-                Log.d(
-                        TAG,
-                        "Firebase ID = "
-                                + firebaseMessageId
-                );
-
-                Log.d(
-                        TAG,
-                        "Position = "
-                                + targetMessagePosition
-                );
-
-                Log.d(
-                        TAG,
-                        "Text = "
-                                + targetMessageText
-                );
-
-                Log.d(
-                        TAG,
-                        "================================"
-                );
+                Log.d(TAG, "================================");
+                Log.d(TAG, "TARGET MESSAGE FOUND");
+                Log.d(TAG, "Message ID = " + firebaseMessageId);
+                Log.d(TAG, "Message position = " + targetMessagePosition);
+                Log.d(TAG, "Message text = " + targetMessageText);
+                Log.d(TAG, "================================");
             }
 
             position++;
         }
 
+        // Refresh the chat messages
         mmessagesAdpter.notifyDataSetChanged();
 
-        // -----------------------------------------------------
-        // SCROLL TO EXACT SEARCH RESULT
-        // -----------------------------------------------------
-
+        // Scroll to and highlight the selected search result
         if (targetMessagePosition >= 0) {
 
-            final int finalPosition =
-                    targetMessagePosition;
+            final int finalPosition = targetMessagePosition;
 
-            messageAdpter.post(
-                    new Runnable() {
+            // Highlight the exact message bubble
+            mmessagesAdpter.setHighlightedPosition(finalPosition);
 
-                        @Override
-                        public void run() {
+            // Scroll after RecyclerView updates
+            messageAdpter.post(new Runnable() {
+                @Override
+                public void run() {
 
-                            RecyclerView.LayoutManager
-                                    manager =
-                                    messageAdpter
-                                            .getLayoutManager();
+                    RecyclerView.LayoutManager manager =
+                            messageAdpter.getLayoutManager();
 
-                            if (manager
-                                    instanceof LinearLayoutManager) {
+                    if (manager instanceof LinearLayoutManager) {
 
-                                LinearLayoutManager
-                                        linearManager =
-                                        (LinearLayoutManager)
-                                                manager;
+                        LinearLayoutManager linearManager =
+                                (LinearLayoutManager) manager;
 
-                                linearManager
-                                        .scrollToPositionWithOffset(
-                                                finalPosition,
-                                                250
-                                        );
+                        linearManager.scrollToPositionWithOffset(
+                                finalPosition,
+                                250
+                        );
 
-                                Log.d(
-                                        TAG,
-                                        "SCROLLED TO EXACT SEARCHED MESSAGE"
-                                );
-                            }
-                        }
+                        Log.d(
+                                TAG,
+                                "SCROLLED TO AND HIGHLIGHTED SEARCH RESULT"
+                        );
                     }
-            );
+                }
+            });
 
         } else {
 
-            /*
-             * Search result did not match a Firebase key.
-             *
-             * This normally means the indexed message
-             * does not exist in this room.
-             *
-             * For normal chat opening, show latest.
-             */
+            // For normal chat opening, show the latest message
+            if (!openedFromSearch && !messagesArrayList.isEmpty()) {
 
-            if (!openedFromSearch
-                    && !messagesArrayList.isEmpty()) {
-
-                messageAdpter.post(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                messageAdpter
-                                        .scrollToPosition(
-                                                messagesArrayList
-                                                        .size() - 1
-                                        );
-                            }
-                        }
-                );
+                messageAdpter.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        messageAdpter.scrollToPosition(
+                                messagesArrayList.size() - 1
+                        );
+                    }
+                });
             }
 
             if (openedFromSearch) {
-
                 Log.w(
                         TAG,
                         "Target message ID was not found in this chat"
