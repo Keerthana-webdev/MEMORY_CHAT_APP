@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:background="@drawable/mainback">
 
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -35,6 +36,7 @@
 
     </LinearLayout>
 
+    <!-- Search bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -64,6 +66,19 @@
 
     </LinearLayout>
 
+    <!-- Sync existing Firebase messages -->
+    <Button
+        android:id="@+id/syncExistingMessagesButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="Sync Existing Messages"
+        android:textAllCaps="false"
+        android:textColor="#2a364e"
+        android:backgroundTint="#DCCBFF" />
+
     <ProgressBar
         android:id="@+id/searchProgress"
         android:layout_width="wrap_content"
@@ -81,6 +96,7 @@
         android:gravity="center"
         android:layout_marginTop="20dp" />
 
+    <!-- Search results -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"
         android:layout_width="match_parent"
