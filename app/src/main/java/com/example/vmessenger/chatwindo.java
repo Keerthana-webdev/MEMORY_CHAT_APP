@@ -453,9 +453,7 @@ public class chatwindo extends AppCompatActivity {
         int position = 0;
 
         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
-            msgModelclass message =
-                    dataSnapshot.getValue(msgModelclass.class);
+            msgModelclass message = dataSnapshot.getValue(msgModelclass.class);
 
             if (message == null) {
                 continue;
@@ -468,10 +466,7 @@ public class chatwindo extends AppCompatActivity {
             String firebaseMessageId = dataSnapshot.getKey();
 
             // Find the exact message selected in Semantic Search
-            if (targetMessageId != null
-                    && firebaseMessageId != null
-                    && targetMessageId.equals(firebaseMessageId)) {
-
+            if (targetMessageId != null && firebaseMessageId != null && targetMessageId.equals(firebaseMessageId)) {
                 targetMessagePosition = position;
 
                 Log.d(TAG, "================================");
@@ -481,7 +476,6 @@ public class chatwindo extends AppCompatActivity {
                 Log.d(TAG, "Message text = " + targetMessageText);
                 Log.d(TAG, "================================");
             }
-
             position++;
         }
 
@@ -498,26 +492,14 @@ public class chatwindo extends AppCompatActivity {
 
             // Scroll after RecyclerView updates
             messageAdpter.post(new Runnable() {
-                @Override
-                public void run() {
+                @Override public void run() {
 
-                    RecyclerView.LayoutManager manager =
-                            messageAdpter.getLayoutManager();
+                    RecyclerView.LayoutManager manager = messageAdpter.getLayoutManager();
 
                     if (manager instanceof LinearLayoutManager) {
-
-                        LinearLayoutManager linearManager =
-                                (LinearLayoutManager) manager;
-
-                        linearManager.scrollToPositionWithOffset(
-                                finalPosition,
-                                250
-                        );
-
-                        Log.d(
-                                TAG,
-                                "SCROLLED TO AND HIGHLIGHTED SEARCH RESULT"
-                        );
+                        LinearLayoutManager linearManager = (LinearLayoutManager) manager;
+                        linearManager.scrollToPositionWithOffset(finalPosition, 250);
+                        Log.d(TAG, "SCROLLED TO AND HIGHLIGHTED SEARCH RESULT");
                     }
                 }
             });
@@ -528,20 +510,15 @@ public class chatwindo extends AppCompatActivity {
             if (!openedFromSearch && !messagesArrayList.isEmpty()) {
 
                 messageAdpter.post(new Runnable() {
-                    @Override
-                    public void run() {
+                    @Override public void run() {
                         messageAdpter.scrollToPosition(
-                                messagesArrayList.size() - 1
-                        );
+                                messagesArrayList.size() - 1);
                     }
                 });
             }
 
             if (openedFromSearch) {
-                Log.w(
-                        TAG,
-                        "Target message ID was not found in this chat"
-                );
+                Log.w(TAG, "Target message ID was not found in this chat");
             }
         }
     }
@@ -549,50 +526,35 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // SEND MESSAGE
     // =========================================================
-
     private void setupSendButton() {
 
-        sendbtn.setOnClickListener(
-                new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View view) {
-
-                        String message =
-                                textmsg.getText()
-                                        .toString()
-                                        .trim();
+        sendbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        String message = textmsg.getText().toString().trim();
 
                         if (message.isEmpty()) {
-
                             Toast.makeText(
                                     chatwindo.this,
                                     "Enter The Message First",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
-                        if (senderRoom == null
-                                || reciverRoom == null) {
-
+                        if (senderRoom == null || reciverRoom == null) {
                             Toast.makeText(
                                     chatwindo.this,
                                     "Chat connection error",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         textmsg.setText("");
 
-                        Date date =
-                                new Date();
+                        Date date = new Date();
 
-                        msgModelclass messagess =
-                                new msgModelclass(
+                        msgModelclass messagess = new msgModelclass(
                                         message,
                                         SenderUID,
                                         date.getTime()
@@ -601,42 +563,32 @@ public class chatwindo extends AppCompatActivity {
                         // -------------------------------------------------
                         // CREATE ONE FIREBASE MESSAGE ID
                         // -------------------------------------------------
-
-                        DatabaseReference
-                                senderMessageRef =
-                                database
+                        DatabaseReference senderMessageRef = database
                                         .getReference()
                                         .child("chats")
                                         .child(senderRoom)
                                         .child("messages")
                                         .push();
 
-                        String messageId =
-                                senderMessageRef.getKey();
+                        String messageId = senderMessageRef.getKey();
 
                         if (messageId == null) {
-
                             Toast.makeText(
                                     chatwindo.this,
                                     "Could not create message",
                                     Toast.LENGTH_SHORT
                             ).show();
-
                             return;
                         }
 
                         // -------------------------------------------------
                         // SAVE TO SENDER ROOM
                         // -------------------------------------------------
-
-                        senderMessageRef
-                                .setValue(messagess)
-                                .addOnSuccessListener(unused -> {
+                        senderMessageRef.setValue(messagess).addOnSuccessListener(unused -> {
 
                                             // ---------------------------------
                                             // SAVE SAME MESSAGE TO RECEIVER
                                             // ---------------------------------
-
                                             database
                                                     .getReference()
                                                     .child("chats")
@@ -650,7 +602,6 @@ public class chatwindo extends AppCompatActivity {
                                             // ---------------------------------
                                             // INDEX MESSAGE
                                             // ---------------------------------
-
                                             Log.d("SEMANTIC_SEARCH", "INDEXING NEW MESSAGE: " + messageId);
 
                                             indexMessageToBackend(
@@ -662,20 +613,14 @@ public class chatwindo extends AppCompatActivity {
                                             );
                                         }
                                 )
-                                .addOnFailureListener(
-                                        error -> {
-
+                                .addOnFailureListener(error -> {
                                             Toast.makeText(
                                                     chatwindo.this,
                                                     "Message failed to send",
                                                     Toast.LENGTH_SHORT
                                             ).show();
 
-                                            Log.e(
-                                                    TAG,
-                                                    "Firebase message error",
-                                                    error
-                                            );
+                                            Log.e(TAG, "Firebase message error", error);
                                         }
                                 );
                     }
@@ -686,7 +631,6 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // INDEX MESSAGE INTO GEMINI + PINECONE
     // =========================================================
-
     private void indexMessageToBackend(
             String messageId,
             String conversationId,
