@@ -638,8 +638,7 @@ public class chatwindo extends AppCompatActivity {
             String text,
             long timestamp
     ) {
-        new Thread(() -> {
-            HttpURLConnection connection = null;
+        new Thread(() -> {HttpURLConnection connection = null;
 
             // Use SEMANTIC_SEARCH so these logs appear with that Logcat filter.
             Log.d("SEMANTIC_SEARCH", "INDEX THREAD STARTED");
@@ -718,32 +717,16 @@ public class chatwindo extends AppCompatActivity {
     // =========================================================
     // SEARCH BUTTON SUPPORT
     // =========================================================
-
-    public void openSemanticSearch(
-            View view
-    ) {
-
-        Intent intent =
-                new Intent(
-                        chatwindo.this,
-                        SemanticSearchActivity.class
-                );
-
+    public void openSemanticSearch(View view) {
+        Intent intent = new Intent(chatwindo.this, SemanticSearchActivity.class);
         startActivity(intent);
     }
 
     // =========================================================
     // OPTIONAL NO-ARG XML onClick SUPPORT
     // =========================================================
-
     public void openSemanticSearch() {
-
-        Intent intent =
-                new Intent(
-                        chatwindo.this,
-                        SemanticSearchActivity.class
-                );
-
+        Intent intent = new Intent(chatwindo.this, SemanticSearchActivity.class);
         startActivity(intent);
     }
 }
