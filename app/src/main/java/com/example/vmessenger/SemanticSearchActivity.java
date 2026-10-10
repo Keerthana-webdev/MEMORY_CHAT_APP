@@ -99,53 +99,27 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             }
                         }
                 );
-
         searchRecyclerView.setAdapter(adapter);
 
-        // -----------------------------------------------------
         // INITIAL UI
-        // -----------------------------------------------------
         progressBar.setVisibility(View.GONE);
-
         emptyText.setText("Search your memories");
-
         emptyText.setVisibility(View.VISIBLE);
 
-        // -----------------------------------------------------
         // BACK
-        // -----------------------------------------------------
+        backButton.setOnClickListener(v -> finish());
 
-        backButton.setOnClickListener(
-                v -> finish()
-        );
-
-        // -----------------------------------------------------
         // SEARCH
-        // -----------------------------------------------------
-
-        searchButton.setOnClickListener(
-                v -> {
-
-                    String query =
-                            searchInput
-                                    .getText()
-                                    .toString()
-                                    .trim();
+        searchButton.setOnClickListener(v -> {
+                    String query = searchInput.getText().toString().trim();
 
                     if (query.isEmpty()) {
-
-                        Toast.makeText(
-                                SemanticSearchActivity.this,
-                                "Enter something to search",
-                                Toast.LENGTH_SHORT
+                        Toast.makeText(SemanticSearchActivity.this, "Enter something to search", Toast.LENGTH_SHORT
                         ).show();
-
                         return;
                     }
 
-                    performSemanticSearch(
-                            query
-                    );
+                    performSemanticSearch(query);
                 }
         );
     }
@@ -153,7 +127,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
     // =========================================================
     // PERFORM SEMANTIC SEARCH
     // =========================================================
-
     private void performSemanticSearch(
             String query
     ) {
