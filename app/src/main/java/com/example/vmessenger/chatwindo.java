@@ -243,7 +243,6 @@ public class chatwindo extends AppCompatActivity {
                 || conversationId.isEmpty()
                 || currentUserId == null
                 || currentUserId.isEmpty()) {
-
             return null;
         }
 
@@ -258,11 +257,7 @@ public class chatwindo extends AppCompatActivity {
          */
 
         if (conversationId.startsWith(currentUserId)) {
-
-            String otherUid =
-                    conversationId.substring(
-                            currentUserId.length()
-                    );
+            String otherUid = conversationId.substring(currentUserId.length());
 
             if (!otherUid.isEmpty()) {
                 return otherUid;
@@ -270,26 +265,18 @@ public class chatwindo extends AppCompatActivity {
         }
 
         if (conversationId.endsWith(currentUserId)) {
-
-            String otherUid =
-                    conversationId.substring(
-                            0,
-                            conversationId.length()
-                                    - currentUserId.length()
-                    );
+            String otherUid = conversationId.substring(0, conversationId.length() - currentUserId.length());
 
             if (!otherUid.isEmpty()) {
                 return otherUid;
             }
         }
-
         return null;
     }
 
     // =========================================================
     // LOAD RECEIVER PROFILE
     // =========================================================
-
     private void loadReceiverProfile() {
 
         DatabaseReference userReference =
