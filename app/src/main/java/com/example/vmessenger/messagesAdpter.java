@@ -25,22 +25,16 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class messagesAdpter
-        extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+public class messagesAdpter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
     private final ArrayList<msgModelclass> messagesAdpterArrayList;
-
     private static final int ITEM_SEND = 1;
     private static final int ITEM_RECIVE = 2;
 
     // Position of the message selected in Semantic Search
     private int highlightedPosition = -1;
 
-    public messagesAdpter(
-            Context context,
-            ArrayList<msgModelclass> messagesAdpterArrayList
-    ) {
+    public messagesAdpter(Context context, ArrayList<msgModelclass> messagesAdpterArrayList) {
         this.context = context;
         this.messagesAdpterArrayList = messagesAdpterArrayList;
     }
@@ -50,20 +44,17 @@ public class messagesAdpter
         int oldPosition = highlightedPosition;
         highlightedPosition = position;
 
-        if (oldPosition >= 0
-                && oldPosition < messagesAdpterArrayList.size()) {
+        if (oldPosition >= 0 && oldPosition < messagesAdpterArrayList.size()) {
             notifyItemChanged(oldPosition);
         }
 
-        if (highlightedPosition >= 0
-                && highlightedPosition < messagesAdpterArrayList.size()) {
+        if (highlightedPosition >= 0 && highlightedPosition < messagesAdpterArrayList.size()) {
             notifyItemChanged(highlightedPosition);
         }
     }
 
     @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(
+    @Override public RecyclerView.ViewHolder onCreateViewHolder(
             @NonNull ViewGroup parent,
             int viewType
     ) {
@@ -87,26 +78,19 @@ public class messagesAdpter
     }
 
     @Override
-    public void onBindViewHolder(
-            @NonNull RecyclerView.ViewHolder holder,
-            int position
-    ) {
-        msgModelclass messages =
-                messagesAdpterArrayList.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        msgModelclass messages = messagesAdpterArrayList.get(position);
 
         // Preserve the existing long-press dialog
         holder.itemView.setOnLongClickListener(
                 new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
+                    @Override public boolean onLongClick(View view) {
+
                         new AlertDialog.Builder(context)
                                 .setTitle("Delete")
-                                .setMessage(
-                                        "Are you sure you want to delete this message?"
-                                )
-                                .setPositiveButton(
-                                        "Yes",
-                                        new DialogInterface.OnClickListener() {
+                                .setMessage("Are you sure you want to delete this message?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
                                             @Override
                                             public void onClick(
                                                     DialogInterface dialog,
@@ -117,9 +101,7 @@ public class messagesAdpter
                                             }
                                         }
                                 )
-                                .setNegativeButton(
-                                        "No",
-                                        new DialogInterface.OnClickListener() {
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(
                                                     DialogInterface dialog,
@@ -136,12 +118,10 @@ public class messagesAdpter
                 }
         );
 
-        boolean isHighlighted =
-                position == highlightedPosition;
+        boolean isHighlighted = position == highlightedPosition;
 
         if (holder instanceof senderVierwHolder) {
-            senderVierwHolder viewHolder =
-                    (senderVierwHolder) holder;
+            senderVierwHolder viewHolder = (senderVierwHolder) holder;
 
             viewHolder.msgtxt.setText(messages.getMessage());
 
@@ -158,8 +138,7 @@ public class messagesAdpter
             }
 
         } else if (holder instanceof reciverViewHolder) {
-            reciverViewHolder viewHolder =
-                    (reciverViewHolder) holder;
+            reciverViewHolder viewHolder = (reciverViewHolder) holder;
 
             viewHolder.msgtxt.setText(messages.getMessage());
 
@@ -206,9 +185,7 @@ public class messagesAdpter
 
             animator.addUpdateListener(animation -> {
                 int color = (int) animation.getAnimatedValue();
-
-                messageText.setBackgroundTintList(
-                        ColorStateList.valueOf(color)
+                messageText.setBackgroundTintList(ColorStateList.valueOf(color)
                 );
             });
 
@@ -227,8 +204,7 @@ public class messagesAdpter
 
     @Override
     public int getItemViewType(int position) {
-        msgModelclass messages =
-                messagesAdpterArrayList.get(position);
+        msgModelclass messages = messagesAdpterArrayList.get(position);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null
                 && FirebaseAuth.getInstance()
@@ -237,39 +213,29 @@ public class messagesAdpter
                 .equals(messages.getSenderid())) {
             return ITEM_SEND;
         }
-
         return ITEM_RECIVE;
     }
 
     class senderVierwHolder extends RecyclerView.ViewHolder {
-
         CircleImageView circleImageView;
         TextView msgtxt;
-
         public senderVierwHolder(@NonNull View itemView) {
             super(itemView);
 
-            circleImageView =
-                    itemView.findViewById(R.id.profilerggg);
-
-            msgtxt =
-                    itemView.findViewById(R.id.msgsendertyp);
+            circleImageView = itemView.findViewById(R.id.profilerggg);
+            msgtxt = itemView.findViewById(R.id.msgsendertyp);
         }
     }
 
     class reciverViewHolder extends RecyclerView.ViewHolder {
-
         CircleImageView circleImageView;
         TextView msgtxt;
 
         public reciverViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            circleImageView =
-                    itemView.findViewById(R.id.pro);
-
-            msgtxt =
-                    itemView.findViewById(R.id.recivertextset);
+            circleImageView = itemView.findViewById(R.id.pro);
+            msgtxt = itemView.findViewById(R.id.recivertextset);
         }
     }
 }
