@@ -283,75 +283,75 @@ public class chatwindo extends AppCompatActivity {
 
         userReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (!snapshot.exists()) {Log.e(TAG, "Receiver profile not found: " + reciverUid);
-                            reciverNName.setText(reciverName != null ? reciverName : "");
+                                                         @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                             if (!snapshot.exists()) {Log.e(TAG, "Receiver profile not found: " + reciverUid);
+                                                                 reciverNName.setText(reciverName != null ? reciverName : "");
 
-                            if (reciverimg == null || reciverimg.isEmpty()) {
-                                profile.setImageResource(R.drawable.photocamera);
-                            }
-                            return;
-                        }
+                                                                 if (reciverimg == null || reciverimg.isEmpty()) {
+                                                                     profile.setImageResource(R.drawable.photocamera);
+                                                                 }
+                                                                 return;
+                                                             }
 
-                        // -------------------------------------------------
-                        // NAME
-                        // -------------------------------------------------
-                        String name = "";
-                        Object nameValue = snapshot.child("name").getValue();
+                                                             // -------------------------------------------------
+                                                             // NAME
+                                                             // -------------------------------------------------
+                                                             String name = "";
+                                                             Object nameValue = snapshot.child("name").getValue();
 
-                        if (nameValue != null) {
-                            name = nameValue.toString();
-                        }
+                                                             if (nameValue != null) {
+                                                                 name = nameValue.toString();
+                                                             }
 
-                        if (name.isEmpty()) {
-                            Object usernameValue = snapshot.child("username").getValue();
+                                                             if (name.isEmpty()) {
+                                                                 Object usernameValue = snapshot.child("username").getValue();
 
-                            if (usernameValue != null) {
-                                name = usernameValue.toString();
-                            }
-                        }
+                                                                 if (usernameValue != null) {
+                                                                     name = usernameValue.toString();
+                                                                 }
+                                                             }
 
-                        if (name.isEmpty() && reciverName != null) {
-                            name = reciverName;
-                        }
+                                                             if (name.isEmpty() && reciverName != null) {
+                                                                 name = reciverName;
+                                                             }
 
-                        reciverName = name;
-                        reciverNName.setText(name);
+                                                             reciverName = name;
+                                                             reciverNName.setText(name);
 
-                        // -------------------------------------------------
-                        // PROFILE IMAGE
-                        // -------------------------------------------------
-                        String image = "";
+                                                             // -------------------------------------------------
+                                                             // PROFILE IMAGE
+                                                             // -------------------------------------------------
+                                                             String image = "";
 
-                        Object imageValue = snapshot.child("profilepic").getValue();
+                                                             Object imageValue = snapshot.child("profilepic").getValue();
 
-                        if (imageValue != null) {
-                            image = imageValue.toString();
-                        }
+                                                             if (imageValue != null) {
+                                                                 image = imageValue.toString();
+                                                             }
 
-                        if (!image.isEmpty()) {
-                            reciverimg = image;
-                            reciverIImg = image;
-                            Picasso.get().load(image).into(profile);
+                                                             if (!image.isEmpty()) {
+                                                                 reciverimg = image;
+                                                                 reciverIImg = image;
+                                                                 Picasso.get().load(image).into(profile);
 
-                        } else {
-                            if (reciverimg != null && !reciverimg.isEmpty()) {
+                                                             } else {
+                                                                 if (reciverimg != null && !reciverimg.isEmpty()) {
 
-                                Picasso.get().load(reciverimg).into(profile);
+                                                                     Picasso.get().load(reciverimg).into(profile);
 
-                            } else {
-                                profile.setImageResource(
-                                        R.drawable.photocamera
-                                );
-                            }
-                        }
-                    }
+                                                                 } else {
+                                                                     profile.setImageResource(
+                                                                             R.drawable.photocamera
+                                                                     );
+                                                                 }
+                                                             }
+                                                         }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Receiver profile error", error.toException());
-                    }
-                }
+                                                         @Override
+                                                         public void onCancelled(@NonNull DatabaseError error) {
+                                                             Log.e(TAG, "Receiver profile error", error.toException());
+                                                         }
+                                                     }
         );
     }
 
@@ -364,24 +364,24 @@ public class chatwindo extends AppCompatActivity {
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                     @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists() && snapshot.child("profilepic").getValue() != null) {
-                            senderImg = snapshot.child("profilepic").getValue().toString();
+                                                         if (snapshot.exists() && snapshot.child("profilepic").getValue() != null) {
+                                                             senderImg = snapshot.child("profilepic").getValue().toString();
 
-                        } else {
-                            senderImg = "";
-                        }
+                                                         } else {
+                                                             senderImg = "";
+                                                         }
 
-                        if (mmessagesAdpter != null) {
-                            mmessagesAdpter.notifyDataSetChanged();
-                        }
-                    }
+                                                         if (mmessagesAdpter != null) {
+                                                             mmessagesAdpter.notifyDataSetChanged();
+                                                         }
+                                                     }
 
-                    @Override public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Sender profile error", error.toException());
-                    }
-                }
+                                                     @Override public void onCancelled(@NonNull DatabaseError error) {
+                                                         Log.e(TAG, "Sender profile error", error.toException());
+                                                     }
+                                                 }
         );
     }
 
@@ -392,25 +392,25 @@ public class chatwindo extends AppCompatActivity {
         DatabaseReference primaryReference = database.getReference().child("chats").child(senderRoom).child("messages");
 
         primaryReference.addValueEventListener(new ValueEventListener() {
-                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                   @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                            displayMessages(snapshot);
+                                                       if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                                                           displayMessages(snapshot);
 
-                        } else {
-                            /*
-                             * Primary room is empty.
-                             * Try reverse room.
-                             */
-                            loadReverseRoom();
-                        }
-                    }
+                                                       } else {
+                                                           /*
+                                                            * Primary room is empty.
+                                                            * Try reverse room.
+                                                            */
+                                                           loadReverseRoom();
+                                                       }
+                                                   }
 
-                    @Override public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Primary chat load failed", error.toException());
-                        loadReverseRoom();
-                    }
-                }
+                                                   @Override public void onCancelled(@NonNull DatabaseError error) {
+                                                       Log.e(TAG, "Primary chat load failed", error.toException());
+                                                       loadReverseRoom();
+                                                   }
+                                               }
         );
     }
 
@@ -423,23 +423,23 @@ public class chatwindo extends AppCompatActivity {
 
         reverseReference.addValueEventListener(new ValueEventListener() {
 
-                    @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                   @Override public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-                            displayMessages(snapshot);
+                                                       if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                                                           displayMessages(snapshot);
 
-                        } else {
-                            messagesArrayList.clear();
-                            mmessagesAdpter.notifyDataSetChanged();
+                                                       } else {
+                                                           messagesArrayList.clear();
+                                                           mmessagesAdpter.notifyDataSetChanged();
 
-                            Log.d(TAG, "No messages found in either chat room");
-                        }
-                    }
+                                                           Log.d(TAG, "No messages found in either chat room");
+                                                       }
+                                                   }
 
-                    @Override public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Reverse chat load failed", error.toException());
-                    }
-                }
+                                                   @Override public void onCancelled(@NonNull DatabaseError error) {
+                                                       Log.e(TAG, "Reverse chat load failed", error.toException());
+                                                   }
+                                               }
         );
     }
 
@@ -529,102 +529,102 @@ public class chatwindo extends AppCompatActivity {
     private void setupSendButton() {
 
         sendbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override public void onClick(View view) {
-                        String message = textmsg.getText().toString().trim();
+                                       @Override public void onClick(View view) {
+                                           String message = textmsg.getText().toString().trim();
 
-                        if (message.isEmpty()) {
-                            Toast.makeText(
-                                    chatwindo.this,
-                                    "Enter The Message First",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            return;
-                        }
+                                           if (message.isEmpty()) {
+                                               Toast.makeText(
+                                                       chatwindo.this,
+                                                       "Enter The Message First",
+                                                       Toast.LENGTH_SHORT
+                                               ).show();
+                                               return;
+                                           }
 
-                        if (senderRoom == null || reciverRoom == null) {
-                            Toast.makeText(
-                                    chatwindo.this,
-                                    "Chat connection error",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            return;
-                        }
+                                           if (senderRoom == null || reciverRoom == null) {
+                                               Toast.makeText(
+                                                       chatwindo.this,
+                                                       "Chat connection error",
+                                                       Toast.LENGTH_SHORT
+                                               ).show();
+                                               return;
+                                           }
 
-                        textmsg.setText("");
+                                           textmsg.setText("");
 
-                        Date date = new Date();
+                                           Date date = new Date();
 
-                        msgModelclass messagess = new msgModelclass(
-                                        message,
-                                        SenderUID,
-                                        date.getTime()
-                                );
+                                           msgModelclass messagess = new msgModelclass(
+                                                   message,
+                                                   SenderUID,
+                                                   date.getTime()
+                                           );
 
-                        // -------------------------------------------------
-                        // CREATE ONE FIREBASE MESSAGE ID
-                        // -------------------------------------------------
-                        DatabaseReference senderMessageRef = database
-                                        .getReference()
-                                        .child("chats")
-                                        .child(senderRoom)
-                                        .child("messages")
-                                        .push();
+                                           // -------------------------------------------------
+                                           // CREATE ONE FIREBASE MESSAGE ID
+                                           // -------------------------------------------------
+                                           DatabaseReference senderMessageRef = database
+                                                   .getReference()
+                                                   .child("chats")
+                                                   .child(senderRoom)
+                                                   .child("messages")
+                                                   .push();
 
-                        String messageId = senderMessageRef.getKey();
+                                           String messageId = senderMessageRef.getKey();
 
-                        if (messageId == null) {
-                            Toast.makeText(
-                                    chatwindo.this,
-                                    "Could not create message",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            return;
-                        }
+                                           if (messageId == null) {
+                                               Toast.makeText(
+                                                       chatwindo.this,
+                                                       "Could not create message",
+                                                       Toast.LENGTH_SHORT
+                                               ).show();
+                                               return;
+                                           }
 
-                        // -------------------------------------------------
-                        // SAVE TO SENDER ROOM
-                        // -------------------------------------------------
-                        senderMessageRef.setValue(messagess).addOnSuccessListener(unused -> {
+                                           // -------------------------------------------------
+                                           // SAVE TO SENDER ROOM
+                                           // -------------------------------------------------
+                                           senderMessageRef.setValue(messagess).addOnSuccessListener(unused -> {
 
-                                            // ---------------------------------
-                                            // SAVE SAME MESSAGE TO RECEIVER
-                                            // ---------------------------------
-                                            database
-                                                    .getReference()
-                                                    .child("chats")
-                                                    .child(reciverRoom)
-                                                    .child("messages")
-                                                    .child(messageId)
-                                                    .setValue(
-                                                            messagess
-                                                    );
+                                                               // ---------------------------------
+                                                               // SAVE SAME MESSAGE TO RECEIVER
+                                                               // ---------------------------------
+                                                               database
+                                                                       .getReference()
+                                                                       .child("chats")
+                                                                       .child(reciverRoom)
+                                                                       .child("messages")
+                                                                       .child(messageId)
+                                                                       .setValue(
+                                                                               messagess
+                                                                       );
 
-                                            // ---------------------------------
-                                            // INDEX MESSAGE
-                                            // ---------------------------------
-                                            Log.d("SEMANTIC_SEARCH", "INDEXING NEW MESSAGE: " + messageId);
+                                                               // ---------------------------------
+                                                               // INDEX MESSAGE
+                                                               // ---------------------------------
+                                                               Log.d("SEMANTIC_SEARCH", "INDEXING NEW MESSAGE: " + messageId);
 
-                                            indexMessageToBackend(
-                                                    messageId,
-                                                    senderRoom,
-                                                    SenderUID,
-                                                    message,
-                                                    date.getTime()
-                                            );
-                                        }
-                                )
-                                .addOnFailureListener(error -> {
-                                            Toast.makeText(
-                                                    chatwindo.this,
-                                                    "Message failed to send",
-                                                    Toast.LENGTH_SHORT
-                                            ).show();
+                                                               indexMessageToBackend(
+                                                                       messageId,
+                                                                       senderRoom,
+                                                                       SenderUID,
+                                                                       message,
+                                                                       date.getTime()
+                                                               );
+                                                           }
+                                                   )
+                                                   .addOnFailureListener(error -> {
+                                                               Toast.makeText(
+                                                                       chatwindo.this,
+                                                                       "Message failed to send",
+                                                                       Toast.LENGTH_SHORT
+                                                               ).show();
 
-                                            Log.e(TAG, "Firebase message error", error);
-                                        }
-                                );
-                    }
-                }
+                                                               Log.e(TAG, "Firebase message error", error);
+                                                           }
+                                                   );
+                                       }
+                                   }
         );
     }
 

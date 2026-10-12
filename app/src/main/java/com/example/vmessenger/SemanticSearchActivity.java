@@ -38,9 +38,11 @@ import java.util.Set;
 
 public class SemanticSearchActivity extends AppCompatActivity {
     private static final String TAG = "SEMANTIC_SEARCH";
-    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
+    private static final String SEARCH_URL =
+            "http://10.0.2.2:3000/search";
 
-    private static final String INDEX_URL = "http://127.0.0.1:3000/index-message";
+    private static final String INDEX_URL =
+            "http://10.0.2.2:3000/index-message";
     private EditText searchInput;
     private ImageView searchButton;
     private ImageView backButton;
@@ -403,7 +405,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         if (roomId.endsWith(senderId) && roomId.length() > senderId.length()) {
             String otherUserId = roomId.substring(0,
-                   roomId.length() - senderId.length()
+                    roomId.length() - senderId.length()
             );
 
             return senderId + otherUserId;
@@ -453,7 +455,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             String text = item.child("message").getValue(String.class);
 
                             String senderId =item.child("senderid")
-                                            .getValue(String.class);
+                                    .getValue(String.class);
 
                             if (messageId == null
                                     || text == null
@@ -464,9 +466,9 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             }
 
                             String conversationId = getCanonicalConversationId(
-                                            roomId,
-                                            senderId
-                                    );
+                                    roomId,
+                                    senderId
+                            );
 
                             if (conversationId == null) {
                                 Log.w(TAG, "Skipping unrecognized room: " + roomId);
@@ -482,8 +484,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
                             Object timeValue = item.child("timeStamp").getValue();
 
                             long timestamp = timeValue instanceof Number
-                                            ? ((Number) timeValue).longValue()
-                                            : 0L;
+                                    ? ((Number) timeValue).longValue()
+                                    : 0L;
 
                             messages.add(
                                     new ExistingMessage(
@@ -610,8 +612,8 @@ public class SemanticSearchActivity extends AppCompatActivity {
             int responseCode = connection.getResponseCode();
 
             InputStream stream = (responseCode >= 200 && responseCode < 300)
-                            ? connection.getInputStream()
-                            : connection.getErrorStream();
+                    ? connection.getInputStream()
+                    : connection.getErrorStream();
 
             StringBuilder response = new StringBuilder();
 
