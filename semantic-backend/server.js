@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
 const PORT = process.env.PORT || 3000;
-const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-3.8-flash";
+const CHAT_MODEL = process.env.GEMINI_CHAT_MODEL || "gemini-3.6-flash";
 const EMBEDDING_MODEL = "gemini-embedding-001";
 
 // ----------------------------------------------------

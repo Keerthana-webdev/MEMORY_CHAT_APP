@@ -38,11 +38,12 @@ import java.util.Set;
 
 public class SemanticSearchActivity extends AppCompatActivity {
     private static final String TAG = "SEMANTIC_SEARCH";
+
     private static final String SEARCH_URL =
-            "http://10.0.2.2:3000/search";
+            "http://127.0.0.1:3000/search";
 
     private static final String INDEX_URL =
-            "http://10.0.2.2:3000/index-message";
+            "http://127.0.0.1:3000/index-message";
     private EditText searchInput;
     private ImageView searchButton;
     private ImageView backButton;
