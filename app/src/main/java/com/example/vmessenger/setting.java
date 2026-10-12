@@ -136,13 +136,11 @@ public class setting extends AppCompatActivity {
         setprofile.setOnClickListener(v -> {
             Intent intent = new Intent();
             intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT
-            );
+            intent.setAction(Intent.ACTION_GET_CONTENT);
 
             startActivityForResult(Intent.createChooser(intent, "Select Profile Picture"), IMAGE_REQUEST);});
 
         donebut.setOnClickListener(v -> {
-
             String name = setname.getText().toString().trim();
             String status = setstatus.getText().toString().trim();
 
@@ -168,6 +166,7 @@ public class setting extends AppCompatActivity {
                             }
                         }
                 );
+
             } else {
                 saveUserData(reference, name, status
                 );
@@ -201,14 +200,10 @@ public class setting extends AppCompatActivity {
                                     ).show();
 
                                     Intent intent = new Intent(setting.this, MainActivity.class);
-
-                                    intent.setFlags(
-                                            Intent.FLAG_ACTIVITY_NEW_TASK |
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    );
-
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
                                     finish();
+
                                 } else {
                                     Toast.makeText(
                                             setting.this,
@@ -226,8 +221,7 @@ public class setting extends AppCompatActivity {
             int resultCode,
             @Nullable Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data
-        );
+        super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_REQUEST &&
                 resultCode == RESULT_OK &&
