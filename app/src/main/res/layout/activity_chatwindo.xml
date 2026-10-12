@@ -10,10 +10,7 @@
     android:background="@drawable/chatback"
     tools:context=".chatwindo">
 
-    <!-- ========================= -->
     <!-- PROFILE / CHAT HEADER     -->
-    <!-- ========================= -->
-
     <LinearLayout
         android:id="@+id/ll1"
         android:layout_width="match_parent"
@@ -54,11 +51,7 @@
 
     </LinearLayout>
 
-
-    <!-- ========================= -->
     <!-- MESSAGE LIST              -->
-    <!-- ========================= -->
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/msgadpter"
         android:layout_width="match_parent"
@@ -68,11 +61,7 @@
         android:padding="@dimen/_10sdp"
         android:scrollbars="vertical" />
 
-
-    <!-- ========================= -->
     <!-- MESSAGE INPUT             -->
-    <!-- ========================= -->
-
     <LinearLayout
         android:id="@+id/ll2"
         android:layout_width="match_parent"
@@ -83,7 +72,6 @@
         android:orientation="horizontal">
 
         <!-- Message box -->
-
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="@dimen/_35sdp"
@@ -112,7 +100,6 @@
 
 
         <!-- Send button -->
-
         <androidx.cardview.widget.CardView
             android:id="@+id/sendbtnn"
             android:layout_width="@dimen/_35sdp"
