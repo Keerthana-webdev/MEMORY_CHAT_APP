@@ -38,12 +38,8 @@ import java.util.Set;
 
 public class SemanticSearchActivity extends AppCompatActivity {
     private static final String TAG = "SEMANTIC_SEARCH";
-
-    private static final String SEARCH_URL =
-            "http://127.0.0.1:3000/search";
-
-    private static final String INDEX_URL =
-            "http://127.0.0.1:3000/index-message";
+    private static final String SEARCH_URL = "http://127.0.0.1:3000/search";
+    private static final String INDEX_URL = "http://127.0.0.1:3000/index-message";
     private EditText searchInput;
     private ImageView searchButton;
     private ImageView backButton;
@@ -84,15 +80,12 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
         resultsList = new ArrayList<>();
 
-        searchRecyclerView.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
+        searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new SemanticSearchAdapter(
                 this,
                 resultsList,
-                result -> openChatFromSearchResult(result)
-        );
+                result -> openChatFromSearchResult(result));
 
         searchRecyclerView.setAdapter(adapter);
 
@@ -163,8 +156,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(SEARCH_URL);
-                connection =
-                        (HttpURLConnection) url.openConnection();
+                connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod("POST");
                 connection.setConnectTimeout(15000);
@@ -619,14 +611,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
             StringBuilder response = new StringBuilder();
 
             if (stream != null) {
-                try (BufferedReader reader =
-                             new BufferedReader(
-                                     new InputStreamReader(
-                                             stream,
-                                             StandardCharsets.UTF_8
-                                     )
-                             )) {
-
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                     String line;
 
                     while ((line = reader.readLine()) != null) {
@@ -715,22 +700,16 @@ public class SemanticSearchActivity extends AppCompatActivity {
 
             if (conversationId.startsWith(currentUserId)) {
 
-                String possibleReceiver =
-                        conversationId.substring(currentUserId.length());
+                String possibleReceiver = conversationId.substring(currentUserId.length());
 
-                if (!possibleReceiver.isEmpty()
-                        && !possibleReceiver.equals(currentUserId)) {
+                if (!possibleReceiver.isEmpty() && !possibleReceiver.equals(currentUserId)) {
                     receiverUid = possibleReceiver;
                 }
             }
 
-            if ((receiverUid == null || receiverUid.isEmpty())
-                    && conversationId.endsWith(currentUserId)) {
+            if ((receiverUid == null || receiverUid.isEmpty()) && conversationId.endsWith(currentUserId)) {
 
-                String possibleReceiver = conversationId.substring(
-                        0,
-                        conversationId.length() - currentUserId.length()
-                );
+                String possibleReceiver = conversationId.substring(0, conversationId.length() - currentUserId.length());
 
                 if (!possibleReceiver.isEmpty()
                         && !possibleReceiver.equals(currentUserId)) {
@@ -739,9 +718,7 @@ public class SemanticSearchActivity extends AppCompatActivity {
             }
         }
 
-        if (receiverUid == null
-                || receiverUid.isEmpty()
-                || receiverUid.equals(currentUserId)) {
+        if (receiverUid == null || receiverUid.isEmpty() || receiverUid.equals(currentUserId)) {
 
             Log.e(TAG, "Could not identify receiver");
             Log.e(TAG, "Current UID = " + currentUserId);
