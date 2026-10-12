@@ -85,13 +85,9 @@ public class SemanticSearchAdapter extends RecyclerView.Adapter<SemanticSearchAd
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            messageText = itemView.findViewById(
-                    R.id.resultMessage
-            );
+            messageText = itemView.findViewById(R.id.resultMessage);
 
-            scoreText = itemView.findViewById(
-                    R.id.resultScore
-            );
+            scoreText = itemView.findViewById(R.id.resultScore);
         }
     }
 }
