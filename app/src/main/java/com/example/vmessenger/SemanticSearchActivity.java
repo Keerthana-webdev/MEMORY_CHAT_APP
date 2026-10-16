@@ -741,7 +741,6 @@ public class SemanticSearchActivity extends AppCompatActivity {
         intent.putExtra("uid", receiverUid);
         intent.putExtra("nameeee", "");
         intent.putExtra("reciverImg", "");
-
         intent.putExtra("targetMessageId", messageId);
         intent.putExtra("targetMessageText", messageText);
         intent.putExtra("targetMessageSenderId", senderId);
