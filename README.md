@@ -1,2 +1,2 @@
 ### Memory chat application using Android studio 
-Memory chat application 
+Memory chat application using Android and java
